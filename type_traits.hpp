@@ -6,12 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/07 10:12:18 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/07 16:22:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_TYPE_TRAITS_HPP
 #define FT_CONTAINERS_TYPE_TRAITS_HPP
+
+namespace ft {
 
 // enable_if {{{
 
@@ -25,6 +27,8 @@ struct enable_if<true, T> {
 
 // enable_if }}}
 
+// helper class: integral_constant, true_type, false_type {{{
+
 template <class T, T v>
 struct integral_constant {
   static const T value = v;
@@ -36,10 +40,44 @@ struct integral_constant {
   }
 };
 
-typedef integral_constant<bool, (true)> true_type;
-typedef integral_constant<bool, (false)> false_type;
+typedef integral_constant<bool, true> true_type;
+typedef integral_constant<bool, false> false_type;
+
+// helper class: integral_constant, true_type, false_type }}}
+
+// remove_const, volatile, cv {{{
+
+template <class T>
+struct remove_const {
+  typedef T type;
+};
+
+template <class T>
+struct remove_const<const T> {
+  typedef T type;
+};
+
+template <typename T>
+struct remove_volatile {
+  typedef T type;
+};
+
+template <typename T>
+struct remove_volatile<volatile T> {
+  typedef T type;
+};
+
+template <typename T>
+struct remove_cv {
+  typedef typename ft::remove_volatile<typename ft::remove_const<T>::type>::type
+      type;
+};
+
+// remove_const, volatile, cv }}}
 
 // is_integral {{{
+
+// is_integral_internal {{{
 
 template <class _Tp>
 struct is_integral_internal : public false_type {};
@@ -58,19 +96,6 @@ struct is_integral_internal<unsigned char> : public true_type {};
 
 template <>
 struct is_integral_internal<wchar_t> : public true_type {};
-
-#ifndef _LIBCPP_NO_HAS_CHAR8_T
-template <>
-struct is_integral_internal<char8_t> : public true_type {};
-#endif
-
-#ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
-template <>
-struct is_integral_internal<char16_t> : public true_type {};
-
-template <>
-struct is_integral_internal<char32_t> : public true_type {};
-#endif  // _LIBCPP_HAS_NO_UNICODE_CHARS
 
 template <>
 struct is_integral_internal<short> : public true_type {};
@@ -96,18 +121,14 @@ struct is_integral_internal<long long> : public true_type {};
 template <>
 struct is_integral_internal<unsigned long long> : public true_type {};
 
-#ifndef _LIBCPP_HAS_NO_INT128
-template <>
-struct is_integral_internal<__int128_t> : public true_type {};
+// is_integral_internal }}}
 
-template <>
-struct is_integral_internal<__uint128_t> : public true_type {};
-#endif  //_LIBCPP_HAS_NO_INT128
-
-template <class _Tp>
-struct _LIBCPP_TEMPLATE_VIS is_integral :
-    public is_integral_internal<typename remove_cv<_Tp>::type> {};
+template <typename Tp>
+struct is_integral :
+    public ft::is_integral_internal<typename ft::remove_cv<Tp>::type> {};
 
 // is_integral }}}
+
+}  // namespace ft
 
 #endif  // FT_CONTAINERS_TYPE_TRAITS_HPP
