@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/07 16:22:08 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/08 14:32:06 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ struct enable_if<true, T> {
 
 // helper class: integral_constant, true_type, false_type {{{
 
-template <class T, T v>
+template <typename T, T v>
 struct integral_constant {
   static const T value = v;
   typedef T value_type;
@@ -47,12 +47,12 @@ typedef integral_constant<bool, false> false_type;
 
 // remove_const, volatile, cv {{{
 
-template <class T>
+template <typename T>
 struct remove_const {
   typedef T type;
 };
 
-template <class T>
+template <typename T>
 struct remove_const<const T> {
   typedef T type;
 };
@@ -79,7 +79,7 @@ struct remove_cv {
 
 // is_integral_internal {{{
 
-template <class _Tp>
+template <typename _Tp>
 struct is_integral_internal : public false_type {};
 
 template <>
