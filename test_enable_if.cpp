@@ -47,5 +47,9 @@ int main(void) {
     std::cout << "int is integral" << std::endl;
   else
     std::cout << "int is not integral" << std::endl;
+  if (ft::is_pointer<void*>::value)
+    std::cout << "void * is pointer" << std::endl;
+  else
+    std::cout << "void * is not pointer" << std::endl;
   return (0);
 }

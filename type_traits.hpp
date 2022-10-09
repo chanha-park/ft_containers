@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/09 14:41:59 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/09 15:09:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ struct remove_cv {
 
 // is_void {{{
 
-template <class T>
+template <typename T>
 struct is_void_internal : public ft::false_type {};
 template <>
 struct is_void_internal<void> : public ft::true_type {};
 
-template <class T>
+template <typename T>
 struct is_void : public ft::is_void_internal<typename ft::remove_cv<T>::type> {
 };
 
@@ -142,7 +142,7 @@ struct is_integral
 
 // is_floating_point {{{
 
-template <class T>
+template <typename T>
 struct is_floating_point_internal : public ft::false_type {};
 template <>
 struct is_floating_point_internal<float> : public ft::true_type {};
@@ -151,11 +151,34 @@ struct is_floating_point_internal<double> : public ft::true_type {};
 template <>
 struct is_floating_point_internal<long double> : public ft::true_type {};
 
-template <class T>
+template <typename T>
 struct is_floating_point
     : public ft::is_floating_point_internal<typename ft::remove_cv<T>::type> {};
 
 // is_floating_point }}}
+
+// is_arithmetic {{{
+
+template <typename T>
+struct is_arithmetic
+    : public ft::integral_constant<bool,
+                                   ft::is_integral<T>::value ||
+                                       ft::is_floating_point<T>::value> {};
+// is_arithmetic }}}
+
+// is_pointer {{{
+
+template <typename T>
+struct is_pointer_internal : public ft::false_type {};
+
+template <typename T>
+struct is_pointer_internal<T*> : public ft::true_type {};
+
+template <typename T>
+struct is_pointer
+    : public ft::is_pointer_internal<typename ft::remove_cv<T>::type> {};
+
+// is_pointer }}}
 
 }  // namespace ft
 
