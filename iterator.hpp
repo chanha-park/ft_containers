@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/07 09:51:08 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/09 15:13:33 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,17 +134,16 @@ typename iterator_traits<InputIterator>::difference_type distance(
     InputIterator first,
     InputIterator last) {
   return (distance_internal(
-      first,
-      last,
+      first, last,
       typename iterator_traits<InputIterator>::iterator_category()));
 }
 
 // }}}
 
 template <class InputIterator>
-InputIterator next(InputIterator x,
-                   typename iterator_traits<InputIterator>::difference_type n
-                   = 1);
+InputIterator next(
+    InputIterator x,
+    typename iterator_traits<InputIterator>::difference_type n = 1);
 
 template <class BidirectionalIterator>
 BidirectionalIterator prev(
@@ -152,12 +151,12 @@ BidirectionalIterator prev(
     typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
 
 template <class Iterator>
-class reverse_iterator :
-    public iterator<typename iterator_traits<Iterator>::iterator_category,
-                    typename iterator_traits<Iterator>::value_type,
-                    typename iterator_traits<Iterator>::difference_type,
-                    typename iterator_traits<Iterator>::pointer,
-                    typename iterator_traits<Iterator>::reference> {
+class reverse_iterator
+    : public iterator<typename iterator_traits<Iterator>::iterator_category,
+                      typename iterator_traits<Iterator>::value_type,
+                      typename iterator_traits<Iterator>::difference_type,
+                      typename iterator_traits<Iterator>::pointer,
+                      typename iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
@@ -378,8 +377,8 @@ template <class T,
           class charT = char,
           class traits = char_traits<charT>,
           class Distance = ptrdiff_t>
-class istream_iterator :
-    public iterator<input_iterator_tag, T, Distance, const T*, const T&> {
+class istream_iterator
+    : public iterator<input_iterator_tag, T, Distance, const T*, const T&> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -404,8 +403,8 @@ bool operator!=(const istream_iterator<T, charT, traits, Distance>& x,
                 const istream_iterator<T, charT, traits, Distance>& y);
 
 template <class T, class charT = char, class traits = char_traits<charT>>
-class ostream_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
+class ostream_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -423,12 +422,11 @@ class ostream_iterator :
 };
 
 template <class charT, class traits = char_traits<charT>>
-class istreambuf_iterator :
-    public iterator<input_iterator_tag,
-                    charT,
-                    typename traits::off_type,
-                    unspecified,
-                    charT> {
+class istreambuf_iterator : public iterator<input_iterator_tag,
+                                            charT,
+                                            typename traits::off_type,
+                                            unspecified,
+                                            charT> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -457,8 +455,8 @@ bool operator!=(const istreambuf_iterator<charT, traits>& a,
                 const istreambuf_iterator<charT, traits>& b);
 
 template <class charT, class traits = char_traits<charT>>
-class ostreambuf_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
+class ostreambuf_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -487,66 +485,6 @@ constexpr T* begin(T (&array)[N]);
 template <class T, size_t N>
 constexpr T* end(T (&array)[N]);
 
-template <class C>
-auto constexpr cbegin(const C& c) -> decltype(std::begin(c));
-C++ 14 template <class C>
-auto constexpr cend(const C& c) -> decltype(std::end(c));
-C++ 14 template <class C>
-auto constexpr rbegin(C& c) -> decltype(c.rbegin());
-C++ 14 template <class C>
-auto constexpr rbegin(const C& c) -> decltype(c.rbegin());
-C++ 14 template <class C>
-auto constexpr rend(C& c) -> decltype(c.rend());
-C++ 14 template <class C>
-constexpr auto rend(const C& c) -> decltype(c.rend());
-C++ 14 template <class E>
-reverse_iterator<const E*> constexpr rbegin(initializer_list<E> il);
-C++ 14 template <class E>
-reverse_iterator<const E*> constexpr rend(initializer_list<E> il);
-C++ 14 template <class T, size_t N>
-reverse_iterator<T*> constexpr rbegin(T (&array)[N]);
-C++ 14 template <class T, size_t N>
-reverse_iterator<T*> constexpr rend(T (&array)[N]);
-C++ 14 template <class C>
-constexpr auto crbegin(const C& c) -> decltype(std::rbegin(c));
-C++ 14 template <class C>
-constexpr auto crend(const C& c) -> decltype(std::rend(c));
-C++ 14
-
-    24.8,
-    container access :
-    template <class C>
-    constexpr auto
-    size(const C& c) -> decltype(c.size());
-C++ 17 template <class T, size_t N>
-constexpr size_t size(const T (&array)[N]) noexcept;
-C++ 17
-
-    template <class C>
-    constexpr auto ssize(const C& c)
-        -> common_type_t<ptrdiff_t, make_signed_t<decltype(c.size())>>;
-C++ 20 template <class T, ptrdiff_t>
-constexpr ptrdiff_t ssize(const T (&array)[N]) noexcept;
-C++ 20
-
-    template <class C>
-    constexpr auto empty(const C& c) -> decltype(c.empty());
-C++ 17 template <class T, size_t N>
-constexpr bool empty(const T (&array)[N]) noexcept;
-C++ 17 template <class E>
-constexpr bool empty(initializer_list<E> il) noexcept;
-C++ 17 template <class C>
-constexpr auto data(C& c) -> decltype(c.data());
-C++ 17 template <class C>
-constexpr auto data(const C& c) -> decltype(c.data());
-C++ 17 template <class T, size_t N>
-constexpr T* data(T (&array)[N]) noexcept;
-C++ 17 template <class E>
-constexpr const E* data(initializer_list<E> il) noexcept;
-C++ 17
-
 }  // namespace ft
 
-std
-
-    // iterator synopsis end
+// iterator synopsis end
