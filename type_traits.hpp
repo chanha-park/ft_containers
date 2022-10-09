@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/08 14:32:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/09 14:41:59 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@ struct integral_constant {
   typedef T value_type;
   typedef integral_constant type;
 
-  operator value_type() const throw() {
-    return value;
-  }
+  operator value_type() const throw() { return (value); }
 };
 
 typedef integral_constant<bool, true> true_type;
@@ -75,59 +73,89 @@ struct remove_cv {
 
 // remove_const, volatile, cv }}}
 
+// is_void {{{
+
+template <class T>
+struct is_void_internal : public ft::false_type {};
+template <>
+struct is_void_internal<void> : public ft::true_type {};
+
+template <class T>
+struct is_void : public ft::is_void_internal<typename ft::remove_cv<T>::type> {
+};
+
+// is_void }}}
+
 // is_integral {{{
 
 // is_integral_internal {{{
 
-template <typename _Tp>
-struct is_integral_internal : public false_type {};
+template <typename T>
+struct is_integral_internal : public ft::false_type {};
 
 template <>
-struct is_integral_internal<bool> : public true_type {};
+struct is_integral_internal<bool> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<char> : public true_type {};
+struct is_integral_internal<char> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<signed char> : public true_type {};
+struct is_integral_internal<signed char> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<unsigned char> : public true_type {};
+struct is_integral_internal<unsigned char> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<wchar_t> : public true_type {};
+struct is_integral_internal<wchar_t> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<short> : public true_type {};
+struct is_integral_internal<short> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<unsigned short> : public true_type {};
+struct is_integral_internal<unsigned short> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<int> : public true_type {};
+struct is_integral_internal<int> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<unsigned int> : public true_type {};
+struct is_integral_internal<unsigned int> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<long> : public true_type {};
+struct is_integral_internal<long> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<unsigned long> : public true_type {};
+struct is_integral_internal<unsigned long> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<long long> : public true_type {};
+struct is_integral_internal<long long> : public ft::true_type {};
 
 template <>
-struct is_integral_internal<unsigned long long> : public true_type {};
+struct is_integral_internal<unsigned long long> : public ft::true_type {};
 
 // is_integral_internal }}}
 
-template <typename Tp>
-struct is_integral :
-    public ft::is_integral_internal<typename ft::remove_cv<Tp>::type> {};
+template <typename T>
+struct is_integral
+    : public ft::is_integral_internal<typename ft::remove_cv<T>::type> {};
 
 // is_integral }}}
+
+// is_floating_point {{{
+
+template <class T>
+struct is_floating_point_internal : public ft::false_type {};
+template <>
+struct is_floating_point_internal<float> : public ft::true_type {};
+template <>
+struct is_floating_point_internal<double> : public ft::true_type {};
+template <>
+struct is_floating_point_internal<long double> : public ft::true_type {};
+
+template <class T>
+struct is_floating_point
+    : public ft::is_floating_point_internal<typename ft::remove_cv<T>::type> {};
+
+// is_floating_point }}}
 
 }  // namespace ft
 
