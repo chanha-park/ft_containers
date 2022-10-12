@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/09 15:13:33 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/12 18:50:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 namespace ft {
 
-template <class Iterator>
+template <typename Iterator>
 struct iterator_traits {
   typedef typename Iterator::difference_type difference_type;
   typedef typename Iterator::value_type value_type;
@@ -29,7 +29,7 @@ struct iterator_traits {
   typedef typename Iterator::iterator_category iterator_category;
 };
 
-template <class T>
+template <typename T>
 struct iterator_traits<T*> {
   typedef std::ptrdiff_t difference_type;
   typedef T value_type;
@@ -38,7 +38,7 @@ struct iterator_traits<T*> {
   typedef std::random_access_iterator_tag iterator_category;
 };
 
-template <class T>
+template <typename T>
 struct iterator_traits<const T*> {
   typedef std::ptrdiff_t difference_type;
   typedef T value_type;
@@ -47,11 +47,11 @@ struct iterator_traits<const T*> {
   typedef std::random_access_iterator_tag iterator_category;
 };
 
-template <class Category,
-          class T,
-          class Distance = ptrdiff_t,
-          class Pointer = T*,
-          class Reference = T&>
+template <typename Category,
+          typename T,
+          typename Distance = ptrdiff_t,
+          typename Pointer = T*,
+          typename Reference = T&>
 struct iterator {
   typedef T value_type;
   typedef Distance difference_type;
@@ -60,31 +60,26 @@ struct iterator {
   typedef Category iterator_category;
 };
 
-// struct input_iterator_tag  {};
-// struct output_iterator_tag {};
-// struct forward_iterator_tag       : public input_iterator_tag         {};
-// struct bidirectional_iterator_tag : public forward_iterator_tag       {};
-// struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+struct input_iterator_tag {};
 
-// 27.4.3, iterator operations
-// extension: second argument not conforming to C++03
+struct output_iterator_tag {};
+
+struct forward_iterator_tag : public input_iterator_tag {};
+
+struct bidirectional_iterator_tag : public forward_iterator_tag {};
+
+struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 // advance {{{
 
-template <class InputIterator>
-void advance_internal(
-    InputIterator& i,
-    typename iterator_traits<InputIterator>::difference_type n,
-    input_iterator_tag) {
+template <typename InputIter, typename Distance>
+void advance__(InputIter& i, Distance n, input_iterator_tag) {
   for (; n > 0; --n)
     ++i;
 }
 
-template <class BidirectionalIterator>
-void advance_internal(
-    BidirectionalIterator& i,
-    typename iterator_traits<BidirectionalIterator>::difference_type n,
-    bidirectional_iterator_tag) {
+template <typename BidirectionalIter, typename Distance>
+void advance__(BidirectionalIter& i, Distance n, bidirectional_iterator_tag) {
   if (n >= 0)
     for (; n > 0; --n)
       ++i;
@@ -93,70 +88,61 @@ void advance_internal(
       --i;
 }
 
-template <class RandomIterator>
-void advance_internal(
-    RandomIterator& i,
-    typename iterator_traits<RandomIterator>::difference_type n,
-    random_access_iterator_tag) {
+template <typename RandomIter, typename Distance>
+void advance__(RandomIter& i, Distance n, random_access_iterator_tag) {
   i += n;
 }
 
-template <class InputIterator>
-void advance(InputIterator& i,
-             typename iterator_traits<InputIterator>::difference_type n) {
-  advance_internal(
-      i, n, typename iterator_traits<InputIterator>::iterator_category());
+template <typename InputIter, typename Distance>
+void advance(InputIter& i, Distance n) {
+  advance__(i, n, typename iterator_traits<InputIter>::iterator_category(i));
 }
 
 // }}}
 
 // distance {{{
 
-template <class InputIterator>
-typename iterator_traits<InputIterator>::difference_type
-distance_internal(InputIterator first, InputIterator last, input_iterator_tag) {
-  typename iterator_traits<InputIterator>::difference_type r(0);
+template <typename InputIter>
+typename iterator_traits<InputIter>::difference_type
+distance__(InputIter first, InputIter last, input_iterator_tag) {
+  typename iterator_traits<InputIter>::difference_type r(0);
   for (; first != last; ++first)
     ++r;
   return (r);
 }
 
-template <class RandomIterator>
-typename iterator_traits<RandomIterator>::difference_type distance_internal(
-    RandomIterator first,
-    RandomIterator last,
-    random_access_iterator_tag) {
+template <typename RandomIter>
+typename iterator_traits<RandomIter>::difference_type
+distance__(RandomIter first, RandomIter last, random_access_iterator_tag) {
   return (last - first);
 }
 
-template <class InputIterator>
-typename iterator_traits<InputIterator>::difference_type distance(
-    InputIterator first,
-    InputIterator last) {
-  return (distance_internal(
-      first, last,
-      typename iterator_traits<InputIterator>::iterator_category()));
+template <typename InputIter>
+typename iterator_traits<InputIter>::difference_type distance(InputIter first,
+                                                              InputIter last) {
+  return (distance__(
+      first, last, typename iterator_traits<InputIter>::iterator_category()));
 }
 
 // }}}
 
-template <class InputIterator>
-InputIterator next(
-    InputIterator x,
-    typename iterator_traits<InputIterator>::difference_type n = 1);
+// template <typename InputIterator>
+// InputIterator next(InputIterator x,
+//                    typename iterator_traits<InputIterator>::difference_type n
+//                    = 1);
 
-template <class BidirectionalIterator>
-BidirectionalIterator prev(
-    BidirectionalIterator x,
-    typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
+// template <typename BidirectionalIterator>
+// BidirectionalIterator prev(
+//     BidirectionalIterator x,
+//     typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
 
-template <class Iterator>
-class reverse_iterator
-    : public iterator<typename iterator_traits<Iterator>::iterator_category,
-                      typename iterator_traits<Iterator>::value_type,
-                      typename iterator_traits<Iterator>::difference_type,
-                      typename iterator_traits<Iterator>::pointer,
-                      typename iterator_traits<Iterator>::reference> {
+template <typename Iterator>
+class reverse_iterator :
+    public iterator<typename iterator_traits<Iterator>::iterator_category,
+                    typename iterator_traits<Iterator>::value_type,
+                    typename iterator_traits<Iterator>::difference_type,
+                    typename iterator_traits<Iterator>::pointer,
+                    typename iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
@@ -166,55 +152,104 @@ class reverse_iterator
   typedef typename iterator_traits<Iterator>::reference reference;
   typedef typename iterator_traits<Iterator>::pointer pointer;
 
-  constexpr reverse_iterator();
-  constexpr explicit reverse_iterator(Iterator x);
-  template <class U>
-  constexpr reverse_iterator(const reverse_iterator<U>& u);
-  template <class U>
-  constexpr reverse_iterator& operator=(const reverse_iterator<U>& u);
-  constexpr Iterator base() const;
-  constexpr reference operator*() const;
-  constexpr pointer operator->() const;
-  constexpr reverse_iterator& operator++();
-  constexpr reverse_iterator operator++(int);
-  constexpr reverse_iterator& operator--();
-  constexpr reverse_iterator operator--(int);
-  constexpr reverse_iterator operator+(difference_type n) const;
-  constexpr reverse_iterator& operator+=(difference_type n);
-  constexpr reverse_iterator operator-(difference_type n) const;
-  constexpr reverse_iterator& operator-=(difference_type n);
-  constexpr reference operator[](difference_type n) const;
+  reverse_iterator(void) {
+  }
+
+  explicit reverse_iterator(iterator_type x) : current(x) {
+  }
+
+  reverse_iterator(const reverse_iterator& x) : current(x.current) {
+  }
+
+  template <typename U>
+  reverse_iterator(const reverse_iterator<U>& u) : current(x.base()) {
+  }
+
+  template <typename U>
+  reverse_iterator& operator=(const reverse_iterator<U>& u) {
+  }
+
+  reference operator*(void) const {
+    Iterator tmp__ = current;
+    return (*--tmp__);
+  }
+
+  pointer operator->(void) const {
+    return (&(operator*()));
+  }
+
+  iterator_type base(void) const {
+    return (current);
+  }
+
+  reverse_iterator& operator++(void) {
+    --current;
+    return (*this);
+  }
+
+  reverse_iterator operator++(int) {
+    reverse_iterator tmp__ = *this;
+    --current;
+    return (tmp__);
+  }
+
+  reverse_iterator& operator--(void) {
+    ++current;
+    return (*this);
+  }
+
+  reverse_iterator operator--(int) {
+    reverse_iterator tmp__ = *this;
+    ++current;
+    return (tmp__);
+  }
+
+  reverse_iterator operator+(difference_type n) const {
+    return (reverse_iterator(current - n));
+  }
+
+  reverse_iterator& operator+=(difference_type n) {
+    current -= n;
+    return (*this);
+  }
+
+  reverse_iterator operator-(difference_type n) const {
+    return (reverse_iterator(current + n));
+  }
+
+  reverse_iterator& operator-=(difference_type n) {
+    current += n;
+    return (*this);
+  }
+
+  reference operator[](difference_type n) const {
+    return (*(*this + n));
+  }
 };
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator==(const reverse_iterator<Iterator1>& x,
-           const reverse_iterator<Iterator2>& y);
+bool operator==(const reverse_iterator<Iterator1>& x,
+                const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator<(const reverse_iterator<Iterator1>& x,
-          const reverse_iterator<Iterator2>& y);
+bool operator<(const reverse_iterator<Iterator1>& x,
+               const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator!=(const reverse_iterator<Iterator1>& x,
-           const reverse_iterator<Iterator2>& y);
+bool operator!=(const reverse_iterator<Iterator1>& x,
+                const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator>(const reverse_iterator<Iterator1>& x,
-          const reverse_iterator<Iterator2>& y);
+bool operator>(const reverse_iterator<Iterator1>& x,
+               const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator>=(const reverse_iterator<Iterator1>& x,
-           const reverse_iterator<Iterator2>& y);
+bool operator>=(const reverse_iterator<Iterator1>& x,
+                const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator<=(const reverse_iterator<Iterator1>& x,
-           const reverse_iterator<Iterator2>& y);
+bool operator<=(const reverse_iterator<Iterator1>& x,
+                const reverse_iterator<Iterator2>& y);
 
 template <class Iterator1, class Iterator2>
 constexpr auto operator-(const reverse_iterator<Iterator1>& x,
@@ -377,8 +412,8 @@ template <class T,
           class charT = char,
           class traits = char_traits<charT>,
           class Distance = ptrdiff_t>
-class istream_iterator
-    : public iterator<input_iterator_tag, T, Distance, const T*, const T&> {
+class istream_iterator :
+    public iterator<input_iterator_tag, T, Distance, const T*, const T&> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -403,8 +438,8 @@ bool operator!=(const istream_iterator<T, charT, traits, Distance>& x,
                 const istream_iterator<T, charT, traits, Distance>& y);
 
 template <class T, class charT = char, class traits = char_traits<charT>>
-class ostream_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
+class ostream_iterator :
+    public iterator<output_iterator_tag, void, void, void, void> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -422,11 +457,12 @@ class ostream_iterator
 };
 
 template <class charT, class traits = char_traits<charT>>
-class istreambuf_iterator : public iterator<input_iterator_tag,
-                                            charT,
-                                            typename traits::off_type,
-                                            unspecified,
-                                            charT> {
+class istreambuf_iterator :
+    public iterator<input_iterator_tag,
+                    charT,
+                    typename traits::off_type,
+                    unspecified,
+                    charT> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
@@ -455,8 +491,8 @@ bool operator!=(const istreambuf_iterator<charT, traits>& a,
                 const istreambuf_iterator<charT, traits>& b);
 
 template <class charT, class traits = char_traits<charT>>
-class ostreambuf_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
+class ostreambuf_iterator :
+    public iterator<output_iterator_tag, void, void, void, void> {
  public:
   typedef charT char_type;
   typedef traits traits_type;
