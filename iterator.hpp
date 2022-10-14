@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/12 18:50:08 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/14 09:54:30 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,9 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 //     BidirectionalIterator x,
 //     typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
 
+
+// reverse_iterator {{{
+
 template <typename Iterator>
 class reverse_iterator :
     public iterator<typename iterator_traits<Iterator>::iterator_category,
@@ -148,6 +151,8 @@ class reverse_iterator :
 
  public:
   typedef Iterator iterator_type;
+  typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+  typedef typename iterator_traits<Iterator>::value_type value_type;
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::reference reference;
   typedef typename iterator_traits<Iterator>::pointer pointer;
@@ -155,14 +160,14 @@ class reverse_iterator :
   reverse_iterator(void) {
   }
 
-  explicit reverse_iterator(iterator_type x) : current(x) {
+  explicit reverse_iterator(iterator_type it) : current(it) {
   }
 
-  reverse_iterator(const reverse_iterator& x) : current(x.current) {
+  reverse_iterator(const reverse_iterator& it) : current(it.current) {
   }
 
   template <typename U>
-  reverse_iterator(const reverse_iterator<U>& u) : current(x.base()) {
+  reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {
   }
 
   template <typename U>
@@ -226,6 +231,8 @@ class reverse_iterator :
     return (*(*this + n));
   }
 };
+
+// reverse_iterator }}}
 
 template <class Iterator1, class Iterator2>
 bool operator==(const reverse_iterator<Iterator1>& x,
