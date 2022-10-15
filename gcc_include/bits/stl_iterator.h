@@ -88,12 +88,18 @@ namespace std
       explicit 
       reverse_iterator(iterator_type __x) : _M_current(__x) { }
 
+
+
+
       reverse_iterator(const reverse_iterator& __x) 
       : _M_current(__x._M_current) { }
 
       template<typename _Iter>
         reverse_iterator(const reverse_iterator<_Iter>& __x)
 	: _M_current(__x.base()) { }
+
+
+
     
       iterator_type 
       base() const { return _M_current; }

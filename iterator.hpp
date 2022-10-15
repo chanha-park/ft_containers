@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/14 09:54:30 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/15 20:56:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,9 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 //     typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
 
 
-// reverse_iterator {{{
+// reverse_iterator {{{1
+
+// reverse_iterator: class {{{2
 
 template <typename Iterator>
 class reverse_iterator :
@@ -151,13 +153,13 @@ class reverse_iterator :
 
  public:
   typedef Iterator iterator_type;
-  typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef typename iterator_traits<Iterator>::value_type value_type;
+  typedef typename iterator_traits<Iterator>::iterator_category iterator_category; // is this neccesary?
+  typedef typename iterator_traits<Iterator>::value_type value_type; // is this neccesary?
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::reference reference;
   typedef typename iterator_traits<Iterator>::pointer pointer;
 
-  reverse_iterator(void) {
+  reverse_iterator(void) : current() {
   }
 
   explicit reverse_iterator(iterator_type it) : current(it) {
@@ -172,19 +174,21 @@ class reverse_iterator :
 
   template <typename U>
   reverse_iterator& operator=(const reverse_iterator<U>& u) {
+	  current = u.base();
+	  return (*this);
+  }
+
+  iterator_type base(void) const {
+    return (current);
   }
 
   reference operator*(void) const {
-    Iterator tmp__ = current;
+    iterator_type tmp__ = current;
     return (*--tmp__);
   }
 
   pointer operator->(void) const {
     return (&(operator*()));
-  }
-
-  iterator_type base(void) const {
-    return (current);
   }
 
   reverse_iterator& operator++(void) {
@@ -193,7 +197,7 @@ class reverse_iterator :
   }
 
   reverse_iterator operator++(int) {
-    reverse_iterator tmp__ = *this;
+    reverse_iterator tmp__(*this);
     --current;
     return (tmp__);
   }
@@ -204,7 +208,7 @@ class reverse_iterator :
   }
 
   reverse_iterator operator--(int) {
-    reverse_iterator tmp__ = *this;
+    reverse_iterator tmp__(*this);
     ++current;
     return (tmp__);
   }
@@ -232,188 +236,194 @@ class reverse_iterator :
   }
 };
 
-// reverse_iterator }}}
+// reverse_iterator: class }}}
 
-template <class Iterator1, class Iterator2>
-bool operator==(const reverse_iterator<Iterator1>& x,
-                const reverse_iterator<Iterator2>& y);
+// reverse_iterator: relational operators {{{2
 
-template <class Iterator1, class Iterator2>
-bool operator<(const reverse_iterator<Iterator1>& x,
-               const reverse_iterator<Iterator2>& y);
+template <typename Iterator>
+bool operator==(const reverse_iterator<Iterator>& x,
+                const reverse_iterator<Iterator>& y) {
+	return (x.base() == y.base());
+}
 
-template <class Iterator1, class Iterator2>
-bool operator!=(const reverse_iterator<Iterator1>& x,
-                const reverse_iterator<Iterator2>& y);
+template <typename Iterator>
+bool operator!=(const reverse_iterator<Iterator>& x,
+                const reverse_iterator<Iterator>& y) {
+	return (!(x == y));
+}
 
-template <class Iterator1, class Iterator2>
-bool operator>(const reverse_iterator<Iterator1>& x,
-               const reverse_iterator<Iterator2>& y);
+template <typename Iterator>
+bool operator<(const reverse_iterator<Iterator>& x,
+               const reverse_iterator<Iterator>& y) {
+	return (y.base() < x.base());
+}
 
-template <class Iterator1, class Iterator2>
-bool operator>=(const reverse_iterator<Iterator1>& x,
-                const reverse_iterator<Iterator2>& y);
+template <typename Iterator>
+bool operator<=(const reverse_iterator<Iterator>& x,
+                const reverse_iterator<Iterator>& y) {
+	return (!(y < x));
+}
 
-template <class Iterator1, class Iterator2>
-bool operator<=(const reverse_iterator<Iterator1>& x,
-                const reverse_iterator<Iterator2>& y);
+template <typename Iterator>
+bool operator>(const reverse_iterator<Iterator>& x,
+               const reverse_iterator<Iterator>& y) {
+	return (y < x);
+}
 
-template <class Iterator1, class Iterator2>
-constexpr auto operator-(const reverse_iterator<Iterator1>& x,
-                         const reverse_iterator<Iterator2>& y)
-    -> decltype(__y.base() - __x.base());  // constexpr in C++17
+template <typename Iterator>
+bool operator>=(const reverse_iterator<Iterator>& x,
+                const reverse_iterator<Iterator>& y) {
+	return (!(x < y));
+}
 
-template <class Iterator>
-constexpr reverse_iterator<Iterator> operator+(
-    typename reverse_iterator<Iterator>::difference_type n,
-    const reverse_iterator<Iterator>& x);  // constexpr in C++17
+// reverse_iterator: relational operators }}}
 
-template <class Iterator>
-constexpr reverse_iterator<Iterator> make_reverse_iterator(
-    Iterator i);  // C++14, constexpr in C++17
+// reverse_iterator: addition, subtraction operators {{{
 
-template <class Container>
-class back_insert_iterator {
+  template<typename Iterator>
+    typename reverse_iterator<Iterator>::difference_type
+    operator-(const reverse_iterator<Iterator>& x, 
+	      const reverse_iterator<Iterator>& y) {
+		return (y.base() - x.base());
+	}
+
+
+template <typename Iterator>
+    reverse_iterator<Iterator> 
+    operator+(typename reverse_iterator<Iterator>::difference_type n,
+	      const reverse_iterator<Iterator>& x) {
+		return (reverse_iterator<Iterator>(x.base() - n));
+	}
+
+// reverse_iterator: addition, subtraction operators }}}
+
+// reverse iterator }}}
+
+// back_insert_iterator class {{{
+
+template <typename Container>
+class back_insert_iterator : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
-  typedef void value_type;
-  typedef void difference_type;
-  typedef void reference;
-  typedef void pointer;
+  typedef void value_type; // is this neccesary?
+  typedef void difference_type; // is this neccesary?
+  typedef void reference; // is this neccesary?
+  typedef void pointer; // is this neccesary?
 
-  explicit back_insert_iterator(Container& x);
-  back_insert_iterator& operator=(const typename Container::value_type& value);
-  back_insert_iterator& operator*();
-  back_insert_iterator& operator++();
-  back_insert_iterator operator++(int);
+  explicit back_insert_iterator(Container& x) : container(&x) {}
+
+  back_insert_iterator& operator=(typename Container::const_reference value) {
+	  container->push_back(value);
+	  return (*this);
+  }
+
+  back_insert_iterator& operator*() {
+	  return (*this);
+  }
+
+  back_insert_iterator& operator++() {
+	  return (*this);
+  }
+
+  back_insert_iterator operator++(int) {
+	  return (*this);
+  }
+
 };
 
-template <class Container>
-back_insert_iterator<Container> back_inserter(Container& x);
+// back_insert_iterator class }}}
 
-template <class Container>
-class front_insert_iterator {
+template <typename Container>
+back_insert_iterator<Container> back_inserter(Container& x) {
+	return (back_insert_iterator<Container>(x));
+}
+
+// front_insert_iterator class {{{
+
+template <typename Container>
+class front_insert_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
-  typedef void value_type;
-  typedef void difference_type;
-  typedef void reference;
-  typedef void pointer;
+  typedef void value_type; // is this neccesary?
+  typedef void difference_type; // is this neccesary?
+  typedef void reference; // is this neccesary?
+  typedef void pointer; // is this neccesary?
 
-  explicit front_insert_iterator(Container& x);
-  front_insert_iterator& operator=(const typename Container::value_type& value);
-  front_insert_iterator& operator*();
-  front_insert_iterator& operator++();
-  front_insert_iterator operator++(int);
+  explicit front_insert_iterator(Container& x) : container(&x) {}
+
+  front_insert_iterator& operator=(typename Container::const_reference& value) {
+	  container->push_front(value);
+	  return (*this);
+  }
+
+  front_insert_iterator& operator*() {
+	  return (*this);
+  }
+  front_insert_iterator& operator++() {
+	  return (*this);
+  }
+  front_insert_iterator operator++(int) {
+	  return (*this);
+  }
+
 };
 
-template <class Container>
-front_insert_iterator<Container> front_inserter(Container& x);
+// front_insert_iterator class }}}
 
-template <class Container>
-class insert_iterator {
+template <typename Container>
+front_insert_iterator<Container> front_inserter(Container& x) {
+	return (front_insert_iterator<Container>(x));
+}
+
+// insert_iterator class {{{
+
+template <typename Container>
+class insert_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
   typename Container::iterator iter;
 
  public:
   typedef Container container_type;
-  typedef void value_type;
-  typedef void difference_type;
-  typedef void reference;
-  typedef void pointer;
+  typedef void value_type; // is this neccesary?
+  typedef void difference_type; // is this neccesary?
+  typedef void reference; // is this neccesary?
+  typedef void pointer; // is this neccesary?
 
-  insert_iterator(Container& x, typename Container::iterator i);
-  insert_iterator& operator=(const typename Container::value_type& value);
-  insert_iterator& operator*();
-  insert_iterator& operator++();
-  insert_iterator& operator++(int);
+  insert_iterator(Container& x, typename Container::iterator i) : container(&x), iter(&i) {}
+  insert_iterator& operator=(const typename Container::const_reference value) {
+	  iter = container->insert(iter, value);
+	  ++iter;
+	  return (*this);
+  }
+
+  insert_iterator& operator*() {
+	  return (*this);
+  }
+
+  insert_iterator& operator++() {
+	  return (*this);
+  }
+
+  insert_iterator& operator++(int) {
+	  return (*this);
+  }
 };
 
-template <class Container, class Iterator>
-insert_iterator<Container> inserter(Container& x, Iterator i);
+// insert_iterator class }}}
 
-template <class Iterator>
-class move_iterator {
- public:
-  typedef Iterator iterator_type;
-  typedef typename iterator_traits<Iterator>::difference_type difference_type;
-  typedef Iterator pointer;
-  typedef typename iterator_traits<Iterator>::value_type value_type;
-  typedef
-      typename iterator_traits<Iterator>::iterator_category iterator_category;
-  typedef value_type&& reference;
-
-  move_iterator();  // all the constexprs are in C++17
-  explicit move_iterator(Iterator i);
-  template <class U>
-  move_iterator(const move_iterator<U>& u);
-  template <class U>
-  move_iterator& operator=(const move_iterator<U>& u);
-  iterator_type base() const;
-  reference operator*() const;
-  pointer operator->() const;
-  move_iterator& operator++();
-  move_iterator operator++(int);
-  move_iterator& operator--();
-  move_iterator operator--(int);
-  move_iterator operator+(difference_type n) const;
-  move_iterator& operator+=(difference_type n);
-  move_iterator operator-(difference_type n) const;
-  move_iterator& operator-=(difference_type n);
-  unspecified operator[](difference_type n) const;
-
- private:
-  Iterator current;
-  exposition only
-};
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator==(const move_iterator<Iterator1>& x,
-           const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator!=(const move_iterator<Iterator1>& x,
-           const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator<(const move_iterator<Iterator1>& x, const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator<=(const move_iterator<Iterator1>& x,
-           const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator>(const move_iterator<Iterator1>& x, const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr bool  // constexpr in C++17
-operator>=(const move_iterator<Iterator1>& x,
-           const move_iterator<Iterator2>& y);
-
-template <class Iterator1, class Iterator2>
-constexpr auto  // constexpr in C++17
-operator-(const move_iterator<Iterator1>& x, const move_iterator<Iterator2>& y)
-    -> decltype(x.base() - y.base());
-
-template <class Iterator>
-constexpr move_iterator<Iterator> operator+(  // constexpr in C++17
-    typename move_iterator<Iterator>::difference_type n,
-    const move_iterator<Iterator>& x);
-
-template <class Iterator>  // constexpr in C++17
-constexpr move_iterator<Iterator> make_move_iterator(const Iterator& i);
+template <typename Container, typename Iterator>
+insert_iterator<Container> inserter(Container& x, Iterator i) {
+      return insert_iterator<Container>(x, typename Container::iterator(i));
+}
 
 template <class T,
           class charT = char,

@@ -71,6 +71,9 @@
 
 namespace std
 {
+
+
+
   template<typename _InputIterator>
     inline typename iterator_traits<_InputIterator>::difference_type
     __distance(_InputIterator __first, _InputIterator __last, input_iterator_tag)
@@ -101,6 +104,10 @@ namespace std
       // concept requirements -- taken care of in __distance
       return __distance(__first, __last, __iterator_category(__first));
     }
+
+
+
+
 
   template<typename _InputIter, typename _Distance>
     inline void
