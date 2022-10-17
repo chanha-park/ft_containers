@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 17:38:22 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/17 18:39:59 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/17 21:11:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace ft {
 
 // struct pair : WIP {{{
 
-template <class T1, class T2>
+template <typename T1, typename T2>
 struct pair {
   typedef T1 first_type;
   typedef T2 second_type;
@@ -28,33 +28,70 @@ struct pair {
   T1 first;
   T2 second;
 
-  pair(const pair&) = default;
-  pair(pair&&) = default;
-  explicit(see - below) constexpr pair();
-  explicit(see - below) pair(const T1& x, const T2& y);  // constexpr in C++14
-  template <class U, class V>
-  explicit(see - below) pair(U&& x, V&& y);  // constexpr in C++14
-  template <class U, class V>
-  explicit(see - below) pair(const pair<U, V>& p);  // constexpr in C++14
-  template <class U, class V>
-  explicit(see - below) pair(pair<U, V>&& p);  // constexpr in C++14
-  template <class... Args1, class... Args2>
-  pair(piecewise_construct_t,
-       tuple<Args1...> first_args,
-       tuple<Args2...> second_args);
+  pair(void) : first(), second() {
+  }
 
-  template <class U, class V>
-  pair& operator=(const pair<U, V>& p);
-  pair& operator=(pair&& p) noexcept(is_nothrow_move_assignable<T1>::value&&
-                                         is_nothrow_move_assignable<T2>::value);
-  template <class U, class V>
-  pair& operator=(pair<U, V>&& p);
+  pair(const pair& p) : first(p.first), second(p.second) {
+  }
 
-  void swap(pair& p) noexcept(
-      is_nothrow_swappable_v<T1>&& is_nothrow_swappable_v<T2>);
+  template <typename U, typename V>
+  pair(const pair<U, V>& p) : first(p.first), second(p.second) {
+  }
+
+  pair(const T1& x, const T2& y) : first(x), second(y) {
+  }
+
+  pair& operator=(const pair& p) {
+    first = p.first;
+    second = p.second;
+    return (*this);
+  }
 };
 
 // struct pair : WIP }}}
+
+// pair: relational opeartors {{{
+
+template <typename T1, typename T2>
+bool operator==(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (x.first == y.first && x.second == y.second);
+}
+
+template <typename T1, typename T2>
+bool operator<(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (x.first < y.first || (!(y.first < x.first) && x.second < y.second));
+}
+
+template <typename T1, typename T2>
+bool operator!=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (!(x == y));
+}
+
+template <typename T1, typename T2>
+bool operator>(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (y < x);
+}
+
+template <typename T1, typename T2>
+bool operator<=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (!(y < x));
+}
+
+template <typename T1, typename T2>
+bool operator>=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+  return (!(x < y));
+}
+
+// pair: relational opeartors }}}
+
+// make_pair {{{
+
+template <typename T1, typename T2>
+pair<T1, T2> make_pair(T1 x, T2 y) {
+  return (pair<T1, T2>(x, y));
+}
+
+// make_pair }}}
 
 // mismatch, equal, lexicographical_compare {{{
 
