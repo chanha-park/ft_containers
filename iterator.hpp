@@ -6,17 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/15 20:56:11 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/17 17:36:59 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_ITERATOR_HPP
 #define FT_CONTAINERS_ITERATOR_HPP
 
-#include <iterator>
 #include "type_traits.hpp"
-
-// iterator synopsis
 
 namespace ft {
 
@@ -126,17 +123,6 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 
 // }}}
 
-// template <typename InputIterator>
-// InputIterator next(InputIterator x,
-//                    typename iterator_traits<InputIterator>::difference_type n
-//                    = 1);
-
-// template <typename BidirectionalIterator>
-// BidirectionalIterator prev(
-//     BidirectionalIterator x,
-//     typename iterator_traits<BidirectionalIterator>::difference_type n = 1);
-
-
 // reverse_iterator {{{1
 
 // reverse_iterator: class {{{2
@@ -153,8 +139,6 @@ class reverse_iterator :
 
  public:
   typedef Iterator iterator_type;
-  typedef typename iterator_traits<Iterator>::iterator_category iterator_category; // is this neccesary?
-  typedef typename iterator_traits<Iterator>::value_type value_type; // is this neccesary?
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::reference reference;
   typedef typename iterator_traits<Iterator>::pointer pointer;
@@ -174,8 +158,8 @@ class reverse_iterator :
 
   template <typename U>
   reverse_iterator& operator=(const reverse_iterator<U>& u) {
-	  current = u.base();
-	  return (*this);
+    current = u.base();
+    return (*this);
   }
 
   iterator_type base(void) const {
@@ -243,57 +227,56 @@ class reverse_iterator :
 template <typename Iterator>
 bool operator==(const reverse_iterator<Iterator>& x,
                 const reverse_iterator<Iterator>& y) {
-	return (x.base() == y.base());
+  return (x.base() == y.base());
 }
 
 template <typename Iterator>
 bool operator!=(const reverse_iterator<Iterator>& x,
                 const reverse_iterator<Iterator>& y) {
-	return (!(x == y));
+  return (!(x == y));
 }
 
 template <typename Iterator>
 bool operator<(const reverse_iterator<Iterator>& x,
                const reverse_iterator<Iterator>& y) {
-	return (y.base() < x.base());
+  return (y.base() < x.base());
 }
 
 template <typename Iterator>
 bool operator<=(const reverse_iterator<Iterator>& x,
                 const reverse_iterator<Iterator>& y) {
-	return (!(y < x));
+  return (!(y < x));
 }
 
 template <typename Iterator>
 bool operator>(const reverse_iterator<Iterator>& x,
                const reverse_iterator<Iterator>& y) {
-	return (y < x);
+  return (y < x);
 }
 
 template <typename Iterator>
 bool operator>=(const reverse_iterator<Iterator>& x,
                 const reverse_iterator<Iterator>& y) {
-	return (!(x < y));
+  return (!(x < y));
 }
 
 // reverse_iterator: relational operators }}}
 
 // reverse_iterator: addition, subtraction operators {{{
 
-  template<typename Iterator>
-    typename reverse_iterator<Iterator>::difference_type
-    operator-(const reverse_iterator<Iterator>& x, 
-	      const reverse_iterator<Iterator>& y) {
-		return (y.base() - x.base());
-	}
-
+template <typename Iterator>
+typename reverse_iterator<Iterator>::difference_type operator-(
+    const reverse_iterator<Iterator>& x,
+    const reverse_iterator<Iterator>& y) {
+  return (y.base() - x.base());
+}
 
 template <typename Iterator>
-    reverse_iterator<Iterator> 
-    operator+(typename reverse_iterator<Iterator>::difference_type n,
-	      const reverse_iterator<Iterator>& x) {
-		return (reverse_iterator<Iterator>(x.base() - n));
-	}
+reverse_iterator<Iterator> operator+(
+    typename reverse_iterator<Iterator>::difference_type n,
+    const reverse_iterator<Iterator>& x) {
+  return (reverse_iterator<Iterator>(x.base() - n));
+}
 
 // reverse_iterator: addition, subtraction operators }}}
 
@@ -302,119 +285,113 @@ template <typename Iterator>
 // back_insert_iterator class {{{
 
 template <typename Container>
-class back_insert_iterator : public iterator<output_iterator_tag, void, void, void, void> {
+class back_insert_iterator :
+    public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
-  typedef void value_type; // is this neccesary?
-  typedef void difference_type; // is this neccesary?
-  typedef void reference; // is this neccesary?
-  typedef void pointer; // is this neccesary?
 
-  explicit back_insert_iterator(Container& x) : container(&x) {}
+  explicit back_insert_iterator(Container& x) : container(&x) {
+  }
 
   back_insert_iterator& operator=(typename Container::const_reference value) {
-	  container->push_back(value);
-	  return (*this);
+    container->push_back(value);
+    return (*this);
   }
 
-  back_insert_iterator& operator*() {
-	  return (*this);
+  back_insert_iterator& operator*(void) {
+    return (*this);
   }
 
-  back_insert_iterator& operator++() {
-	  return (*this);
+  back_insert_iterator& operator++(void) {
+    return (*this);
   }
 
   back_insert_iterator operator++(int) {
-	  return (*this);
+    return (*this);
   }
-
 };
 
 // back_insert_iterator class }}}
 
 template <typename Container>
 back_insert_iterator<Container> back_inserter(Container& x) {
-	return (back_insert_iterator<Container>(x));
+  return (back_insert_iterator<Container>(x));
 }
 
 // front_insert_iterator class {{{
 
 template <typename Container>
-class front_insert_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
+class front_insert_iterator :
+    public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
-  typedef void value_type; // is this neccesary?
-  typedef void difference_type; // is this neccesary?
-  typedef void reference; // is this neccesary?
-  typedef void pointer; // is this neccesary?
 
-  explicit front_insert_iterator(Container& x) : container(&x) {}
+  explicit front_insert_iterator(Container& x) : container(&x) {
+  }
 
   front_insert_iterator& operator=(typename Container::const_reference& value) {
-	  container->push_front(value);
-	  return (*this);
+    container->push_front(value);
+    return (*this);
   }
 
-  front_insert_iterator& operator*() {
-	  return (*this);
+  front_insert_iterator& operator*(void) {
+    return (*this);
   }
-  front_insert_iterator& operator++() {
-	  return (*this);
+
+  front_insert_iterator& operator++(void) {
+    return (*this);
   }
+
   front_insert_iterator operator++(int) {
-	  return (*this);
+    return (*this);
   }
-
 };
 
 // front_insert_iterator class }}}
 
 template <typename Container>
 front_insert_iterator<Container> front_inserter(Container& x) {
-	return (front_insert_iterator<Container>(x));
+  return (front_insert_iterator<Container>(x));
 }
 
 // insert_iterator class {{{
 
 template <typename Container>
-class insert_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
+class insert_iterator :
+    public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
   typename Container::iterator iter;
 
  public:
   typedef Container container_type;
-  typedef void value_type; // is this neccesary?
-  typedef void difference_type; // is this neccesary?
-  typedef void reference; // is this neccesary?
-  typedef void pointer; // is this neccesary?
 
-  insert_iterator(Container& x, typename Container::iterator i) : container(&x), iter(&i) {}
+  insert_iterator(Container& x, typename Container::iterator i) :
+      container(&x), iter(&i) {
+  }
+
   insert_iterator& operator=(const typename Container::const_reference value) {
-	  iter = container->insert(iter, value);
-	  ++iter;
-	  return (*this);
+    iter = container->insert(iter, value);
+    ++iter;
+    return (*this);
   }
 
-  insert_iterator& operator*() {
-	  return (*this);
+  insert_iterator& operator*(void) {
+    return (*this);
   }
 
-  insert_iterator& operator++() {
-	  return (*this);
+  insert_iterator& operator++(void) {
+    return (*this);
   }
 
   insert_iterator& operator++(int) {
-	  return (*this);
+    return (*this);
   }
 };
 
@@ -422,122 +399,7 @@ class insert_iterator
 
 template <typename Container, typename Iterator>
 insert_iterator<Container> inserter(Container& x, Iterator i) {
-      return insert_iterator<Container>(x, typename Container::iterator(i));
+  return insert_iterator<Container>(x, typename Container::iterator(i));
 }
 
-template <class T,
-          class charT = char,
-          class traits = char_traits<charT>,
-          class Distance = ptrdiff_t>
-class istream_iterator :
-    public iterator<input_iterator_tag, T, Distance, const T*, const T&> {
- public:
-  typedef charT char_type;
-  typedef traits traits_type;
-  typedef basic_istream<charT, traits> istream_type;
-
-  constexpr istream_iterator();
-  istream_iterator(istream_type& s);
-  istream_iterator(const istream_iterator& x);
-  ~istream_iterator();
-
-  const T& operator*() const;
-  const T* operator->() const;
-  istream_iterator& operator++();
-  istream_iterator operator++(int);
-};
-
-template <class T, class charT, class traits, class Distance>
-bool operator==(const istream_iterator<T, charT, traits, Distance>& x,
-                const istream_iterator<T, charT, traits, Distance>& y);
-template <class T, class charT, class traits, class Distance>
-bool operator!=(const istream_iterator<T, charT, traits, Distance>& x,
-                const istream_iterator<T, charT, traits, Distance>& y);
-
-template <class T, class charT = char, class traits = char_traits<charT>>
-class ostream_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
- public:
-  typedef charT char_type;
-  typedef traits traits_type;
-  typedef basic_ostream<charT, traits> ostream_type;
-
-  ostream_iterator(ostream_type& s);
-  ostream_iterator(ostream_type& s, const charT* delimiter);
-  ostream_iterator(const ostream_iterator& x);
-  ~ostream_iterator();
-  ostream_iterator& operator=(const T& value);
-
-  ostream_iterator& operator*();
-  ostream_iterator& operator++();
-  ostream_iterator& operator++(int);
-};
-
-template <class charT, class traits = char_traits<charT>>
-class istreambuf_iterator :
-    public iterator<input_iterator_tag,
-                    charT,
-                    typename traits::off_type,
-                    unspecified,
-                    charT> {
- public:
-  typedef charT char_type;
-  typedef traits traits_type;
-  typedef typename traits::int_type int_type;
-  typedef basic_streambuf<charT, traits> streambuf_type;
-  typedef basic_istream<charT, traits> istream_type;
-
-  istreambuf_iterator() noexcept;
-  istreambuf_iterator(istream_type& s) noexcept;
-  istreambuf_iterator(streambuf_type* s) noexcept;
-  istreambuf_iterator(a - private - type) noexcept;
-
-  charT operator*() const;
-  pointer operator->() const;
-  istreambuf_iterator& operator++();
-  a - private - type operator++(int);
-
-  bool equal(const istreambuf_iterator& b) const;
-};
-
-template <class charT, class traits>
-bool operator==(const istreambuf_iterator<charT, traits>& a,
-                const istreambuf_iterator<charT, traits>& b);
-template <class charT, class traits>
-bool operator!=(const istreambuf_iterator<charT, traits>& a,
-                const istreambuf_iterator<charT, traits>& b);
-
-template <class charT, class traits = char_traits<charT>>
-class ostreambuf_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
- public:
-  typedef charT char_type;
-  typedef traits traits_type;
-  typedef basic_streambuf<charT, traits> streambuf_type;
-  typedef basic_ostream<charT, traits> ostream_type;
-
-  ostreambuf_iterator(ostream_type& s) noexcept;
-  ostreambuf_iterator(streambuf_type* s) noexcept;
-  ostreambuf_iterator& operator=(charT c);
-  ostreambuf_iterator& operator*();
-  ostreambuf_iterator& operator++();
-  ostreambuf_iterator& operator++(int);
-  bool failed() const noexcept;
-};
-
-template <class C>
-constexpr auto begin(C& c) -> decltype(c.begin());
-template <class C>
-constexpr auto begin(const C& c) -> decltype(c.begin());
-template <class C>
-constexpr auto end(C& c) -> decltype(c.end());
-template <class C>
-constexpr auto end(const C& c) -> decltype(c.end());
-template <class T, size_t N>
-constexpr T* begin(T (&array)[N]);
-template <class T, size_t N>
-constexpr T* end(T (&array)[N]);
-
 }  // namespace ft
-
-// iterator synopsis end
