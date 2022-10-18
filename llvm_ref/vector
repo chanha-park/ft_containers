@@ -296,6 +296,8 @@ _LIBCPP_PUSH_MACROS
 
 _LIBCPP_BEGIN_NAMESPACE_STD
 
+// __vector_base_common {{{
+
 template <bool>
 class _LIBCPP_TEMPLATE_VIS __vector_base_common
 {
@@ -320,6 +322,10 @@ __vector_base_common<__b>::__throw_out_of_range() const
 }
 
 _LIBCPP_EXTERN_TEMPLATE(class _LIBCPP_EXTERN_TEMPLATE_TYPE_VIS __vector_base_common<true>)
+
+// __vector_base_common }}}
+
+// __vector_base {{{
 
 template <class _Tp, class _Allocator>
 class __vector_base
@@ -416,6 +422,10 @@ private:
         {}
 };
 
+// __vector_base }}}
+
+// __vector_base __destruct_at_end, ctor, dtor {{{
+
 template <class _Tp, class _Allocator>
 inline _LIBCPP_INLINE_VISIBILITY
 void
@@ -464,6 +474,11 @@ __vector_base<_Tp, _Allocator>::~__vector_base()
         __alloc_traits::deallocate(__alloc(), __begin_, capacity());
     }
 }
+
+// __vector_base __destruct_at_end, ctor, dtor }}}
+
+
+// vector class {{{
 
 template <class _Tp, class _Allocator /* = allocator<_Tp> */>
 class _LIBCPP_TEMPLATE_VIS vector
@@ -926,6 +941,8 @@ private:
     ++__tx.__pos_;
   }
 };
+
+// vector }}}
 
 #ifndef _LIBCPP_HAS_NO_DEDUCTION_GUIDES
 template<class _InputIterator,
