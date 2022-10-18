@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 17:38:22 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/17 21:11:11 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/18 12:24:21 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,32 +53,32 @@ struct pair {
 // pair: relational opeartors {{{
 
 template <typename T1, typename T2>
-bool operator==(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator==(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (x.first == y.first && x.second == y.second);
 }
 
 template <typename T1, typename T2>
-bool operator<(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator<(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (x.first < y.first || (!(y.first < x.first) && x.second < y.second));
 }
 
 template <typename T1, typename T2>
-bool operator!=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator!=(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (!(x == y));
 }
 
 template <typename T1, typename T2>
-bool operator>(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator>(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (y < x);
 }
 
 template <typename T1, typename T2>
-bool operator<=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator<=(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (!(y < x));
 }
 
 template <typename T1, typename T2>
-bool operator>=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
+bool operator>=(const ft::pair<T1, T2>& x, const ft::pair<T1, T2>& y) {
   return (!(x < y));
 }
 
@@ -87,8 +87,8 @@ bool operator>=(const pair<T1, T2>& x, const pair<T1, T2>& y) {
 // make_pair {{{
 
 template <typename T1, typename T2>
-pair<T1, T2> make_pair(T1 x, T2 y) {
-  return (pair<T1, T2>(x, y));
+ft::pair<T1, T2> make_pair(T1 x, T2 y) {
+  return (ft::pair<T1, T2>(x, y));
 }
 
 // make_pair }}}
