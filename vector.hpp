@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/18 14:50:28 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/19 17:21:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ namespace ft {
 template <class _Tp, class _Allocator, bool _IsStatic>
 class _Vector_alloc_base {
  public:
-  typedef
-      typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
+  typedef typename _Allocator::template rebind<_Tp>::other allocator_type;
+
+  // typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
 
   allocator_type get_allocator() const {
     return _M_data_allocator;
@@ -63,8 +64,9 @@ class _Vector_alloc_base {
 template <class _Tp, class _Allocator>
 class _Vector_alloc_base<_Tp, _Allocator, true> {
  public:
-  typedef
-      typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
+  typedef typename _Allocator::template rebind<_Tp>::other allocator_type;
+
+  // typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
 
   allocator_type get_allocator() const {
     return allocator_type();
