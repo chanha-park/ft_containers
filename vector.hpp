@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/20 17:51:39 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/20 18:52:07 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,13 @@ struct _Vector_base : public _Vector_alloc_base<_Tp, _Alloc> {
   }
 
   _Vector_base(size_t __n, const allocator_type& __a) : _Base(__a) {
-    start = _Base::allocate_(__n);
-    finish = start;
-    end_of_storage = start + __n;
+    _Base::start = _Base::allocate_(__n);
+    _Base::finish = _Base::start;
+    _Base::end_of_storage = _Base::start + __n;
   }
 
   ~_Vector_base() {
-    _Base::deallocate_(start, end_of_storage - start);
+    _Base::deallocate_(_Base::start, _Base::end_of_storage - _Base::start);
   }
 };
 
@@ -131,9 +131,100 @@ struct _Vector_base : public _Vector_alloc_base<_Tp, _Alloc> {
 
 // _Vector_base }}}
 
+// normal_iterator {{{
+
+template <typename _Iterator, typename _Container>
+class __normal_iterator :
+    public iterator<typename iterator_traits<_Iterator>::iterator_category,
+                    typename iterator_traits<_Iterator>::value_type,
+                    typename iterator_traits<_Iterator>::difference_type,
+                    typename iterator_traits<_Iterator>::pointer,
+                    typename iterator_traits<_Iterator>::reference> {
+ protected:
+  _Iterator _M_current;
+
+ public:
+  typedef typename iterator_traits<_Iterator>::difference_type difference_type;
+  typedef typename iterator_traits<_Iterator>::reference reference;
+  typedef typename iterator_traits<_Iterator>::pointer pointer;
+
+  __normal_iterator() : _M_current(_Iterator()) {
+  }
+
+  explicit __normal_iterator(const _Iterator& __i) : _M_current(__i) {
+  }
+
+  // Allow iterator to const_iterator conversion
+  template <typename _Iter>
+  inline __normal_iterator(const __normal_iterator<_Iter, _Container>& __i) :
+      _M_current(__i.base()) {
+  }
+
+  // Forward iterator requirements
+  reference operator*() const {
+    return *_M_current;
+  }
+
+  pointer operator->() const {
+    return _M_current;
+  }
+
+  __normal_iterator& operator++() {
+    ++_M_current;
+    return *this;
+  }
+
+  __normal_iterator operator++(int) {
+    return __normal_iterator(_M_current++);
+  }
+
+  // Bidirectional iterator requirements
+  __normal_iterator& operator--() {
+    --_M_current;
+    return *this;
+  }
+
+  __normal_iterator operator--(int) {
+    return __normal_iterator(_M_current--);
+  }
+
+  // Random access iterator requirements
+  reference operator[](const difference_type& __n) const {
+    return _M_current[__n];
+  }
+
+  __normal_iterator& operator+=(const difference_type& __n) {
+    _M_current += __n;
+    return *this;
+  }
+
+  __normal_iterator operator+(const difference_type& __n) const {
+    return __normal_iterator(_M_current + __n);
+  }
+
+  __normal_iterator& operator-=(const difference_type& __n) {
+    _M_current -= __n;
+    return *this;
+  }
+
+  __normal_iterator operator-(const difference_type& __n) const {
+    return __normal_iterator(_M_current - __n);
+  }
+
+  difference_type operator-(const __normal_iterator& __i) const {
+    return _M_current - __i._M_current;
+  }
+
+  const _Iterator& base() const {
+    return _M_current;
+  }
+};
+
+// normal_iterator }}}
+
 // vector class {{{
 
-template <class _Tp, class _Alloc = allocator<_Tp> >
+template <class _Tp, class _Alloc = std::allocator<_Tp> >
 class vector : protected _Vector_base<_Tp, _Alloc> {
  private:
   typedef _Vector_base<_Tp, _Alloc> _Base;
@@ -229,7 +320,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
   void _M_range_check(size_type __n) const {
     if (__n >= this->size())
-      __throw_out_of_range("vector");
+      std::__throw_out_of_range("vector");
   }
 
   reference at(size_type __n) {
@@ -267,12 +358,12 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
          _InputIterator __last,
          const allocator_type& __a = allocator_type()) :
       _Base(__a) {
-    typedef typename _Is_integer<_InputIterator>::_Integral _Integral;
+    typedef typename is_integral<_InputIterator>::value _Integral;
     _M_initialize_aux(__first, __last, _Integral());
   }
 
   template <class _Integer>
-  void _M_initialize_aux(_Integer __n, _Integer __value, __true_type) {
+  void _M_initialize_aux(_Integer __n, _Integer __value, true_type) {
     start = allocate_(__n);
     end_of_storage = start + __n;
     finish = uninitialized_fill_n(start, __n, __value);
@@ -281,7 +372,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   template <class _InputIterator>
   void _M_initialize_aux(_InputIterator __first,
                          _InputIterator __last,
-                         __false_type) {
+                         false_type) {
     typedef typename iterator_traits<_InputIterator>::iterator_category
         _IterCategory;
     _M_range_initialize(__first, __last, _IterCategory());
@@ -318,17 +409,17 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
   template <class _InputIterator>
   void assign(_InputIterator __first, _InputIterator __last) {
-    typedef typename _Is_integer<_InputIterator>::_Integral _Integral;
+    typedef typename is_integral<_InputIterator>::value _Integral;
     _M_assign_dispatch(__first, __last, _Integral());
   }
 
   template <class _Integer>
-  void _M_assign_dispatch(_Integer __n, _Integer __val, __true_type) {
+  void _M_assign_dispatch(_Integer __n, _Integer __val, true_type) {
     _M_fill_assign((size_type)__n, (_Tp)__val);
   }
 
   template <class _InputIter>
-  void _M_assign_dispatch(_InputIter __first, _InputIter __last, __false_type) {
+  void _M_assign_dispatch(_InputIter __first, _InputIter __last, false_type) {
     typedef
         typename iterator_traits<_InputIter>::iterator_category _IterCategory;
     _M_assign_aux(__first, __last, _IterCategory());
@@ -405,7 +496,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   // Check whether it's an integral type.  If so, it's not an iterator.
   template <class _InputIterator>
   void insert(iterator __pos, _InputIterator __first, _InputIterator __last) {
-    typedef typename _Is_integer<_InputIterator>::_Integral _Integral;
+    typedef typename is_integral<_InputIterator>::value _Integral;
     _M_insert_dispatch(__pos, __first, __last, _Integral());
   }
 
@@ -413,7 +504,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   void _M_insert_dispatch(iterator __pos,
                           _Integer __n,
                           _Integer __val,
-                          __true_type) {
+                          true_type) {
     _M_fill_insert(__pos, static_cast<size_type>(__n), static_cast<_Tp>(__val));
   }
 
@@ -421,7 +512,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   void _M_insert_dispatch(iterator __pos,
                           _InputIterator __first,
                           _InputIterator __last,
-                          __false_type) {
+                          false_type) {
     typedef typename iterator_traits<_InputIterator>::iterator_category
         _IterCategory;
     _M_range_insert(__pos, __first, __last, _IterCategory());
@@ -479,7 +570,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
       return __result;
     } catch (...) {
       deallocate_(__result, __n);
-      __throw_exception_again;
+      // std::__throw_exception_again;
     }
   }
 
