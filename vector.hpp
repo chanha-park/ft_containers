@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/19 17:21:14 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/20 17:51:39 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,105 +21,113 @@ namespace ft {
 
 // _Vector_alloc_base {{{
 
-// The vector base class serves two purposes.  First, its constructor
-// and destructor allocate (but don't initialize) storage.  This makes
-// exception safety easier.  Second, the base class encapsulates all of
-// the differences between SGI-style allocators and standard-conforming
-// allocators.
-
-// Base class for ordinary allocators.
-template <class _Tp, class _Allocator, bool _IsStatic>
+// template <typename T, typename Allocator, bool IsStatic>
+template <typename T, typename Allocator>
 class _Vector_alloc_base {
  public:
-  typedef typename _Allocator::template rebind<_Tp>::other allocator_type;
-
-  // typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
-
-  allocator_type get_allocator() const {
-    return _M_data_allocator;
-  }
-
-  _Vector_alloc_base(const allocator_type& __a) :
-      _M_data_allocator(__a), _M_start(0), _M_finish(0), _M_end_of_storage(0) {
-  }
+  typedef typename Allocator::template rebind<T>::other allocator_type;
 
  protected:
-  allocator_type _M_data_allocator;
-  _Tp* _M_start;
-  _Tp* _M_finish;
-  _Tp* _M_end_of_storage;
+  allocator_type data_allocator;
+  T* start;
+  T* finish;
+  T* end_of_storage;
 
-  _Tp* _M_allocate(size_t __n) {
-    return _M_data_allocator.allocate(__n);
+  T* allocate_(size_t n) {
+    return (data_allocator.allocate(n));
   }
 
-  void _M_deallocate(_Tp* __p, size_t __n) {
-    if (__p)
-      _M_data_allocator.deallocate(__p, __n);
+  void deallocate_(T* p, size_t n) {
+    if (p)
+      data_allocator.deallocate(p, n);
   }
-};
 
-// Specialization for allocators that have the property that we don't
-// actually have to store an allocator object.
-template <class _Tp, class _Allocator>
-class _Vector_alloc_base<_Tp, _Allocator, true> {
  public:
-  typedef typename _Allocator::template rebind<_Tp>::other allocator_type;
-
-  // typename _Alloc_traits<_Tp, _Allocator>::allocator_type allocator_type;
-
-  allocator_type get_allocator() const {
-    return allocator_type();
+  allocator_type get_allocator(void) const {
+    return (data_allocator);
   }
 
-  _Vector_alloc_base(const allocator_type&) :
-      _M_start(0), _M_finish(0), _M_end_of_storage(0) {
-  }
-
- protected:
-  _Tp* _M_start;
-  _Tp* _M_finish;
-  _Tp* _M_end_of_storage;
-
-  typedef typename _Alloc_traits<_Tp, _Allocator>::_Alloc_type _Alloc_type;
-
-  _Tp* _M_allocate(size_t __n) {
-    return _Alloc_type::allocate(__n);
-  }
-
-  void _M_deallocate(_Tp* __p, size_t __n) {
-    _Alloc_type::deallocate(__p, __n);
+  _Vector_alloc_base(const allocator_type& x) :
+      data_allocator(x), start(0), finish(0), end_of_storage(0) {
   }
 };
+
+// template <typename T, typename Allocator>
+// class _Vector_alloc_base<T, Allocator, true> {
+//  public:
+//   typedef typename Allocator::template rebind<T>::other allocator_type;
+
+//  protected:
+//   T* start;
+//   T* finish;
+//   T* end_of_storage;
+
+//   T* allocate_(size_t __n) {
+//     return Allocator::allocate(__n);
+//   }
+
+//   void deallocate_(T* __p, size_t __n) {
+//     Allocator::deallocate(__p, __n);
+//   }
+
+//  public:
+//   allocator_type get_allocator(void) const {
+//     return (allocator_type());
+//   }
+
+//   _Vector_alloc_base(const allocator_type&) :
+//       start(0), finish(0), end_of_storage(0) {
+//   }
+// };
 
 // _Vector_alloc_base }}}
 
 // _Vector_base {{{
 
-template <class _Tp, class _Alloc>
-struct _Vector_base :
-    public _Vector_alloc_base<_Tp,
-                              _Alloc,
-                              _Alloc_traits<_Tp, _Alloc>::_S_instanceless> {
-  typedef _Vector_alloc_base<_Tp,
-                             _Alloc,
-                             _Alloc_traits<_Tp, _Alloc>::_S_instanceless>
-      _Base;
+template <typename _Tp, typename _Alloc>
+struct _Vector_base : public _Vector_alloc_base<_Tp, _Alloc> {
+ public:
+  typedef _Vector_alloc_base<_Tp, _Alloc> _Base;
   typedef typename _Base::allocator_type allocator_type;
 
   _Vector_base(const allocator_type& __a) : _Base(__a) {
   }
 
   _Vector_base(size_t __n, const allocator_type& __a) : _Base(__a) {
-    _M_start = _M_allocate(__n);
-    _M_finish = _M_start;
-    _M_end_of_storage = _M_start + __n;
+    start = _Base::allocate_(__n);
+    finish = start;
+    end_of_storage = start + __n;
   }
 
   ~_Vector_base() {
-    _M_deallocate(_M_start, _M_end_of_storage - _M_start);
+    _Base::deallocate_(start, end_of_storage - start);
   }
 };
+
+// template <typename _Tp, typename _Alloc>
+// struct _Vector_base :
+//     public _Vector_alloc_base<_Tp,
+//                               _Alloc,
+//                               _Alloc_traits<_Tp, _Alloc>::_S_instanceless> {
+//   typedef _Vector_alloc_base<_Tp,
+//                              _Alloc,
+//                              _Alloc_traits<_Tp, _Alloc>::_S_instanceless>
+//       _Base;
+//   typedef typename _Base::allocator_type allocator_type;
+
+//   _Vector_base(const allocator_type& __a) : _Base(__a) {
+//   }
+
+//   _Vector_base(size_t __n, const allocator_type& __a) : _Base(__a) {
+//     start = allocate_(__n);
+//     finish = start;
+//     end_of_storage = start + __n;
+//   }
+
+//   ~_Vector_base() {
+//     deallocate_(start, end_of_storage - start);
+//   }
+// };
 
 // _Vector_base }}}
 
@@ -152,11 +160,11 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   typedef reverse_iterator<iterator> reverse_iterator;
 
  protected:
-  using _Base::_M_allocate;
-  using _Base::_M_deallocate;
-  using _Base::_M_end_of_storage;
-  using _Base::_M_finish;
-  using _Base::_M_start;
+  using _Base::allocate_;
+  using _Base::deallocate_;
+  using _Base::end_of_storage;
+  using _Base::finish;
+  using _Base::start;
 
  protected:
   void _M_insert_aux(iterator __position, const _Tp& __x);
@@ -164,19 +172,19 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
  public:
   iterator begin() {
-    return iterator(_M_start);
+    return iterator(start);
   }
 
   const_iterator begin() const {
-    return const_iterator(_M_start);
+    return const_iterator(start);
   }
 
   iterator end() {
-    return iterator(_M_finish);
+    return iterator(finish);
   }
 
   const_iterator end() const {
-    return const_iterator(_M_finish);
+    return const_iterator(finish);
   }
 
   reverse_iterator rbegin() {
@@ -204,7 +212,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   }
 
   size_type capacity() const {
-    return size_type(const_iterator(_M_end_of_storage) - begin());
+    return size_type(const_iterator(end_of_storage) - begin());
   }
 
   bool empty() const {
@@ -241,16 +249,16 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
          const _Tp& __value,
          const allocator_type& __a = allocator_type()) :
       _Base(__n, __a) {
-    _M_finish = uninitialized_fill_n(_M_start, __n, __value);
+    finish = uninitialized_fill_n(start, __n, __value);
   }
 
   explicit vector(size_type __n) : _Base(__n, allocator_type()) {
-    _M_finish = uninitialized_fill_n(_M_start, __n, _Tp());
+    finish = uninitialized_fill_n(start, __n, _Tp());
   }
 
   vector(const vector<_Tp, _Alloc>& __x) :
       _Base(__x.size(), __x.get_allocator()) {
-    _M_finish = uninitialized_copy(__x.begin(), __x.end(), _M_start);
+    finish = uninitialized_copy(__x.begin(), __x.end(), start);
   }
 
   // Check whether it's an integral type.  If so, it's not an iterator.
@@ -265,9 +273,9 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
   template <class _Integer>
   void _M_initialize_aux(_Integer __n, _Integer __value, __true_type) {
-    _M_start = _M_allocate(__n);
-    _M_end_of_storage = _M_start + __n;
-    _M_finish = uninitialized_fill_n(_M_start, __n, __value);
+    start = allocate_(__n);
+    end_of_storage = start + __n;
+    finish = uninitialized_fill_n(start, __n, __value);
   }
 
   template <class _InputIterator>
@@ -280,7 +288,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   }
 
   ~vector() {
-    _Destroy(_M_start, _M_finish);
+    _Destroy(start, finish);
   }
 
   vector<_Tp, _Alloc>& operator=(const vector<_Tp, _Alloc>& __x);
@@ -288,12 +296,12 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   void reserve(size_type __n) {
     if (capacity() < __n) {
       const size_type __old_size = size();
-      pointer __tmp = _M_allocate_and_copy(__n, _M_start, _M_finish);
-      _Destroy(_M_start, _M_finish);
-      _M_deallocate(_M_start, _M_end_of_storage - _M_start);
-      _M_start = __tmp;
-      _M_finish = __tmp + __old_size;
-      _M_end_of_storage = _M_start + __n;
+      pointer __tmp = _M_allocate_and_copy(__n, start, finish);
+      _Destroy(start, finish);
+      deallocate_(start, end_of_storage - start);
+      start = __tmp;
+      finish = __tmp + __old_size;
+      end_of_storage = start + __n;
     }
   }
 
@@ -353,32 +361,32 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   }
 
   void push_back(const _Tp& __x) {
-    if (_M_finish != _M_end_of_storage) {
-      _Construct(_M_finish, __x);
-      ++_M_finish;
+    if (finish != end_of_storage) {
+      _Construct(finish, __x);
+      ++finish;
     } else
       _M_insert_aux(end(), __x);
   }
 
   void push_back() {
-    if (_M_finish != _M_end_of_storage) {
-      _Construct(_M_finish);
-      ++_M_finish;
+    if (finish != end_of_storage) {
+      _Construct(finish);
+      ++finish;
     } else
       _M_insert_aux(end());
   }
 
   void swap(vector<_Tp, _Alloc>& __x) {
-    std::swap(_M_start, __x._M_start);
-    std::swap(_M_finish, __x._M_finish);
-    std::swap(_M_end_of_storage, __x._M_end_of_storage);
+    std::swap(start, __x.start);
+    std::swap(finish, __x.finish);
+    std::swap(end_of_storage, __x.end_of_storage);
   }
 
   iterator insert(iterator __position, const _Tp& __x) {
     size_type __n = __position - begin();
-    if (_M_finish != _M_end_of_storage && __position == end()) {
-      _Construct(_M_finish, __x);
-      ++_M_finish;
+    if (finish != end_of_storage && __position == end()) {
+      _Construct(finish, __x);
+      ++finish;
     } else
       _M_insert_aux(iterator(__position), __x);
     return begin() + __n;
@@ -386,9 +394,9 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
   iterator insert(iterator __position) {
     size_type __n = __position - begin();
-    if (_M_finish != _M_end_of_storage && __position == end()) {
-      _Construct(_M_finish);
-      ++_M_finish;
+    if (finish != end_of_storage && __position == end()) {
+      _Construct(finish);
+      ++finish;
     } else
       _M_insert_aux(iterator(__position));
     return begin() + __n;
@@ -426,22 +434,22 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   void _M_fill_insert(iterator __pos, size_type __n, const _Tp& __x);
 
   void pop_back() {
-    --_M_finish;
-    _Destroy(_M_finish);
+    --finish;
+    _Destroy(finish);
   }
 
   iterator erase(iterator __position) {
     if (__position + 1 != end())
       copy(__position + 1, end(), __position);
-    --_M_finish;
-    _Destroy(_M_finish);
+    --finish;
+    _Destroy(finish);
     return __position;
   }
 
   iterator erase(iterator __first, iterator __last) {
     iterator __i(copy(__last, end(), __first));
     _Destroy(__i, end());
-    _M_finish = _M_finish - (__last - __first);
+    finish = finish - (__last - __first);
     return __first;
   }
 
@@ -465,12 +473,12 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   pointer _M_allocate_and_copy(size_type __n,
                                _ForwardIterator __first,
                                _ForwardIterator __last) {
-    pointer __result = _M_allocate(__n);
+    pointer __result = allocate_(__n);
     try {
       uninitialized_copy(__first, __last, __result);
       return __result;
     } catch (...) {
-      _M_deallocate(__result, __n);
+      deallocate_(__result, __n);
       __throw_exception_again;
     }
   }
@@ -489,9 +497,9 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
                            _ForwardIterator __last,
                            forward_iterator_tag) {
     size_type __n = distance(__first, __last);
-    _M_start = _M_allocate(__n);
-    _M_end_of_storage = _M_start + __n;
-    _M_finish = uninitialized_copy(__first, __last, _M_start);
+    start = allocate_(__n);
+    end_of_storage = start + __n;
+    finish = uninitialized_copy(__first, __last, start);
   }
 
   template <class _InputIterator>
