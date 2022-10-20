@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/18 12:21:26 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/20 18:16:29 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,16 @@
 #include "type_traits.hpp"
 
 namespace ft {
+
+struct input_iterator_tag {};
+
+struct output_iterator_tag {};
+
+struct forward_iterator_tag : public input_iterator_tag {};
+
+struct bidirectional_iterator_tag : public forward_iterator_tag {};
+
+struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 template <typename Iterator>
 struct iterator_traits {
@@ -56,16 +66,6 @@ struct iterator {
   typedef Reference reference;
   typedef Category iterator_category;
 };
-
-struct input_iterator_tag {};
-
-struct output_iterator_tag {};
-
-struct forward_iterator_tag : public input_iterator_tag {};
-
-struct bidirectional_iterator_tag : public forward_iterator_tag {};
-
-struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 // advance {{{
 
@@ -403,3 +403,5 @@ insert_iterator<Container> inserter(Container& x, Iterator i) {
 }
 
 }  // namespace ft
+
+#endif  // FT_CONTAINERS_ITERATOR_HPP
