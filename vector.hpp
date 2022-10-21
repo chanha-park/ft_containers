@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/21 17:48:29 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 18:10:52 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,18 +138,20 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
 
-  typedef std::iterator<ft::iterator_traits<pointer>::iterator_category,
-                        ft::iterator_traits<pointer>::value_type,
-                        ft::iterator_traits<pointer>::difference_type,
-                        ft::iterator_traits<pointer>::pointer,
-                        ft::iterator_traits<pointer>::reference>
+  typedef typename std::iterator<
+      typename ft::iterator_traits<pointer>::iterator_category,
+      typename ft::iterator_traits<pointer>::value_type,
+      typename ft::iterator_traits<pointer>::difference_type,
+      typename ft::iterator_traits<pointer>::pointer,
+      typename ft::iterator_traits<pointer>::reference>
       iterator;
 
-  typedef std::iterator<ft::iterator_traits<const_pointer>::iterator_category,
-                        ft::iterator_traits<const_pointer>::value_type,
-                        ft::iterator_traits<const_pointer>::difference_type,
-                        ft::iterator_traits<const_pointer>::pointer,
-                        ft::iterator_traits<const_pointer>::reference>
+  typedef typename std::iterator<
+      typename ft::iterator_traits<const_pointer>::iterator_category,
+      typename ft::iterator_traits<const_pointer>::value_type,
+      typename ft::iterator_traits<const_pointer>::difference_type,
+      typename ft::iterator_traits<const_pointer>::pointer,
+      typename ft::iterator_traits<const_pointer>::reference>
       const_iterator;
 
   // typedef __normal_iterator<pointer, vector_type> iterator;
@@ -164,8 +166,8 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
 
   allocator_type get_allocator() const { return _Base::get_allocator(); }
 
-  typedef reverse_iterator<const_iterator> const_reverse_iterator;
-  typedef reverse_iterator<iterator> reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef ft::reverse_iterator<iterator> reverse_iterator;
 
  protected:
   using _Base::allocate_;

@@ -6,12 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/09 15:09:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 18:04:21 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_TYPE_TRAITS_HPP
 #define FT_CONTAINERS_TYPE_TRAITS_HPP
+
+#include <cstddef>
 
 namespace ft {
 

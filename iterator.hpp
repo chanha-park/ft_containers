@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/21 17:51:04 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 18:00:06 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,102 +277,105 @@ reverse_iterator<Iterator> operator+(
 
 // back_insert_iterator class {{{
 
-template <typename Container>
-class back_insert_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
- protected:
-  Container* container;
+// template <typename Container>
+// class back_insert_iterator
+//     : public iterator<output_iterator_tag, void, void, void, void> {
+//  protected:
+//   Container* container;
 
- public:
-  typedef Container container_type;
+//  public:
+//   typedef Container container_type;
 
-  explicit back_insert_iterator(Container& x) : container(&x) {}
+//   explicit back_insert_iterator(Container& x) : container(&x) {}
 
-  back_insert_iterator& operator=(typename Container::const_reference value) {
-    container->push_back(value);
-    return (*this);
-  }
+//   back_insert_iterator& operator=(typename Container::const_reference value)
+//   {
+//     container->push_back(value);
+//     return (*this);
+//   }
 
-  back_insert_iterator& operator*(void) { return (*this); }
+//   back_insert_iterator& operator*(void) { return (*this); }
 
-  back_insert_iterator& operator++(void) { return (*this); }
+//   back_insert_iterator& operator++(void) { return (*this); }
 
-  back_insert_iterator operator++(int) { return (*this); }
-};
+//   back_insert_iterator operator++(int) { return (*this); }
+// };
 
 // back_insert_iterator class }}}
 
-template <typename Container>
-back_insert_iterator<Container> back_inserter(Container& x) {
-  return (back_insert_iterator<Container>(x));
-}
+// template <typename Container>
+// back_insert_iterator<Container> back_inserter(Container& x) {
+//   return (back_insert_iterator<Container>(x));
+// }
 
 // front_insert_iterator class {{{
 
-template <typename Container>
-class front_insert_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
- protected:
-  Container* container;
+// template <typename Container>
+// class front_insert_iterator
+//     : public iterator<output_iterator_tag, void, void, void, void> {
+//  protected:
+//   Container* container;
 
- public:
-  typedef Container container_type;
+//  public:
+//   typedef Container container_type;
 
-  explicit front_insert_iterator(Container& x) : container(&x) {}
+//   explicit front_insert_iterator(Container& x) : container(&x) {}
 
-  front_insert_iterator& operator=(typename Container::const_reference& value) {
-    container->push_front(value);
-    return (*this);
-  }
+//   front_insert_iterator& operator=(typename Container::const_reference&
+//   value) {
+//     container->push_front(value);
+//     return (*this);
+//   }
 
-  front_insert_iterator& operator*(void) { return (*this); }
+//   front_insert_iterator& operator*(void) { return (*this); }
 
-  front_insert_iterator& operator++(void) { return (*this); }
+//   front_insert_iterator& operator++(void) { return (*this); }
 
-  front_insert_iterator operator++(int) { return (*this); }
-};
+//   front_insert_iterator operator++(int) { return (*this); }
+// };
 
 // front_insert_iterator class }}}
 
-template <typename Container>
-front_insert_iterator<Container> front_inserter(Container& x) {
-  return (front_insert_iterator<Container>(x));
-}
+// template <typename Container>
+// front_insert_iterator<Container> front_inserter(Container& x) {
+//   return (front_insert_iterator<Container>(x));
+// }
 
 // insert_iterator class {{{
 
-template <typename Container>
-class insert_iterator
-    : public iterator<output_iterator_tag, void, void, void, void> {
- protected:
-  Container* container;
-  typename Container::iterator iter;
+// template <typename Container>
+// class insert_iterator
+//     : public iterator<output_iterator_tag, void, void, void, void> {
+//  protected:
+//   Container* container;
+//   typename Container::iterator iter;
 
- public:
-  typedef Container container_type;
+//  public:
+//   typedef Container container_type;
 
-  insert_iterator(Container& x, typename Container::iterator i)
-      : container(&x), iter(&i) {}
+//   insert_iterator(Container& x, typename Container::iterator i)
+//       : container(&x), iter(&i) {}
 
-  insert_iterator& operator=(const typename Container::const_reference value) {
-    iter = container->insert(iter, value);
-    ++iter;
-    return (*this);
-  }
+//   insert_iterator& operator=(const typename Container::const_reference value)
+//   {
+//     iter = container->insert(iter, value);
+//     ++iter;
+//     return (*this);
+//   }
 
-  insert_iterator& operator*(void) { return (*this); }
+//   insert_iterator& operator*(void) { return (*this); }
 
-  insert_iterator& operator++(void) { return (*this); }
+//   insert_iterator& operator++(void) { return (*this); }
 
-  insert_iterator& operator++(int) { return (*this); }
-};
+//   insert_iterator& operator++(int) { return (*this); }
+// };
 
 // insert_iterator class }}}
 
-template <typename Container, typename Iterator>
-insert_iterator<Container> inserter(Container& x, Iterator i) {
-  return insert_iterator<Container>(x, typename Container::iterator(i));
-}
+// template <typename Container, typename Iterator>
+// insert_iterator<Container> inserter(Container& x, Iterator i) {
+//   return insert_iterator<Container>(x, typename Container::iterator(i));
+// }
 
 }  // namespace ft
 
