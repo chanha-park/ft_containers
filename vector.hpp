@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/20 18:52:07 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 16:12:38 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,97 +130,6 @@ struct _Vector_base : public _Vector_alloc_base<_Tp, _Alloc> {
 // };
 
 // _Vector_base }}}
-
-// normal_iterator {{{
-
-template <typename _Iterator, typename _Container>
-class __normal_iterator :
-    public iterator<typename iterator_traits<_Iterator>::iterator_category,
-                    typename iterator_traits<_Iterator>::value_type,
-                    typename iterator_traits<_Iterator>::difference_type,
-                    typename iterator_traits<_Iterator>::pointer,
-                    typename iterator_traits<_Iterator>::reference> {
- protected:
-  _Iterator _M_current;
-
- public:
-  typedef typename iterator_traits<_Iterator>::difference_type difference_type;
-  typedef typename iterator_traits<_Iterator>::reference reference;
-  typedef typename iterator_traits<_Iterator>::pointer pointer;
-
-  __normal_iterator() : _M_current(_Iterator()) {
-  }
-
-  explicit __normal_iterator(const _Iterator& __i) : _M_current(__i) {
-  }
-
-  // Allow iterator to const_iterator conversion
-  template <typename _Iter>
-  inline __normal_iterator(const __normal_iterator<_Iter, _Container>& __i) :
-      _M_current(__i.base()) {
-  }
-
-  // Forward iterator requirements
-  reference operator*() const {
-    return *_M_current;
-  }
-
-  pointer operator->() const {
-    return _M_current;
-  }
-
-  __normal_iterator& operator++() {
-    ++_M_current;
-    return *this;
-  }
-
-  __normal_iterator operator++(int) {
-    return __normal_iterator(_M_current++);
-  }
-
-  // Bidirectional iterator requirements
-  __normal_iterator& operator--() {
-    --_M_current;
-    return *this;
-  }
-
-  __normal_iterator operator--(int) {
-    return __normal_iterator(_M_current--);
-  }
-
-  // Random access iterator requirements
-  reference operator[](const difference_type& __n) const {
-    return _M_current[__n];
-  }
-
-  __normal_iterator& operator+=(const difference_type& __n) {
-    _M_current += __n;
-    return *this;
-  }
-
-  __normal_iterator operator+(const difference_type& __n) const {
-    return __normal_iterator(_M_current + __n);
-  }
-
-  __normal_iterator& operator-=(const difference_type& __n) {
-    _M_current -= __n;
-    return *this;
-  }
-
-  __normal_iterator operator-(const difference_type& __n) const {
-    return __normal_iterator(_M_current - __n);
-  }
-
-  difference_type operator-(const __normal_iterator& __i) const {
-    return _M_current - __i._M_current;
-  }
-
-  const _Iterator& base() const {
-    return _M_current;
-  }
-};
-
-// normal_iterator }}}
 
 // vector class {{{
 

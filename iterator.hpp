@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/20 18:16:29 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 17:19:30 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ distance__(RandomIter first, RandomIter last, random_access_iterator_tag) {
 template <typename InputIter>
 typename iterator_traits<InputIter>::difference_type distance(InputIter first,
                                                               InputIter last) {
-  return (distance__(
-      first, last, typename iterator_traits<InputIter>::iterator_category()));
+  return (distance__(first, last,
+                     typename iterator_traits<InputIter>::iterator_category()));
 }
 
 // }}}
@@ -128,12 +128,12 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 // reverse_iterator: class {{{2
 
 template <typename Iterator>
-class reverse_iterator :
-    public iterator<typename iterator_traits<Iterator>::iterator_category,
-                    typename iterator_traits<Iterator>::value_type,
-                    typename iterator_traits<Iterator>::difference_type,
-                    typename iterator_traits<Iterator>::pointer,
-                    typename iterator_traits<Iterator>::reference> {
+class reverse_iterator
+    : public iterator<typename iterator_traits<Iterator>::iterator_category,
+                      typename iterator_traits<Iterator>::value_type,
+                      typename iterator_traits<Iterator>::difference_type,
+                      typename iterator_traits<Iterator>::pointer,
+                      typename iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
@@ -143,18 +143,14 @@ class reverse_iterator :
   typedef typename iterator_traits<Iterator>::reference reference;
   typedef typename iterator_traits<Iterator>::pointer pointer;
 
-  reverse_iterator(void) : current() {
-  }
+  reverse_iterator(void) : current() {}
 
-  explicit reverse_iterator(iterator_type it) : current(it) {
-  }
+  explicit reverse_iterator(iterator_type it) : current(it) {}
 
-  reverse_iterator(const reverse_iterator& it) : current(it.current) {
-  }
+  reverse_iterator(const reverse_iterator& it) : current(it.current) {}
 
   template <typename U>
-  reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {
-  }
+  reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {}
 
   template <typename U>
   reverse_iterator& operator=(const reverse_iterator<U>& u) {
@@ -162,18 +158,14 @@ class reverse_iterator :
     return (*this);
   }
 
-  iterator_type base(void) const {
-    return (current);
-  }
+  iterator_type base(void) const { return (current); }
 
   reference operator*(void) const {
     iterator_type tmp__ = current;
     return (*--tmp__);
   }
 
-  pointer operator->(void) const {
-    return (&(operator*()));
-  }
+  pointer operator->(void) const { return (&(operator*())); }
 
   reverse_iterator& operator++(void) {
     --current;
@@ -215,9 +207,7 @@ class reverse_iterator :
     return (*this);
   }
 
-  reference operator[](difference_type n) const {
-    return (*(*this + n));
-  }
+  reference operator[](difference_type n) const { return (*(*this + n)); }
 };
 
 // reverse_iterator: class }}}
@@ -285,33 +275,26 @@ reverse_iterator<Iterator> operator+(
 // back_insert_iterator class {{{
 
 template <typename Container>
-class back_insert_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
+class back_insert_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
 
-  explicit back_insert_iterator(Container& x) : container(&x) {
-  }
+  explicit back_insert_iterator(Container& x) : container(&x) {}
 
   back_insert_iterator& operator=(typename Container::const_reference value) {
     container->push_back(value);
     return (*this);
   }
 
-  back_insert_iterator& operator*(void) {
-    return (*this);
-  }
+  back_insert_iterator& operator*(void) { return (*this); }
 
-  back_insert_iterator& operator++(void) {
-    return (*this);
-  }
+  back_insert_iterator& operator++(void) { return (*this); }
 
-  back_insert_iterator operator++(int) {
-    return (*this);
-  }
+  back_insert_iterator operator++(int) { return (*this); }
 };
 
 // back_insert_iterator class }}}
@@ -324,33 +307,26 @@ back_insert_iterator<Container> back_inserter(Container& x) {
 // front_insert_iterator class {{{
 
 template <typename Container>
-class front_insert_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
+class front_insert_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
 
  public:
   typedef Container container_type;
 
-  explicit front_insert_iterator(Container& x) : container(&x) {
-  }
+  explicit front_insert_iterator(Container& x) : container(&x) {}
 
   front_insert_iterator& operator=(typename Container::const_reference& value) {
     container->push_front(value);
     return (*this);
   }
 
-  front_insert_iterator& operator*(void) {
-    return (*this);
-  }
+  front_insert_iterator& operator*(void) { return (*this); }
 
-  front_insert_iterator& operator++(void) {
-    return (*this);
-  }
+  front_insert_iterator& operator++(void) { return (*this); }
 
-  front_insert_iterator operator++(int) {
-    return (*this);
-  }
+  front_insert_iterator operator++(int) { return (*this); }
 };
 
 // front_insert_iterator class }}}
@@ -363,8 +339,8 @@ front_insert_iterator<Container> front_inserter(Container& x) {
 // insert_iterator class {{{
 
 template <typename Container>
-class insert_iterator :
-    public iterator<output_iterator_tag, void, void, void, void> {
+class insert_iterator
+    : public iterator<output_iterator_tag, void, void, void, void> {
  protected:
   Container* container;
   typename Container::iterator iter;
@@ -372,9 +348,8 @@ class insert_iterator :
  public:
   typedef Container container_type;
 
-  insert_iterator(Container& x, typename Container::iterator i) :
-      container(&x), iter(&i) {
-  }
+  insert_iterator(Container& x, typename Container::iterator i)
+      : container(&x), iter(&i) {}
 
   insert_iterator& operator=(const typename Container::const_reference value) {
     iter = container->insert(iter, value);
@@ -382,17 +357,11 @@ class insert_iterator :
     return (*this);
   }
 
-  insert_iterator& operator*(void) {
-    return (*this);
-  }
+  insert_iterator& operator*(void) { return (*this); }
 
-  insert_iterator& operator++(void) {
-    return (*this);
-  }
+  insert_iterator& operator++(void) { return (*this); }
 
-  insert_iterator& operator++(int) {
-    return (*this);
-  }
+  insert_iterator& operator++(int) { return (*this); }
 };
 
 // insert_iterator class }}}
