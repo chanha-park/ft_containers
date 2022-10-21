@@ -6,13 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/21 17:19:30 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/21 17:51:04 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_ITERATOR_HPP
 #define FT_CONTAINERS_ITERATOR_HPP
 
+#include <iterator>
 #include "type_traits.hpp"
 
 namespace ft {
@@ -54,18 +55,18 @@ struct iterator_traits<const T*> {
   typedef ft::random_access_iterator_tag iterator_category;
 };
 
-template <typename Category,
-          typename T,
-          typename Distance = ptrdiff_t,
-          typename Pointer = T*,
-          typename Reference = T&>
-struct iterator {
-  typedef T value_type;
-  typedef Distance difference_type;
-  typedef Pointer pointer;
-  typedef Reference reference;
-  typedef Category iterator_category;
-};
+// template <typename Category,
+//           typename T,
+//           typename Distance = ptrdiff_t,
+//           typename Pointer = T*,
+//           typename Reference = T&>
+// struct iterator {
+//   typedef T value_type;
+//   typedef Distance difference_type;
+//   typedef Pointer pointer;
+//   typedef Reference reference;
+//   typedef Category iterator_category;
+// };
 
 // advance {{{
 
@@ -129,19 +130,21 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 
 template <typename Iterator>
 class reverse_iterator
-    : public iterator<typename iterator_traits<Iterator>::iterator_category,
-                      typename iterator_traits<Iterator>::value_type,
-                      typename iterator_traits<Iterator>::difference_type,
-                      typename iterator_traits<Iterator>::pointer,
-                      typename iterator_traits<Iterator>::reference> {
+    : public std::iterator<
+          typename ft::iterator_traits<Iterator>::iterator_category,
+          typename ft::iterator_traits<Iterator>::value_type,
+          typename ft::iterator_traits<Iterator>::difference_type,
+          typename ft::iterator_traits<Iterator>::pointer,
+          typename ft::iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
  public:
   typedef Iterator iterator_type;
-  typedef typename iterator_traits<Iterator>::difference_type difference_type;
-  typedef typename iterator_traits<Iterator>::reference reference;
-  typedef typename iterator_traits<Iterator>::pointer pointer;
+  typedef
+      typename ft::iterator_traits<Iterator>::difference_type difference_type;
+  typedef typename ft::iterator_traits<Iterator>::reference reference;
+  typedef typename ft::iterator_traits<Iterator>::pointer pointer;
 
   reverse_iterator(void) : current() {}
 
