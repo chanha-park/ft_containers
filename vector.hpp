@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/21 18:10:52 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/23 14:39:32 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 
 namespace ft {
 
-// _Vector_alloc_base {{{
+// vector_alloc_base_ {{{
 
 // template <typename T, typename Allocator, bool IsStatic>
 template <typename T, typename Allocator>
-class _Vector_alloc_base {
+class vector_alloc_base_ {
  public:
   typedef typename Allocator::template rebind<T>::other allocator_type;
 
@@ -43,12 +43,12 @@ class _Vector_alloc_base {
  public:
   allocator_type get_allocator(void) const { return (data_allocator); }
 
-  _Vector_alloc_base(const allocator_type& x)
+  vector_alloc_base_(const allocator_type& x)
       : data_allocator(x), start(0), finish(0), end_of_storage(0) {}
 };
 
 // template <typename T, typename Allocator>
-// class _Vector_alloc_base<T, Allocator, true> {
+// class vector_alloc_base_<T, Allocator, true> {
 //  public:
 //   typedef typename Allocator::template rebind<T>::other allocator_type;
 
@@ -70,67 +70,67 @@ class _Vector_alloc_base {
 //     return (allocator_type());
 //   }
 
-//   _Vector_alloc_base(const allocator_type&) :
+//   vector_alloc_base_(const allocator_type&) :
 //       start(0), finish(0), end_of_storage(0) {
 //   }
 // };
 
-// _Vector_alloc_base }}}
+// vector_alloc_base_ }}}
 
-// _Vector_base {{{
+// vector_base_ {{{
 
 template <typename _Tp, typename _Alloc>
-struct _Vector_base : public _Vector_alloc_base<_Tp, _Alloc> {
+struct vector_base_ : public vector_alloc_base_<_Tp, _Alloc> {
  public:
-  typedef _Vector_alloc_base<_Tp, _Alloc> _Base;
+  typedef vector_alloc_base_<_Tp, _Alloc> _Base;
   typedef typename _Base::allocator_type allocator_type;
 
-  _Vector_base(const allocator_type& __a) : _Base(__a) {}
+  vector_base_(const allocator_type& __a) : _Base(__a) {}
 
-  _Vector_base(size_t __n, const allocator_type& __a) : _Base(__a) {
+  vector_base_(size_t __n, const allocator_type& __a) : _Base(__a) {
     _Base::start = _Base::allocate_(__n);
     _Base::finish = _Base::start;
     _Base::end_of_storage = _Base::start + __n;
   }
 
-  ~_Vector_base() {
+  ~vector_base_() {
     _Base::deallocate_(_Base::start, _Base::end_of_storage - _Base::start);
   }
 };
 
 // template <typename _Tp, typename _Alloc>
-// struct _Vector_base :
-//     public _Vector_alloc_base<_Tp,
+// struct vector_base_ :
+//     public vector_alloc_base_<_Tp,
 //                               _Alloc,
 //                               _Alloc_traits<_Tp, _Alloc>::_S_instanceless> {
-//   typedef _Vector_alloc_base<_Tp,
+//   typedef vector_alloc_base_<_Tp,
 //                              _Alloc,
 //                              _Alloc_traits<_Tp, _Alloc>::_S_instanceless>
 //       _Base;
 //   typedef typename _Base::allocator_type allocator_type;
 
-//   _Vector_base(const allocator_type& __a) : _Base(__a) {
+//   vector_base_(const allocator_type& __a) : _Base(__a) {
 //   }
 
-//   _Vector_base(size_t __n, const allocator_type& __a) : _Base(__a) {
+//   vector_base_(size_t __n, const allocator_type& __a) : _Base(__a) {
 //     start = allocate_(__n);
 //     finish = start;
 //     end_of_storage = start + __n;
 //   }
 
-//   ~_Vector_base() {
+//   ~vector_base_() {
 //     deallocate_(start, end_of_storage - start);
 //   }
 // };
 
-// _Vector_base }}}
+// vector_base_ }}}
 
 // vector class {{{
 
 template <class _Tp, class _Alloc = std::allocator<_Tp> >
-class vector : protected _Vector_base<_Tp, _Alloc> {
+class vector : protected vector_base_<_Tp, _Alloc> {
  private:
-  typedef _Vector_base<_Tp, _Alloc> _Base;
+  typedef vector_base_<_Tp, _Alloc> _Base;
   typedef vector<_Tp, _Alloc> vector_type;
 
  public:
@@ -138,7 +138,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
 
-  typedef typename std::iterator<
+  typedef typename ft::iterator<
       typename ft::iterator_traits<pointer>::iterator_category,
       typename ft::iterator_traits<pointer>::value_type,
       typename ft::iterator_traits<pointer>::difference_type,
@@ -146,7 +146,7 @@ class vector : protected _Vector_base<_Tp, _Alloc> {
       typename ft::iterator_traits<pointer>::reference>
       iterator;
 
-  typedef typename std::iterator<
+  typedef typename ft::iterator<
       typename ft::iterator_traits<const_pointer>::iterator_category,
       typename ft::iterator_traits<const_pointer>::value_type,
       typename ft::iterator_traits<const_pointer>::difference_type,
