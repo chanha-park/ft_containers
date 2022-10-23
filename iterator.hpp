@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/23 17:55:56 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/23 19:47:01 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -392,10 +392,14 @@ void constructObject_(T* p) {
   new (p) T();
 }
 
+// forward declaration
+template <typename T>
+void destructObject_(T* p);
+
 template <typename ForwardIter>
 void __destroy_aux(ForwardIter first, ForwardIter last, ft::false_type) {
   for (; first != last; ++first)
-    destructObject_(&*first);
+    ft::destructObject_(&*first);
 }
 
 template <typename ForwardIter>
