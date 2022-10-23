@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/21 18:04:21 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/23 16:14:12 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,15 @@ struct is_pointer
     : public ft::is_pointer_internal<typename ft::remove_cv<T>::type> {};
 
 // is_pointer }}}
+
+// is_trivially_destructible {{{
+
+template <typename T>
+struct is_trivially_destructible
+    : public ft::integral_constant<bool,
+                                   ft::is_arithmetic<T>::value ||
+                                       ft::is_pointer<T>::value> {};
+// is_trivially_destructible }}}
 
 }  // namespace ft
 

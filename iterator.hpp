@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/23 14:51:02 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/23 16:58:34 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,6 +375,42 @@ reverse_iterator<Iterator> operator+(
 // insert_iterator<Container> inserter(Container& x, Iterator i) {
 //   return insert_iterator<Container>(x, typename Container::iterator(i));
 // }
+
+template <class T1, class T2>
+void constructObject_(T1* p, const T2& value) {
+  // new (static_cast<void*>(p)) T1(value);
+  new (p) T1(value);
+}
+
+template <class T>
+void constructObject_(T* p) {
+  // new (static_cast<void*>(p)) T();
+  new (p) T();
+}
+
+template <class _ForwardIterator>
+inline void __destroy_aux(_ForwardIterator __first, _ForwardIterator __last, ft::false_type) {
+  for (; __first != __last; ++__first)
+    destructObject_(&*__first);
+}
+
+template <class _ForwardIterator>
+inline void __destroy_aux(_ForwardIterator, _ForwardIterator, ft::true_type) {}
+
+template <class T>
+void destructObject_(T* p) {
+  p->~T();
+}
+
+template <class _ForwardIterator>
+inline void destructObject_(_ForwardIterator __first, _ForwardIterator __last) {
+  typedef
+      typename ft::iterator_traits<_ForwardIterator>::value_type _Value_type;
+  typedef typename ft::is_trivially_destructible<_Value_type>
+      _Has_trivial_destructor;
+
+  ft::__destroy_aux(__first, __last, _Has_trivial_destructor());
+}
 
 }  // namespace ft
 

@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/23 14:39:32 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/23 17:30:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,7 +274,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
     _M_range_initialize(__first, __last, _IterCategory());
   }
 
-  ~vector() { _Destroy(start, finish); }
+  ~vector() { destructObject_(start, finish); }
 
   vector<_Tp, _Alloc>& operator=(const vector<_Tp, _Alloc>& __x);
 
@@ -282,7 +282,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
     if (capacity() < __n) {
       const size_type __old_size = size();
       pointer __tmp = _M_allocate_and_copy(__n, start, finish);
-      _Destroy(start, finish);
+      destructObject_(start, finish);
       deallocate_(start, end_of_storage - start);
       start = __tmp;
       finish = __tmp + __old_size;
@@ -337,7 +337,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
 
   void push_back(const _Tp& __x) {
     if (finish != end_of_storage) {
-      _Construct(finish, __x);
+      constructObject_(finish, __x);
       ++finish;
     } else
       _M_insert_aux(end(), __x);
@@ -345,7 +345,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
 
   void push_back() {
     if (finish != end_of_storage) {
-      _Construct(finish);
+      constructObject_(finish);
       ++finish;
     } else
       _M_insert_aux(end());
@@ -360,7 +360,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
   iterator insert(iterator __position, const _Tp& __x) {
     size_type __n = __position - begin();
     if (finish != end_of_storage && __position == end()) {
-      _Construct(finish, __x);
+      constructObject_(finish, __x);
       ++finish;
     } else
       _M_insert_aux(iterator(__position), __x);
@@ -370,7 +370,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
   iterator insert(iterator __position) {
     size_type __n = __position - begin();
     if (finish != end_of_storage && __position == end()) {
-      _Construct(finish);
+      constructObject_(finish);
       ++finish;
     } else
       _M_insert_aux(iterator(__position));
@@ -410,20 +410,20 @@ class vector : protected vector_base_<_Tp, _Alloc> {
 
   void pop_back() {
     --finish;
-    _Destroy(finish);
+    destructObject_(finish);
   }
 
   iterator erase(iterator __position) {
     if (__position + 1 != end())
       copy(__position + 1, end(), __position);
     --finish;
-    _Destroy(finish);
+    destructObject_(finish);
     return __position;
   }
 
   iterator erase(iterator __first, iterator __last) {
     iterator __i(copy(__last, end(), __first));
-    _Destroy(__i, end());
+    destructObject_(__i, end());
     finish = finish - (__last - __first);
     return __first;
   }
