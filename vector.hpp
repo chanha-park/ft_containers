@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/24 17:42:03 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/24 18:55:05 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -480,7 +480,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
       finish = __new_finish.base();
     } else {
       _ForwardIter __mid = __first;
-      advance(__mid, size());
+	  ft::advance(__mid, size());
       std::copy(__first, __mid, start);
       finish = std::uninitialized_copy(__mid, __last, finish);
     }
@@ -520,7 +520,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
           std::copy(__first, __last, __pos);
         } else {
           _ForwardIterator __mid = __first;
-          advance(__mid, __elems_after);
+		  ft::advance(__mid, __elems_after);
           std::uninitialized_copy(__mid, __last, finish);
           finish += __n - __elems_after;
           std::uninitialized_copy(__pos, __old_finish, finish);
