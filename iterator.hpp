@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/24 13:53:52 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/24 14:56:22 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,25 @@
 
 namespace ft {
 
-struct input_iterator_tag {};
+// struct input_iterator_tag {};
 
-struct output_iterator_tag {};
+// struct output_iterator_tag {};
 
-struct forward_iterator_tag : public input_iterator_tag {};
+// struct forward_iterator_tag : public input_iterator_tag {};
 
-struct bidirectional_iterator_tag : public forward_iterator_tag {};
+// struct bidirectional_iterator_tag : public forward_iterator_tag {};
 
-struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+// struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+
+typedef std::input_iterator_tag input_iterator_tag;
+
+typedef std::output_iterator_tag output_iterator_tag;
+
+typedef std::forward_iterator_tag forward_iterator_tag;
+
+typedef std::bidirectional_iterator_tag bidirectional_iterator_tag;
+
+typedef std::random_access_iterator_tag random_access_iterator_tag;
 
 template <typename Iterator>
 struct iterator_traits {
