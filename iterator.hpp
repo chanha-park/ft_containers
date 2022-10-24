@@ -6,13 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/24 14:56:22 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/24 17:31:41 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_ITERATOR_HPP
 #define FT_CONTAINERS_ITERATOR_HPP
 
+#include <iterator>
 #include "type_traits.hpp"
 
 namespace ft {
@@ -102,7 +103,7 @@ void advance__(RandomIter& i, Distance n, random_access_iterator_tag) {
 
 template <typename InputIter, typename Distance>
 void advance(InputIter& i, Distance n) {
-  advance__(i, n, typename iterator_traits<InputIter>::iterator_category(i));
+  advance__(i, n, typename iterator_traits<InputIter>::iterator_category());
 }
 
 // }}}
