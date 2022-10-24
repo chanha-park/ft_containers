@@ -37,7 +37,9 @@ struct integral_constant {
   typedef T value_type;
   typedef integral_constant type;
 
-  operator value_type() const throw() { return (value); }
+  operator value_type() const throw() {
+    return (value);
+  }
 };
 
 typedef integral_constant<bool, true> true_type;
@@ -79,12 +81,13 @@ struct remove_cv {
 
 template <typename T>
 struct is_void_internal : public ft::false_type {};
+
 template <>
 struct is_void_internal<void> : public ft::true_type {};
 
 template <typename T>
-struct is_void : public ft::is_void_internal<typename ft::remove_cv<T>::type> {
-};
+struct is_void :
+    public ft::is_void_internal<typename ft::remove_cv<T>::type> {};
 
 // is_void }}}
 
@@ -137,8 +140,8 @@ struct is_integral_internal<unsigned long long> : public ft::true_type {};
 // is_integral_internal }}}
 
 template <typename T>
-struct is_integral
-    : public ft::is_integral_internal<typename ft::remove_cv<T>::type> {};
+struct is_integral :
+    public ft::is_integral_internal<typename ft::remove_cv<T>::type> {};
 
 // is_integral }}}
 
@@ -146,26 +149,30 @@ struct is_integral
 
 template <typename T>
 struct is_floating_point_internal : public ft::false_type {};
+
 template <>
 struct is_floating_point_internal<float> : public ft::true_type {};
+
 template <>
 struct is_floating_point_internal<double> : public ft::true_type {};
+
 template <>
 struct is_floating_point_internal<long double> : public ft::true_type {};
 
 template <typename T>
-struct is_floating_point
-    : public ft::is_floating_point_internal<typename ft::remove_cv<T>::type> {};
+struct is_floating_point :
+    public ft::is_floating_point_internal<typename ft::remove_cv<T>::type> {};
 
 // is_floating_point }}}
 
 // is_arithmetic {{{
 
 template <typename T>
-struct is_arithmetic
-    : public ft::integral_constant<bool,
-                                   ft::is_integral<T>::value ||
-                                       ft::is_floating_point<T>::value> {};
+struct is_arithmetic :
+    public ft::integral_constant<bool,
+                                 ft::is_integral<T>::value
+                                     || ft::is_floating_point<T>::value> {};
+
 // is_arithmetic }}}
 
 // is_pointer {{{
@@ -177,18 +184,19 @@ template <typename T>
 struct is_pointer_internal<T*> : public ft::true_type {};
 
 template <typename T>
-struct is_pointer
-    : public ft::is_pointer_internal<typename ft::remove_cv<T>::type> {};
+struct is_pointer :
+    public ft::is_pointer_internal<typename ft::remove_cv<T>::type> {};
 
 // is_pointer }}}
 
 // is_trivially_destructible {{{
 
 template <typename T>
-struct is_trivially_destructible
-    : public ft::integral_constant<bool,
-                                   ft::is_arithmetic<T>::value ||
-                                       ft::is_pointer<T>::value> {};
+struct is_trivially_destructible :
+    public ft::integral_constant<bool,
+                                 ft::is_arithmetic<T>::value
+                                     || ft::is_pointer<T>::value> {};
+
 // is_trivially_destructible }}}
 
 }  // namespace ft

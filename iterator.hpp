@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/23 19:47:01 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/24 13:53:52 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ distance__(RandomIter first, RandomIter last, random_access_iterator_tag) {
 template <typename InputIter>
 typename iterator_traits<InputIter>::difference_type distance(InputIter first,
                                                               InputIter last) {
-  return (distance__(first, last,
-                     typename iterator_traits<InputIter>::iterator_category()));
+  return (distance__(
+      first, last, typename iterator_traits<InputIter>::iterator_category()));
 }
 
 // }}}
@@ -128,13 +128,13 @@ typename iterator_traits<InputIter>::difference_type distance(InputIter first,
 // reverse_iterator: class {{{2
 
 template <typename Iterator>
-class reverse_iterator
-    : public ft::iterator<
-          typename ft::iterator_traits<Iterator>::iterator_category,
-          typename ft::iterator_traits<Iterator>::value_type,
-          typename ft::iterator_traits<Iterator>::difference_type,
-          typename ft::iterator_traits<Iterator>::pointer,
-          typename ft::iterator_traits<Iterator>::reference> {
+class reverse_iterator :
+    public ft::iterator<
+        typename ft::iterator_traits<Iterator>::iterator_category,
+        typename ft::iterator_traits<Iterator>::value_type,
+        typename ft::iterator_traits<Iterator>::difference_type,
+        typename ft::iterator_traits<Iterator>::pointer,
+        typename ft::iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
@@ -145,14 +145,18 @@ class reverse_iterator
   typedef typename ft::iterator_traits<Iterator>::reference reference;
   typedef typename ft::iterator_traits<Iterator>::pointer pointer;
 
-  reverse_iterator(void) : current() {}
+  reverse_iterator(void) : current() {
+  }
 
-  explicit reverse_iterator(iterator_type it) : current(it) {}
+  explicit reverse_iterator(iterator_type it) : current(it) {
+  }
 
-  reverse_iterator(const reverse_iterator& it) : current(it.current) {}
+  reverse_iterator(const reverse_iterator& it) : current(it.current) {
+  }
 
   template <typename U>
-  reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {}
+  reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {
+  }
 
   template <typename U>
   reverse_iterator& operator=(const reverse_iterator<U>& u) {
@@ -160,14 +164,18 @@ class reverse_iterator
     return (*this);
   }
 
-  iterator_type base(void) const { return (current); }
+  iterator_type base(void) const {
+    return (current);
+  }
 
   reference operator*(void) const {
     iterator_type tmp__ = current;
     return (*--tmp__);
   }
 
-  pointer operator->(void) const { return (&(operator*())); }
+  pointer operator->(void) const {
+    return (&(operator*()));
+  }
 
   reverse_iterator& operator++(void) {
     --current;
@@ -209,7 +217,9 @@ class reverse_iterator
     return (*this);
   }
 
-  reference operator[](difference_type n) const { return (*(*this + n)); }
+  reference operator[](difference_type n) const {
+    return (*(*this + n));
+  }
 };
 
 // reverse_iterator: class }}}
@@ -397,13 +407,22 @@ template <typename T>
 void destructObject_(T* p);
 
 template <typename ForwardIter>
-void __destroy_aux(ForwardIter first, ForwardIter last, ft::false_type) {
+typename ft::enable_if<
+    !ft::is_trivially_destructible<
+        typename ft::iterator_traits<ForwardIter>::value_type>::value,
+    void>::type
+__destroy_aux(ForwardIter first, ForwardIter last) {
   for (; first != last; ++first)
     ft::destructObject_(&*first);
 }
 
 template <typename ForwardIter>
-void __destroy_aux(ForwardIter, ForwardIter, ft::true_type) {}
+typename ft::enable_if<
+    ft::is_trivially_destructible<
+        typename ft::iterator_traits<ForwardIter>::value_type>::value,
+    void>::type
+__destroy_aux(ForwardIter, ForwardIter) {
+}
 
 template <typename T>
 void destructObject_(T* p) {
@@ -412,11 +431,11 @@ void destructObject_(T* p) {
 
 template <typename ForwardIter>
 void destructObject_(ForwardIter first, ForwardIter last) {
-  typedef typename ft::iterator_traits<ForwardIter>::value_type value_type;
-  typedef typename ft::is_trivially_destructible<value_type>
-      has_trivial_destructor;
+  // typedef typename ft::iterator_traits<ForwardIter>::value_type value_type;
+  // typedef typename ft::is_trivially_destructible<value_type>
+  //     has_trivial_destructor;
 
-  ft::__destroy_aux(first, last, has_trivial_destructor());
+  ft::__destroy_aux<ForwardIter>(first, last);
 }
 
 }  // namespace ft
