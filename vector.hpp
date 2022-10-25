@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/25 10:51:54 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/25 11:05:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -600,7 +600,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
   }
 
   size_type max_size() const {
-    return (size_type(-1) / sizeof(_Tp));
+    return (size_type(-1) / sizeof(_Tp)) >> (sizeof(_Tp) == 1);
   }
 
   size_type capacity() const {
