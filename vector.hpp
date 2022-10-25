@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/24 18:55:05 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/25 10:51:54 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,6 @@ class vector_iterator :
     return vector_iterator(current - n);
   }
 
-  difference_type operator-(const vector_iterator& x) const {
-    return (current - x.base());
-  }
-
   vector_iterator& operator+=(const difference_type& n) {
     current += n;
     return (*this);
@@ -154,6 +150,13 @@ template <typename Iter1, typename Iter2, typename Container>
 bool operator>=(const vector_iterator<Iter1, Container>& x,
                 const vector_iterator<Iter2, Container>& y) {
   return (!(x < y));
+}
+
+template <typename Iter1, typename Iter2, typename Container>
+typename vector_iterator<Iter1, Container>::difference_type operator-(
+    const vector_iterator<Iter1, Container>& x,
+    const vector_iterator<Iter2, Container>& y) {
+  return (x.base() - y.base());
 }
 
 template <typename Iterator, typename Container>
@@ -480,7 +483,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
       finish = __new_finish.base();
     } else {
       _ForwardIter __mid = __first;
-	  ft::advance(__mid, size());
+      ft::advance(__mid, size());
       std::copy(__first, __mid, start);
       finish = std::uninitialized_copy(__mid, __last, finish);
     }
@@ -520,7 +523,7 @@ class vector : protected vector_base_<_Tp, _Alloc> {
           std::copy(__first, __last, __pos);
         } else {
           _ForwardIterator __mid = __first;
-		  ft::advance(__mid, __elems_after);
+          ft::advance(__mid, __elems_after);
           std::uninitialized_copy(__mid, __last, finish);
           finish += __n - __elems_after;
           std::uninitialized_copy(__pos, __old_finish, finish);
