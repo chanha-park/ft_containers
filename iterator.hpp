@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/10/24 19:40:39 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/10/25 14:47:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,8 +162,8 @@ class reverse_iterator :
   explicit reverse_iterator(iterator_type it) : current(it) {
   }
 
-  // reverse_iterator(const reverse_iterator& it) : current(it.current) {
-  // }
+  reverse_iterator(const reverse_iterator& it) : current(it.current) {
+  }
 
   template <typename U>
   reverse_iterator(const reverse_iterator<U>& u) : current(u.base()) {
@@ -295,134 +295,27 @@ reverse_iterator<Iterator> operator+(
 
 // reverse iterator }}}
 
-// Obsolete {{{
-
-// back_insert_iterator class {{{
-
-// template <typename Container>
-// class back_insert_iterator
-//     : public iterator<output_iterator_tag, void, void, void, void> {
-//  protected:
-//   Container* container;
-
-//  public:
-//   typedef Container container_type;
-
-//   explicit back_insert_iterator(Container& x) : container(&x) {}
-
-//   back_insert_iterator& operator=(typename Container::const_reference value)
-//   {
-//     container->push_back(value);
-//     return (*this);
-//   }
-
-//   back_insert_iterator& operator*(void) { return (*this); }
-
-//   back_insert_iterator& operator++(void) { return (*this); }
-
-//   back_insert_iterator operator++(int) { return (*this); }
-// };
-
-// back_insert_iterator class }}}
-
-// template <typename Container>
-// back_insert_iterator<Container> back_inserter(Container& x) {
-//   return (back_insert_iterator<Container>(x));
-// }
-
-// front_insert_iterator class {{{
-
-// template <typename Container>
-// class front_insert_iterator
-//     : public iterator<output_iterator_tag, void, void, void, void> {
-//  protected:
-//   Container* container;
-
-//  public:
-//   typedef Container container_type;
-
-//   explicit front_insert_iterator(Container& x) : container(&x) {}
-
-//   front_insert_iterator& operator=(typename Container::const_reference&
-//   value) {
-//     container->push_front(value);
-//     return (*this);
-//   }
-
-//   front_insert_iterator& operator*(void) { return (*this); }
-
-//   front_insert_iterator& operator++(void) { return (*this); }
-
-//   front_insert_iterator operator++(int) { return (*this); }
-// };
-
-// front_insert_iterator class }}}
-
-// template <typename Container>
-// front_insert_iterator<Container> front_inserter(Container& x) {
-//   return (front_insert_iterator<Container>(x));
-// }
-
-// insert_iterator class {{{
-
-// template <typename Container>
-// class insert_iterator
-//     : public iterator<output_iterator_tag, void, void, void, void> {
-//  protected:
-//   Container* container;
-//   typename Container::iterator iter;
-
-//  public:
-//   typedef Container container_type;
-
-//   insert_iterator(Container& x, typename Container::iterator i)
-//       : container(&x), iter(&i) {}
-
-//   insert_iterator& operator=(const typename Container::const_reference value)
-//   {
-//     iter = container->insert(iter, value);
-//     ++iter;
-//     return (*this);
-//   }
-
-//   insert_iterator& operator*(void) { return (*this); }
-
-//   insert_iterator& operator++(void) { return (*this); }
-
-//   insert_iterator& operator++(int) { return (*this); }
-// };
-
-// insert_iterator class }}}
-
-// template <typename Container, typename Iterator>
-// insert_iterator<Container> inserter(Container& x, Iterator i) {
-//   return insert_iterator<Container>(x, typename Container::iterator(i));
-// }
-
-// Obsolete }}}
-
 template <typename T1, typename T2>
 void constructObject_(T1* p, const T2& value) {
-  // new (static_cast<void*>(p)) T1(value);
-  new (p) T1(value);
+  new (static_cast<void*>(p)) T1(value);
 }
 
 template <typename T>
 void constructObject_(T* p) {
-  // new (static_cast<void*>(p)) T();
-  new (p) T();
+  new (static_cast<void*>(p)) T();
 }
 
-// forward declaration
 template <typename T>
-void destructObject_(T* p);
+void destructObject_(T* p) {
+  p->~T();
+}
 
 template <typename ForwardIter>
 typename ft::enable_if<
     !ft::is_trivially_destructible<
         typename ft::iterator_traits<ForwardIter>::value_type>::value,
     void>::type
-__destroy_aux(ForwardIter first, ForwardIter last) {
+destruct_(ForwardIter first, ForwardIter last) {
   for (; first != last; ++first)
     ft::destructObject_(&*first);
 }
@@ -432,21 +325,12 @@ typename ft::enable_if<
     ft::is_trivially_destructible<
         typename ft::iterator_traits<ForwardIter>::value_type>::value,
     void>::type
-__destroy_aux(ForwardIter, ForwardIter) {
-}
-
-template <typename T>
-void destructObject_(T* p) {
-  p->~T();
+destruct_(ForwardIter, ForwardIter) {
 }
 
 template <typename ForwardIter>
 void destructObject_(ForwardIter first, ForwardIter last) {
-  // typedef typename ft::iterator_traits<ForwardIter>::value_type value_type;
-  // typedef typename ft::is_trivially_destructible<value_type>
-  //     has_trivial_destructor;
-
-  ft::__destroy_aux<ForwardIter>(first, last);
+  ft::destruct_<ForwardIter>(first, last);
 }
 
 }  // namespace ft

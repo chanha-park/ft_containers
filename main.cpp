@@ -13,16 +13,16 @@ void f(void) {
 
   std::cout << "================" << std::endl;
 
-  // for (ft::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
-  //   std::cout << "i: " << (v.end() - it) << " " << *it << std::endl;
-  //   std::cout << "i: " << (it - v.begin()) << " " << *it << std::endl;
-  // }
+  for (ft::vector<int>::iterator it = v.begin(); it != v.end(); ++it) {
+    std::cout << "i: " << (v.end() - it) << " " << *it << std::endl;
+    std::cout << "i: " << (it - v.begin()) << " " << *it << std::endl;
+  }
 
-  // for (ft::vector<int>::reverse_iterator it = v.rbegin(); it != v.rend();
-  //      ++it) {
-  //   std::cout << "i: " << (v.rend() - it) << " " << *it << std::endl;
-  //   std::cout << "i: " << (it - v.rbegin()) << " " << *it << std::endl;
-  // }
+  for (ft::vector<int>::reverse_iterator it = v.rbegin(); it != v.rend();
+       ++it) {
+    std::cout << "i: " << (v.rend() - it) << " " << *it << std::endl;
+    std::cout << "i: " << (it - v.rbegin()) << " " << *it << std::endl;
+  }
 
   // compile error
 
@@ -40,5 +40,6 @@ void f(void) {
 
 int main(void) {
   f();
+  system("leaks $PPID");
   return (0);
 }
