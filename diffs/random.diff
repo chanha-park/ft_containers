@@ -1,0 +1,11 @@
+--- logs/vector/random__ft.log	2022-10-27 23:05:17.032272487 +0900
++++ logs/vector/random__std.log	2022-10-27 23:05:18.664286175 +0900
+@@ -25,7 +25,7 @@
+ Vector content:
+ QExoqp0nICr0sXsHqty2 naax9QcpJhvaL7DezsNQ 25ZTtB6wbptfbxM8AvHB tShYNtc0MkdjqLrOatgz 7Z3kf1Qec0NnsLSEpbOt WhkSNrKJC966fvjZ2Or1 8vlxlFRRgW7yYj4GO7dt z0jXAhiV9keBsaLOY0Xf z0jXAhiV9keBsaLOY0Xf z0jXAhiV9keBsaLOY0Xf 5sq1aoT8zP0HaHj3nFOK 61Dv31GYZhkgjKCErpng l0IIcWWHhOcPzoxEamQM bE1RYclskwXlhCm46YFs kXeoi5qz94JYPqSDTs79 TFsQP1dz8VVos9KzUpY0 b3wYQR7An193gjgYuRj3 xSmyNsnSJ47jLqrvbpyr guAIP2Wq43Gf8VhHsyu5 yT6c2loPebHovnq9BQog 3qvU1xcVm2g1DKFDlqh4 L0q8RR9P41VD4sVjdnWl YdjESsIZM4b1oGQPjpBe l1ZVQbWKw7brHUSimJgq xdn0cf4vqRzpfXWtl10G lYnZvpqaV0s8DowMZwzV 8P1cyKrwJNLoJyvLjYqO 4MhOXNbAX23CEijO5cRT tHe3miAwCOVQbuoLaEP2 l6uNLsc8fiLl3eWoG6j6 477xt6l0lph9ALQdr4HX D9UJNe4s8YF02LhrwOdl dLCisBNOdE8yugntu6cj YvY4aQFHgAuagn4dFLO1 uvg6KqtcgduR31n3ajsv wbiAcjgojb9JOagZwyMn ATZKCzaPOqgkhPjwuGlf MOhaJs56yjOw8f6nLPRA 0gyB2Tr42v6awMw2nK7J e6GsiLFUuoDpVFEhJKZ1 z0jXAhiV9keBsaLOY0Xf P68p2ZAosHJdmoZh1C7N 
+ 
+-Max size: 576460752303423487 (file: tests/vector/random.cpp, line: 48)
++Max size: 288230376151711743 (file: tests/vector/random.cpp, line: 48)
+ Capacity Ok (file: tests/vector/random.cpp, line: 54)
+ Size: 39 (file: tests/vector/random.cpp, line: 54)
+ 

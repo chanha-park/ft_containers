@@ -1,0 +1,11 @@
+--- logs/vector/ctor_size__ft.log	2022-10-27 23:04:35.771925392 +0900
++++ logs/vector/ctor_size__std.log	2022-10-27 23:04:36.803934098 +0900
+@@ -22,7 +22,7 @@
+ Vector content:
+ 
+ 
+-unhandled exception (file: tests/vector/ctor_size.cpp, line: 52)
++Length exception (file: tests/vector/ctor_size.cpp, line: 50)
+ ========================================
+ No leak detected
+ ========================================
