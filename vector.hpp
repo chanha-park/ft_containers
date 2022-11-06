@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/04 15:16:55 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/07 00:58:58 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -652,6 +652,8 @@ class vector : protected vector_base_<T, Allocator> {
         = std::uninitialized_copy(other.begin(), other.end(), this->start);
   }
 
+  // maybe need improvement: handle allocation in Base_ only (use initialize
+  // list?) _M_range_initialize can throw exception since it allocates memory
   template <typename InputIter>
   vector(InputIter first,
          InputIter last,
