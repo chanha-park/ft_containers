@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/23 17:52:34 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/24 01:34:24 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,9 +283,25 @@ class vector : protected vector_base_<T, Allocator> {
 
   // operator= overload {{{
 
-  // XXX
+  // XXX need test
   vector<T, Allocator>& operator=(const vector<T, Allocator>& other) {
     if (&other != this) {
+      const size_type oldSize = this->size();
+      const size_type newSize = other.size();
+      if (this->capacity() < newSize) {
+        vector tmp__(other);
+        this->swap(tmp__);
+        return (*this);
+      }
+      if (oldSize >= newSize) {
+        iterator it(std::copy(other.begin(), other.end(), this->begin()));
+        destructObject_(it, this->end());
+      } else {
+        std::copy(other.begin(), other.begin() + oldSize, this->begin());
+        std::uninitialized_copy(
+            other.begin() + oldSize, other.end(), this->end());
+      }
+      this->finish = this->start + newSize;
     }
     return (*this);
   }
@@ -456,7 +472,7 @@ class vector : protected vector_base_<T, Allocator> {
   }
 
   void swap(vector<T, Allocator>& other) {
-    std::swap(get_allocator(), other.get_allocator());
+    // std::swap(get_allocator(), other.get_allocator());  // XXX swap alloc ?
     std::swap(this->start, other.start);
     std::swap(this->finish, other.finish);
     std::swap(this->end_of_storage, other.end_of_storage);
