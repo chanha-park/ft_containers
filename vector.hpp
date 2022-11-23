@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/11 22:00:11 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/23 17:52:34 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,41 +237,38 @@ class vector : protected vector_base_<T, Allocator> {
   // member types }}}
 
  private:
+  // XXX implement auxiliary functions
   // private auxiliary functions {{{
   // private auxiliary functions }}}
 
  public:
   // constructor {{{
 
-  // XXX
   explicit vector(const allocator_type& alloc = allocator_type()) :
       Base_(alloc) {
   }
 
-  // XXX need fix uninitialized_fill_n does not return in c++98
   explicit vector(size_type n,
                   const value_type& val = value_type(),
                   const allocator_type& alloc = allocator_type()) :
       Base_(n, alloc) {
-    this->finish = std::uninitialized_fill_n(this->start, n, val);
+    std::uninitialized_fill_n(this->start, n, val);
+    this->finish = this->start + n;
   }
 
   // copy constructor
-  // XXX need fix uninitialized_fill_n does not return in c++98
   vector(const vector<T, Allocator>& other) :
       Base_(other.size(), other.get_allocator()) {
     this->finish
         = std::uninitialized_copy(other.begin(), other.end(), this->start);
   }
 
-  // XXX maybe need improvement: handle allocation in Base_ only (use initialize
-  // list?) _M_range_initialize can throw exception since it allocates memory
   template <typename InputIter>
   vector(InputIter first,
          InputIter last,
          const allocator_type& alloc = allocator_type()) :
-      Base_(alloc) {
-    _M_initialize_aux(first, last);
+      Base_(ft::distance(first, last), alloc) {
+    this->finish = std::uninitialized_copy(first, last, this->start);
   }
 
   // constructor }}}
