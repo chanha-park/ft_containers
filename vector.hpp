@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/24 17:28:14 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/25 02:15:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,9 @@ class vector_iterator :
   }
 
   vector_iterator operator+(const difference_type& n) const {
-    vector_iterator tmp__(current + n);
-    return (tmp__);
+    // vector_iterator tmp__(current + n);
+    // return (tmp__);
+    return (vector_iterator(current + n));
   }
 
   vector_iterator operator-(const difference_type& n) const {
@@ -163,7 +164,7 @@ template <typename Iterator, typename Container>
 vector_iterator<Iterator, Container> operator+(
     typename vector_iterator<Iterator, Container>::difference_type n,
     const vector_iterator<Iterator, Container>& x) {
-  return vector_iterator<Iterator, Container>(x.base() + n);
+  return (vector_iterator<Iterator, Container>(x.base() + n));
 }
 
 // vector_iterator }}}
@@ -213,7 +214,7 @@ template <typename T, typename Allocator = std::allocator<T> >
 class vector : protected vector_base_<T, Allocator> {
  private:
   typedef vector_base_<T, Allocator> Base_;
-  typedef vector<T, Allocator> vector_type;
+  typedef vector<T, Allocator> vector_type_;
 
  public:
   // member types {{{
@@ -221,8 +222,8 @@ class vector : protected vector_base_<T, Allocator> {
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
 
-  typedef vector_iterator<pointer, vector_type> iterator;
-  typedef vector_iterator<const_pointer, vector_type> const_iterator;
+  typedef vector_iterator<pointer, vector_type_> iterator;
+  typedef vector_iterator<const_pointer, vector_type_> const_iterator;
 
   typedef value_type& reference;
   typedef const value_type& const_reference;
@@ -239,6 +240,13 @@ class vector : protected vector_base_<T, Allocator> {
  private:
   // XXX implement auxiliary functions
   // private auxiliary functions {{{
+
+  // auxiliary constructor for private use. n > other.size()
+  vector(size_type n, const vector<T, Allocator>& other) :
+      Base_(n, other.get_allocator()) {
+    this->finish
+        = std::uninitialized_copy(other.begin(), other.end(), this->start);
+  }
 
   // private auxiliary functions }}}
 
@@ -287,22 +295,22 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX need test
   vector<T, Allocator>& operator=(const vector<T, Allocator>& other) {
     if (&other != this) {
-      const size_type oldSize = this->size();
-      const size_type newSize = other.size();
-      if (this->capacity() < newSize) {
+      const size_type oldSize__ = this->size();
+      const size_type newSize__ = other.size();
+      if (this->capacity() < newSize__) {
         vector<T, Allocator> tmp__(other);
         this->swap(tmp__);
         return (*this);
       }
-      if (oldSize >= newSize) {
+      if (oldSize__ >= newSize__) {
         iterator it(std::copy(other.begin(), other.end(), this->begin()));
         destructObject_(it, this->end());
       } else {
-        std::copy(other.begin(), other.begin() + oldSize, this->begin());
+        std::copy(other.begin(), other.begin() + oldSize__, this->begin());
         std::uninitialized_copy(
-            other.begin() + oldSize, other.end(), this->end());
+            other.begin() + oldSize__, other.end(), this->end());
       }
-      this->finish = this->start + newSize;
+      this->finish = this->start + newSize__;
     }
     return (*this);
   }
@@ -364,20 +372,22 @@ class vector : protected vector_base_<T, Allocator> {
     return (begin() == end());
   }
 
-  // XXX
+  // XXX need test
   void reserve(size_type n) {
     if (n > this->max_size())
       throw(std::length_error("vector"));
 
     if (this->capacity() < n) {
-      vector<T, Allocator> tmp__(n);  // bad since it constructs default value;
-      tmp__ = *this;
+      vector<T, Allocator> tmp__(n, *this);
       this->swap(tmp__);
     }
   }
 
   // XXX
   void resize(size_type n, const value_type& val = value_type()) {
+    if (n > this->max_size())
+      throw(std::length_error("vector"));
+
     if (n < size())
       erase(begin() + n, end());
     else
@@ -475,8 +485,8 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   iterator erase(iterator first, iterator last) {
-    iterator __i(std::copy(last, end(), first));
-    destructObject_(__i, end());
+    iterator it__(std::copy(last, end(), first));
+    destructObject_(it__, end());
     this->finish = this->finish - (last - first);
     return (first);
   }
