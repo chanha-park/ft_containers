@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/24 01:34:24 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:28:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,7 @@ class vector : protected vector_base_<T, Allocator> {
  private:
   // XXX implement auxiliary functions
   // private auxiliary functions {{{
+
   // private auxiliary functions }}}
 
  public:
@@ -289,7 +290,7 @@ class vector : protected vector_base_<T, Allocator> {
       const size_type oldSize = this->size();
       const size_type newSize = other.size();
       if (this->capacity() < newSize) {
-        vector tmp__(other);
+        vector<T, Allocator> tmp__(other);
         this->swap(tmp__);
         return (*this);
       }
@@ -350,6 +351,7 @@ class vector : protected vector_base_<T, Allocator> {
     return (size_type(end() - begin()));
   }
 
+  // XXX
   size_type max_size(void) const {
     return ((size_type(-1) / sizeof(T)) >> 1);
   }
@@ -364,6 +366,14 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   void reserve(size_type n) {
+    if (n > this->max_size())
+      throw(std::length_error("vector"));
+
+    if (this->capacity() < n) {
+      vector<T, Allocator> tmp__(n);  // bad since it constructs default value;
+      tmp__ = *this;
+      this->swap(tmp__);
+    }
   }
 
   // XXX
