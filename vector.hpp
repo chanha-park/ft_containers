@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/25 02:15:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/25 15:02:51 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,15 +383,15 @@ class vector : protected vector_base_<T, Allocator> {
     }
   }
 
-  // XXX
+  // XXX need test
   void resize(size_type n, const value_type& val = value_type()) {
     if (n > this->max_size())
       throw(std::length_error("vector"));
 
     if (n < size())
-      erase(begin() + n, end());
+      this->erase(this->begin() + n, this->end());
     else
-      insert(end(), n - size(), val);
+      this->insert(this->end(), n - this->size(), val);
   }
 
   // capacity }}}
@@ -451,7 +451,7 @@ class vector : protected vector_base_<T, Allocator> {
   void push_back(void) {
   }
 
-  // XXX
+  // XXX need test
   void pop_back(void) {
     --this->finish;
     destructObject_(this->finish);
@@ -459,10 +459,6 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   iterator insert(iterator pos, const value_type& val) {
-  }
-
-  // XXX
-  iterator insert(iterator pos) {
   }
 
   // XXX
@@ -474,20 +470,21 @@ class vector : protected vector_base_<T, Allocator> {
   void insert(iterator pos, size_type n, const value_type& val) {
   }
 
-  // XXX
+  // XXX need test
   iterator erase(iterator pos) {
-    if (pos + 1 != end())
-      std::copy(pos + 1, end(), pos);
+    if (pos + 1 != this->end())
+      std::copy(pos + 1, this->end(), pos);
     --this->finish;
     destructObject_(this->finish);
     return (pos);
   }
 
-  // XXX
+  // XXX need test
   iterator erase(iterator first, iterator last) {
-    iterator it__(std::copy(last, end(), first));
+    iterator it__(std::copy(last, this->end(), first));
     destructObject_(it__, end());
-    this->finish = this->finish - (last - first);
+    // destructObject_(std::copy(last, end(), first), end());
+    this->finish -= (last - first);
     return (first);
   }
 
@@ -498,9 +495,8 @@ class vector : protected vector_base_<T, Allocator> {
     std::swap(this->end_of_storage, other.end_of_storage);
   }
 
-  // XXX
   void clear(void) {
-    erase(begin(), end());
+    this->erase(this->begin(), this->end());
   }
 
   // modifiers }}}
