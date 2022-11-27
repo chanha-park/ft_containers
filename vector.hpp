@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/25 18:46:49 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/28 01:58:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,11 +241,14 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX implement auxiliary functions
   // private auxiliary functions {{{
 
-  // auxiliary constructor for private use. n > other.size()
-  vector(size_type n, const vector<T, Allocator>& other) :
-      Base_(n, other.get_allocator()) {
-    this->finish
-        = std::uninitialized_copy(other.begin(), other.end(), this->start);
+  // auxiliary constructor for private use. n > last - first
+  template <typename InputIter>
+  vector(size_type n,
+         InputIter first,
+         InputIter last,
+         const allocator_type& alloc) :
+      Base_(n, alloc) {
+    this->finish = std::uninitialized_copy(first, last, this->start);
   }
 
   // private auxiliary functions }}}
@@ -378,7 +381,8 @@ class vector : protected vector_base_<T, Allocator> {
       throw(std::length_error("vector"));
 
     if (this->capacity() < n) {
-      vector<T, Allocator> tmp__(n, *this);
+      vector<T, Allocator> tmp__(
+          n, this->begin(), this->end(), this->get_allocator());
       this->swap(tmp__);
     }
   }
@@ -456,10 +460,31 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   iterator insert(iterator pos, const value_type& val) {
+    const size_type n__ = pos - this->begin();
     if (this->finish != this->end_of_storage) {
+      // enough space. no need to realloc
+      if (pos == this->end()) {
+        constructObject_(this->finish, val);
+        ++this->finish;
+      } else {
+        // enough space, but need have to shift elements back
+        constructObject_(this->finish, *(this->finish - 1));
+        ++this->finish;
+        std::copy_backward(
+            pos, iterator(this->finish - 2), iterator(this->finish - 1));
+        *pos = val;
+      }
     } else {
+      // need size overflow check
       const size_type newSize__ = (this->size() << 1) + 1;
+      vector<T, Allocator> tmp__(
+          newSize__, this->begin(), pos, this->get_allocator());
+      constructObject_(tmp__->finish, val);
+      ++tmp__->finish;
+      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+      this->swap(tmp__);
     }
+    return (this->begin() + n__);
   }
 
   // XXX
