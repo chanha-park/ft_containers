@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/25 15:02:51 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/25 18:46:49 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,8 +303,8 @@ class vector : protected vector_base_<T, Allocator> {
         return (*this);
       }
       if (oldSize__ >= newSize__) {
-        iterator it(std::copy(other.begin(), other.end(), this->begin()));
-        destructObject_(it, this->end());
+        iterator it__(std::copy(other.begin(), other.end(), this->begin()));
+        destructObject_(it__, this->end());
       } else {
         std::copy(other.begin(), other.begin() + oldSize__, this->begin());
         std::uninitialized_copy(
@@ -443,12 +443,9 @@ class vector : protected vector_base_<T, Allocator> {
   void assign(InputIter first, InputIter last) {
   }
 
-  // XXX
+  // XXX need test
   void push_back(const value_type& val) {
-  }
-
-  // XXX
-  void push_back(void) {
+    this->insert(this->end(), val);
   }
 
   // XXX need test
@@ -459,6 +456,10 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   iterator insert(iterator pos, const value_type& val) {
+    if (this->finish != this->end_of_storage) {
+    } else {
+      const size_type newSize__ = (this->size() << 1) + 1;
+    }
   }
 
   // XXX
