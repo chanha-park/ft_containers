@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/28 01:58:14 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/28 13:01:17 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,7 +378,7 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX need test
   void reserve(size_type n) {
     if (n > this->max_size())
-      throw(std::length_error("vector"));
+      throw(std::length_error("ft::vector"));
 
     if (this->capacity() < n) {
       vector<T, Allocator> tmp__(
@@ -390,7 +390,7 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX need test
   void resize(size_type n, const value_type& val = value_type()) {
     if (n > this->max_size())
-      throw(std::length_error("vector"));
+      throw(std::length_error("ft::vector"));
 
     if (n < size())
       this->erase(this->begin() + n, this->end());
@@ -458,7 +458,7 @@ class vector : protected vector_base_<T, Allocator> {
     destructObject_(this->finish);
   }
 
-  // XXX
+  // XXX need test
   iterator insert(iterator pos, const value_type& val) {
     const size_type n__ = pos - this->begin();
     if (this->finish != this->end_of_storage) {
@@ -476,7 +476,14 @@ class vector : protected vector_base_<T, Allocator> {
       }
     } else {
       // need size overflow check
-      const size_type newSize__ = (this->size() << 1) + 1;
+      const size_type oldSize__ = this->size();
+      const size_type maxSize__ = this->max_size();
+      if (oldSize__ >= maxSize__)
+        throw(std::length_error("ft::vector"));
+      else if (oldSize__ >= (maxSize__ >> 1))
+        const size_type newSize__ = maxSize__;
+      else
+        const size_type newSize__ = (oldSize__ << 1) + 1;
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
       constructObject_(tmp__->finish, val);
