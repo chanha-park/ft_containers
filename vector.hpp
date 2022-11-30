@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/28 13:01:17 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/11/30 22:09:39 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,6 +251,30 @@ class vector : protected vector_base_<T, Allocator> {
     this->finish = std::uninitialized_copy(first, last, this->start);
   }
 
+  // XXX auxiliary function for range insert.
+  // need optimization?
+  template <typename InputIter>
+  iterator insert_range__(iterator pos,
+                          InputIter first,
+                          InputIter last,
+                          ft::input_iterator_tag) {
+    const difference_type offset__ = pos - this->begin();
+    for (; first != last; ++first) {
+      pos = insert(pos, *first);
+      ++pos;
+    }
+    return (this->begin() + offset__);
+  }
+
+  template <typename ForwardIter>
+  iterator insert_range__(iterator pos,
+                          ForwardIter first,
+                          ForwardIter last,
+                          ft::forward_iterator_tag) {
+    if (first == last)
+      return (pos);
+  }
+
   // private auxiliary functions }}}
 
  public:
@@ -362,9 +386,11 @@ class vector : protected vector_base_<T, Allocator> {
     return (size_type(end() - begin()));
   }
 
-  // XXX
+  // XXX need test
   size_type max_size(void) const {
-    return ((size_type(-1) / sizeof(T)) >> 1);
+    // return ((size_type(-1) / sizeof(T)) >> 1);
+    return (std::min<size_type>(this->data_allocator.max_size(),
+                                std::numeric_limits<difference_type>::max()));
   }
 
   size_type capacity(void) const {
@@ -410,12 +436,18 @@ class vector : protected vector_base_<T, Allocator> {
     return (*(begin() + n));
   }
 
-  // XXX
+  // XXX need test
   reference at(size_type n) {
+    if (n >= this->size())
+      throw(std::out_of_range("ft::vector"));
+    return (this->start[n]);
   }
 
-  // XXX
+  // XXX need test
   const_reference at(size_type n) const {
+    if (n >= this->size())
+      throw(std::out_of_range("ft::vector"));
+    return (this->start[n]);
   }
 
   reference front(void) {
@@ -496,11 +528,25 @@ class vector : protected vector_base_<T, Allocator> {
 
   // XXX
   template <typename InputIter>
-  void insert(iterator pos, InputIter first, InputIter last) {
+  typename ft::enable_if<!ft::is_integral<InputIter>::value, iterator>::type
+  insert(iterator pos, InputIter first, InputIter last) {
+    return (insert_range__(
+        pos,
+        first,
+        last,
+        typename iterator_traits<InputIter>::iterator_category()));
+  }
+
+  // XXX need test. necessary?
+  template <typename InputIter>
+  typename ft::enable_if<ft::is_integral<InputIter>::value, iterator>::type
+  insert(iterator pos, InputIter first, InputIter last) {
+    this->insert(
+        pos, static_cast<size_type>(first), static_cast<value_type>(last));
   }
 
   // XXX
-  void insert(iterator pos, size_type n, const value_type& val) {
+  iterator insert(iterator pos, size_type n, const value_type& val) {
   }
 
   // XXX need test
