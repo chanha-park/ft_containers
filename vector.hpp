@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/30 22:09:39 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/05 21:34:03 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,7 @@ class vector : protected vector_base_<T, Allocator> {
   }
 
   // XXX auxiliary function for range insert.
-  // need optimization?
+  // need test
   template <typename InputIter>
   iterator insert_range__(iterator pos,
                           InputIter first,
@@ -266,13 +266,39 @@ class vector : protected vector_base_<T, Allocator> {
     return (this->begin() + offset__);
   }
 
+  // XXX auxiliary function for range insert.
+  // need test
   template <typename ForwardIter>
   iterator insert_range__(iterator pos,
                           ForwardIter first,
                           ForwardIter last,
                           ft::forward_iterator_tag) {
-    if (first == last)
+    const size_type insertSize__ = ft::distance(first, last);
+    if (insertSize__ == 0)
       return (pos);
+    const size_type offset__ = pos - this->begin();
+    if (size_type(this->end_of_storage - this->finish) >= insertSize__
+        && pos == this->end()) {
+      for (; first != last; ++first) {
+        constructObject_(this->finish, *first);
+        ++this->finish;
+      }
+    } else {
+      const size_type oldSize__ = this->size();
+      const size_type maxSize__ = this->max_size();
+      if (insertSize__ >= maxSize__ - oldSize__)
+        throw(std::length_error("ft::vector"));
+      const size_type newSize__ = oldSize__ + insertSize__;
+      vector<T, Allocator> tmp__(
+          newSize__, this->begin(), pos, this->get_allocator());
+      for (; first != last; ++first) {
+        constructObject_(tmp__->finish, *first);
+        ++tmp__->finish;
+      }
+      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+      this->swap(tmp__);
+    }
+    return (this->begin() + offset__);
   }
 
   // private auxiliary functions }}}
@@ -470,13 +496,35 @@ class vector : protected vector_base_<T, Allocator> {
 
   // modifiers {{{
 
-  // XXX
+  // XXX need test
   void assign(size_type n, const value_type& val) {
+    if (n > this->capacity()) {
+      vector<T, Allocator> tmp__(n, val, this->get_allocator());
+      this->swap(tmp__);
+    } else if (n > this->size()) {
+      std::fill(this->begin(), this->end(), val);
+      std::uninitialized_fill_n(this->finish, n - this->size(), val);
+      this->finish = this->start + n;
+    } else
+      std::fill_n(this->begin(), n, val);
+    this->erase(this->begin + n, this->end());
   }
 
   // XXX
   template <typename InputIter>
-  void assign(InputIter first, InputIter last) {
+  typename ft::enable_if<!ft::is_integral<InputIter>::value, void>::type assign(
+      InputIter first,
+      InputIter last) {
+    this->assign_range__(
+        first, last, typename iterator_traits<InputIter>::iterator_category());
+  }
+
+  // XXX need test. necessary?
+  template <typename InputIter>
+  typename ft::enable_if<ft::is_integral<InputIter>::value, void>::type assign(
+      InputIter first,
+      InputIter last) {
+    this->assign(static_cast<size_type>(first), static_cast<value_type>(last));
   }
 
   // XXX need test
@@ -507,15 +555,13 @@ class vector : protected vector_base_<T, Allocator> {
         *pos = val;
       }
     } else {
-      // need size overflow check
       const size_type oldSize__ = this->size();
       const size_type maxSize__ = this->max_size();
       if (oldSize__ >= maxSize__)
         throw(std::length_error("ft::vector"));
-      else if (oldSize__ >= (maxSize__ >> 1))
-        const size_type newSize__ = maxSize__;
-      else
-        const size_type newSize__ = (oldSize__ << 1) + 1;
+      const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
+                                      ? maxSize__
+                                      : ((oldSize__ << 1) + 1);
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
       constructObject_(tmp__->finish, val);
@@ -526,11 +572,11 @@ class vector : protected vector_base_<T, Allocator> {
     return (this->begin() + n__);
   }
 
-  // XXX
+  // XXX need test
   template <typename InputIter>
   typename ft::enable_if<!ft::is_integral<InputIter>::value, iterator>::type
   insert(iterator pos, InputIter first, InputIter last) {
-    return (insert_range__(
+    return (this->insert_range__(
         pos,
         first,
         last,
@@ -545,8 +591,35 @@ class vector : protected vector_base_<T, Allocator> {
         pos, static_cast<size_type>(first), static_cast<value_type>(last));
   }
 
-  // XXX
+  // XXX need test
   iterator insert(iterator pos, size_type n, const value_type& val) {
+    if (n == 0)
+      return (pos);
+    const size_type offset__ = pos - this->begin();
+    if (size_type(this->end_of_storage - this->finish) >= n
+        && pos == this->end()) {
+      while (n > 0) {
+        constructObject_(this->finish, val);
+        ++this->finish;
+        --n;
+      }
+    } else {
+      const size_type oldSize__ = this->size();
+      const size_type maxSize__ = this->max_size();
+      if (n >= maxSize__ - oldSize__)
+        throw(std::length_error("ft::vector"));
+      const size_type newSize__ = oldSize__ + n;
+      vector<T, Allocator> tmp__(
+          newSize__, this->begin(), pos, this->get_allocator());
+      while (n > 0) {
+        constructObject_(tmp__->finish, val);
+        ++tmp__->finish;
+        --n;
+      }
+      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+      this->swap(tmp__);
+    }
+    return (this->begin() + offset__);
   }
 
   // XXX need test
