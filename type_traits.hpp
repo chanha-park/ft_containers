@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/11/25 11:49:54 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 16:40:05 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,16 @@ struct is_trivially_destructible :
                                      || ft::is_pointer<T>::value> {};
 
 // is_trivially_destructible }}}
+
+// is_same {{{
+
+template <typename T, typename U>
+struct is_same : ft::false_type {};
+
+template <typename T>
+struct is_same<T, T> : ft::true_type {};
+
+// is_same }}}
 
 }  // namespace ft
 
