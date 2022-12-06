@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 19:55:37 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 21:36:01 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define FT_CONTAINERS_VECTOR_HPP
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include "algorithm.hpp"
 #include "iterator.hpp"
@@ -363,9 +364,43 @@ class vector : protected vector_base_<T, Allocator> {
   }
 
   template <typename InputIter>
-  vector(InputIter first,
+  vector(typename ft::enable_if<is_integral<InputIter>::value, InputIter>::type
+             first,
          InputIter last,
          const allocator_type& alloc = allocator_type()) :
+      Base_(static_cast<size_type>(first), alloc) {
+    const size_type n = static_cast<size_type>(first);
+    const value_type val = static_cast<value_type>(last);
+
+    std::uninitialized_fill_n(this->start, n, val);
+    this->finish = this->start + n;
+  }
+
+  // Base_(ft::distance(first, last), alloc) {
+  // typename iterator_traits<InputIter>::iterator_category();
+  template <typename InputIter>
+  vector(
+      typename ft::enable_if<
+          !is_integral<InputIter>::value
+              && is_same<typename iterator_traits<InputIter>::iterator_category,
+                         ft::input_iterator_tag>::value,
+          InputIter>::type first,
+      InputIter last,
+      const allocator_type& alloc = allocator_type()) :
+      Base_(alloc) {
+    for (; first != last; ++first)
+      push_back(*first);
+  }
+
+  template <typename InputIter>
+  vector(
+      typename ft::enable_if<!is_integral<InputIter>::value
+                                 && !is_same<typename iterator_traits<
+                                                 InputIter>::iterator_category,
+                                             ft::input_iterator_tag>::value,
+                             InputIter>::type first,
+      InputIter last,
+      const allocator_type& alloc = allocator_type()) :
       Base_(ft::distance(first, last), alloc) {
     this->finish = &*std::uninitialized_copy(first, last, this->start);
   }
@@ -544,7 +579,7 @@ class vector : protected vector_base_<T, Allocator> {
       this->finish = this->start + n;
     } else {
       std::fill_n(this->begin(), n, val);
-      this->erase(this->begin + n, this->end());
+      this->erase(this->begin() + n, this->end());
     }
   }
 
@@ -625,8 +660,8 @@ class vector : protected vector_base_<T, Allocator> {
   template <typename InputIter>
   typename ft::enable_if<ft::is_integral<InputIter>::value, iterator>::type
   insert(iterator pos, InputIter first, InputIter last) {
-    this->insert(
-        pos, static_cast<size_type>(first), static_cast<value_type>(last));
+    return (this->insert(
+        pos, static_cast<size_type>(first), static_cast<value_type>(last)));
   }
 
   // XXX need test
