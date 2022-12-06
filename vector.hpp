@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/05 21:34:03 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 19:55:37 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ class vector : protected vector_base_<T, Allocator> {
          InputIter last,
          const allocator_type& alloc) :
       Base_(n, alloc) {
-    this->finish = std::uninitialized_copy(first, last, this->start);
+    this->finish = &*std::uninitialized_copy(first, last, this->start);
   }
 
   // XXX auxiliary function for range insert.
@@ -292,13 +292,50 @@ class vector : protected vector_base_<T, Allocator> {
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
       for (; first != last; ++first) {
-        constructObject_(tmp__->finish, *first);
-        ++tmp__->finish;
+        constructObject_(tmp__.finish, *first);
+        ++tmp__.finish;
       }
-      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+
+      tmp__.finish = &*std::uninitialized_copy(pos, this->end(), tmp__.end());
       this->swap(tmp__);
     }
     return (this->begin() + offset__);
+  }
+
+  template <typename InputIter>
+  void assign_range__(InputIter first, InputIter last, ft::input_iterator_tag) {
+    iterator cur__(this->begin());
+
+    for (; first != last && cur__ != this->end(); ++cur__, ++first)
+      *cur__ = *first;
+    if (first == last)
+      this->erase(cur__, this->end());
+    else
+      this->insert(this->end(), first, last);
+  }
+
+  template <typename ForwardIter>
+  void assign_range__(ForwardIter first,
+                      ForwardIter last,
+                      ft::forward_iterator_tag) {
+    const size_type oldSize__ = this->size();
+    const size_type newSize__ = ft::distance(first, last);
+    if (newSize__ == 0)
+      return;
+
+    if (newSize__ > this->capacity()) {
+      vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());
+      this->swap(tmp__);
+      return;
+    }
+    if (this->size() >= newSize__) {
+      iterator it__(std::copy(first, last, this->begin()));
+      destructObject_(it__, this->end());
+    } else {
+      std::copy(first, first + oldSize__, this->begin());
+      std::uninitialized_copy(first + oldSize__, last, this->end());
+    }
+    this->finish = this->start + newSize__;
   }
 
   // private auxiliary functions }}}
@@ -322,7 +359,7 @@ class vector : protected vector_base_<T, Allocator> {
   vector(const vector<T, Allocator>& other) :
       Base_(other.size(), other.get_allocator()) {
     this->finish
-        = std::uninitialized_copy(other.begin(), other.end(), this->start);
+        = &*std::uninitialized_copy(other.begin(), other.end(), this->start);
   }
 
   template <typename InputIter>
@@ -330,7 +367,7 @@ class vector : protected vector_base_<T, Allocator> {
          InputIter last,
          const allocator_type& alloc = allocator_type()) :
       Base_(ft::distance(first, last), alloc) {
-    this->finish = std::uninitialized_copy(first, last, this->start);
+    this->finish = &*std::uninitialized_copy(first, last, this->start);
   }
 
   // constructor }}}
@@ -505,12 +542,13 @@ class vector : protected vector_base_<T, Allocator> {
       std::fill(this->begin(), this->end(), val);
       std::uninitialized_fill_n(this->finish, n - this->size(), val);
       this->finish = this->start + n;
-    } else
+    } else {
       std::fill_n(this->begin(), n, val);
-    this->erase(this->begin + n, this->end());
+      this->erase(this->begin + n, this->end());
+    }
   }
 
-  // XXX
+  // XXX need test
   template <typename InputIter>
   typename ft::enable_if<!ft::is_integral<InputIter>::value, void>::type assign(
       InputIter first,
@@ -564,9 +602,9 @@ class vector : protected vector_base_<T, Allocator> {
                                       : ((oldSize__ << 1) + 1);
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
-      constructObject_(tmp__->finish, val);
-      ++tmp__->finish;
-      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+      constructObject_(tmp__.finish, val);
+      ++tmp__.finish;
+      tmp__.finish = &*std::uninitialized_copy(pos, this->end(), tmp__.end());
       this->swap(tmp__);
     }
     return (this->begin() + n__);
@@ -612,11 +650,11 @@ class vector : protected vector_base_<T, Allocator> {
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
       while (n > 0) {
-        constructObject_(tmp__->finish, val);
-        ++tmp__->finish;
+        constructObject_(tmp__.finish, val);
+        ++tmp__.finish;
         --n;
       }
-      tmp__->finish = std::uninitialized_copy(pos, this->end(), tmp__->end());
+      tmp__.finish = &*std::uninitialized_copy(pos, this->end(), tmp__.end());
       this->swap(tmp__);
     }
     return (this->begin() + offset__);
