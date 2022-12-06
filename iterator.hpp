@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/05 21:37:11 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 16:22:31 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,94 +332,6 @@ template <typename ForwardIter>
 void destructObject_(ForwardIter first, ForwardIter last) {
   ft::destruct_<ForwardIter>(first, last);
 }
-
-// is_input_iterator {{{
-
-template <typename Iter>
-struct is_input_iterator_internal : public ft::false_type {};
-
-template <>
-struct is_input_iterator_internal<ft::input_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_input_iterator_internal<ft::forward_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_input_iterator_internal<ft::bidirectional_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_input_iterator_internal<ft::random_access_iterator_tag> :
-    public ft::true_type {};
-
-template <typename Iter>
-struct is_input_iterator :
-    public ft::is_input_iterator_internal<typename ft::iterator_traits<
-        typename ft::remove_cv<Iter>::type>::iterator_category> {};
-
-// is_input_iterator }}}
-
-// is_forward_iterator {{{
-
-template <typename Iter>
-struct is_forward_iterator_internal : public ft::false_type {};
-
-template <>
-struct is_forward_iterator_internal<ft::forward_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_forward_iterator_internal<ft::bidirectional_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_forward_iterator_internal<ft::random_access_iterator_tag> :
-    public ft::true_type {};
-
-template <typename Iter>
-struct is_forward_iterator :
-    public ft::is_forward_iterator_internal<typename ft::iterator_traits<
-        typename ft::remove_cv<Iter>::type>::iterator_category> {};
-
-// is_forward_iterator }}}
-
-// is_bidirectional_iterator {{{
-
-template <typename Iter>
-struct is_bidirectional_iterator_internal : public ft::false_type {};
-
-template <>
-struct is_bidirectional_iterator_internal<ft::bidirectional_iterator_tag> :
-    public ft::true_type {};
-
-template <>
-struct is_bidirectional_iterator_internal<ft::random_access_iterator_tag> :
-    public ft::true_type {};
-
-template <typename Iter>
-struct is_bidirectional_iterator :
-    public ft::is_bidirectional_iterator_internal<typename ft::iterator_traits<
-        typename ft::remove_cv<Iter>::type>::iterator_category> {};
-
-// is_bidirectional_iterator }}}
-
-// is_random_access_iterator {{{
-
-template <typename Iter>
-struct is_random_access_iterator_internal : public ft::false_type {};
-
-template <>
-struct is_random_access_iterator_internal<ft::random_access_iterator_tag> :
-    public ft::true_type {};
-
-template <typename Iter>
-struct is_random_access_iterator :
-    public ft::is_random_access_iterator_internal<typename ft::iterator_traits<
-        typename ft::remove_cv<Iter>::type>::iterator_category> {};
-
-// is_random_access_iterator }}}
 
 }  // namespace ft
 
