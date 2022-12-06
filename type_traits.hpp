@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 16:40:05 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 22:28:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,13 +201,13 @@ struct is_reference<T&> : public ft::true_type {};
 
 // is_array {{{
 
-template <class T>
+template <typename T>
 struct is_array : public ft::false_type {};
 
-template <class T>
+template <typename T>
 struct is_array<T[]> : public ft::true_type {};
 
-template <class T, size_t N>
+template <typename T, size_t N>
 struct is_array<T[N]> : public ft::true_type {};
 
 // is_array }}}

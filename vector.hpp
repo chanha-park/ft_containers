@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 21:36:01 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 22:34:16 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,8 +321,8 @@ class vector : protected vector_base_<T, Allocator> {
                       ft::forward_iterator_tag) {
     const size_type oldSize__ = this->size();
     const size_type newSize__ = ft::distance(first, last);
-    if (newSize__ == 0)
-      return;
+    // if (newSize__ == 0)
+    //   return;
 
     if (newSize__ > this->capacity()) {
       vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());

@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 21:42:08 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 22:29:47 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,83 @@ typedef std::random_access_iterator_tag random_access_iterator_tag;
 
 // iterator tags }}}
 
+// has_iterator_typedef__ {{{
+
+template <typename T>
+struct has_iterator_typedef__ {
+ private:
+  struct two__ {
+    char dummy__[2];
+  };
+
+  template <typename>
+  struct void_t__ {
+    typedef void type;
+  };
+
+  template <typename U>
+  static two__ test__(...);
+
+  template <typename U>
+  static char test__(
+      typename void_t__<typename U::iterator_category>::type* = 0,
+      typename void_t__<typename U::difference_type>::type* = 0,
+      typename void_t__<typename U::value_type>::type* = 0,
+      typename void_t__<typename U::reference>::type* = 0,
+      typename void_t__<typename U::pointer>::type* = 0);
+
+ public:
+  static const bool value = sizeof(test__<T>(0, 0, 0, 0, 0)) == 1;
+};
+
+// has_iterator_typedef__ }}}
+
+// is_iterator {{{
+
+template <typename T>
+struct is_iterator : ft::false_type {};
+
+template <>
+struct is_iterator<ft::input_iterator_tag> : ft::true_type {};
+
+template <>
+struct is_iterator<ft::output_iterator_tag> : ft::true_type {};
+
+template <>
+struct is_iterator<ft::forward_iterator_tag> : ft::true_type {};
+
+template <>
+struct is_iterator<ft::bidirectional_iterator_tag> : ft::true_type {};
+
+template <>
+struct is_iterator<ft::random_access_iterator_tag> : ft::true_type {};
+
+// is_iterator }}}
+
+template <typename Iterator, bool>
+struct iterator_traits_internal {};
+
 template <typename Iterator>
-struct iterator_traits {
+struct iterator_traits_internal<Iterator, true> {
   typedef typename Iterator::difference_type difference_type;
   typedef typename Iterator::value_type value_type;
   typedef typename Iterator::pointer pointer;
   typedef typename Iterator::reference reference;
   typedef typename Iterator::iterator_category iterator_category;
 };
+
+template <typename Iterator, bool>
+struct iterator_traits__ {};
+
+template <typename Iterator>
+struct iterator_traits__<Iterator, true> :
+    iterator_traits_internal<
+        Iterator,
+        ft::is_iterator<typename Iterator::iterator_category>::value> {};
+
+template <typename Iterator>
+struct iterator_traits :
+    iterator_traits__<Iterator, ft::has_iterator_typedef__<Iterator>::value> {};
 
 template <typename T>
 struct iterator_traits<T*> {
