@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 16:22:31 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/06 21:42:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "type_traits.hpp"
 
 namespace ft {
+
+// iterator tags {{{
 
 // struct input_iterator_tag {};
 
@@ -37,6 +39,8 @@ typedef std::forward_iterator_tag forward_iterator_tag;
 typedef std::bidirectional_iterator_tag bidirectional_iterator_tag;
 
 typedef std::random_access_iterator_tag random_access_iterator_tag;
+
+// iterator tags }}}
 
 template <typename Iterator>
 struct iterator_traits {
