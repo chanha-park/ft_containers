@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 22:34:16 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/07 21:54:29 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,11 +187,13 @@ class vector_base_ {
       data_allocator(x), start(0), finish(0), end_of_storage(0) {
   }
 
-  vector_base_(size_t n, const allocator_type& x) :
+  vector_base_(size_t n, const allocator_type& x) try :
       data_allocator(x),
       start(data_allocator.allocate(n)),
       finish(start),
       end_of_storage(start + n) {
+  } catch (const std::exception& e) {
+    throw(std::length_error("ft::vector"));
   }
 
   T* allocate_(size_t n) {
@@ -321,8 +323,6 @@ class vector : protected vector_base_<T, Allocator> {
                       ft::forward_iterator_tag) {
     const size_type oldSize__ = this->size();
     const size_type newSize__ = ft::distance(first, last);
-    // if (newSize__ == 0)
-    //   return;
 
     if (newSize__ > this->capacity()) {
       vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());
