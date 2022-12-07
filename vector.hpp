@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/07 21:54:29 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/07 22:36:21 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,6 +321,30 @@ class vector : protected vector_base_<T, Allocator> {
   void assign_range__(ForwardIter first,
                       ForwardIter last,
                       ft::forward_iterator_tag) {
+    const size_type oldSize__ = this->size();
+    const size_type newSize__ = ft::distance(first, last);
+
+    if (newSize__ > this->capacity()) {
+      vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());
+      this->swap(tmp__);
+      return;
+    }
+    if (oldSize__ >= newSize__) {
+      iterator it__(std::copy(first, last, this->begin()));
+      destructObject_(it__, this->end());
+    } else {
+      ForwardIter mid__(first);
+      ft::advance(mid__, oldSize__);
+      std::copy(first, mid__, this->begin());
+      std::uninitialized_copy(mid__, last, this->end());
+    }
+    this->finish = this->start + newSize__;
+  }
+
+  template <typename RandIter>
+  void assign_range__(RandIter first,
+                      RandIter last,
+                      ft::random_access_iterator_tag) {
     const size_type oldSize__ = this->size();
     const size_type newSize__ = ft::distance(first, last);
 
