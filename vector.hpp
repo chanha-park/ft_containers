@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/07 22:36:21 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/08 21:05:29 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,6 @@ class vector_iterator :
   }
 
   vector_iterator operator+(const difference_type& n) const {
-    // vector_iterator tmp__(current + n);
-    // return (tmp__);
     return (vector_iterator(current + n));
   }
 
@@ -221,6 +219,7 @@ class vector : protected vector_base_<T, Allocator> {
 
  public:
   // member types {{{
+
   typedef T value_type;
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
@@ -241,7 +240,6 @@ class vector : protected vector_base_<T, Allocator> {
   // member types }}}
 
  private:
-  // XXX implement auxiliary functions
   // private auxiliary functions {{{
 
   // auxiliary constructor for private use. n > last - first
@@ -254,8 +252,7 @@ class vector : protected vector_base_<T, Allocator> {
     this->finish = &*std::uninitialized_copy(first, last, this->start);
   }
 
-  // XXX auxiliary function for range insert.
-  // need test
+  // XXX need test
   template <typename InputIter>
   iterator insert_range__(iterator pos,
                           InputIter first,
@@ -269,8 +266,7 @@ class vector : protected vector_base_<T, Allocator> {
     return (this->begin() + offset__);
   }
 
-  // XXX auxiliary function for range insert.
-  // need test
+  // XXX need test
   template <typename ForwardIter>
   iterator insert_range__(iterator pos,
                           ForwardIter first,
