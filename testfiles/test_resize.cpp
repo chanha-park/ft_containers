@@ -19,11 +19,11 @@ std::vector<int> resize_test(std::vector<T> vector) {
   v.push_back(vector.size());
   v.push_back(vector.capacity());
   v.push_back(vector[65]);
-  return v;
+  return vector;
 }
 
 template <typename T>
-std::vector<int> resize_test(ft::vector<T> vector) {
+ft::vector<int> resize_test(ft::vector<T> vector) {
   std::vector<int> v;
   vector.assign(9900 * _ratio, 1);
   vector.resize(5000 * _ratio);
@@ -37,26 +37,26 @@ std::vector<int> resize_test(ft::vector<T> vector) {
   v.push_back(vector.size());
   v.push_back(vector.capacity());
   v.push_back(vector[65]);
-  return v;
+  return vector;
 }
 
 template <class T>
 int run_vector_unit_test(std::string test_name,
                          std::vector<int>(func1)(std::vector<T>),
-                         std::vector<int>(func2)(ft::vector<T>)) {
+                         ft::vector<int>(func2)(ft::vector<T>)) {
   int result;
   // int leaks;
   // time_t t1;
   // time_t t2;
   (void)test_name;
   std::vector<int> res1;
-  std::vector<int> res2;
+  ft::vector<int> res2;
   std::vector<int> vector;
   ft::vector<int> my_vector;
 
   res1 = func1(vector);
   res2 = func2(my_vector);
-  if (res1 == res2) {
+  if (res2 == res1) {
     std::cout << "OK" << std::endl;
     result = 0;
   } else {
