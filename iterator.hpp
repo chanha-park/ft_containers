@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/06 22:29:47 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/09 11:57:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,27 +73,27 @@ struct has_iterator_typedef__ {
 
 // has_iterator_typedef__ }}}
 
-// is_iterator {{{
+// is_iterator_tag {{{
 
 template <typename T>
-struct is_iterator : ft::false_type {};
+struct is_iterator_tag : ft::false_type {};
 
 template <>
-struct is_iterator<ft::input_iterator_tag> : ft::true_type {};
+struct is_iterator_tag<ft::input_iterator_tag> : ft::true_type {};
 
 template <>
-struct is_iterator<ft::output_iterator_tag> : ft::true_type {};
+struct is_iterator_tag<ft::output_iterator_tag> : ft::true_type {};
 
 template <>
-struct is_iterator<ft::forward_iterator_tag> : ft::true_type {};
+struct is_iterator_tag<ft::forward_iterator_tag> : ft::true_type {};
 
 template <>
-struct is_iterator<ft::bidirectional_iterator_tag> : ft::true_type {};
+struct is_iterator_tag<ft::bidirectional_iterator_tag> : ft::true_type {};
 
 template <>
-struct is_iterator<ft::random_access_iterator_tag> : ft::true_type {};
+struct is_iterator_tag<ft::random_access_iterator_tag> : ft::true_type {};
 
-// is_iterator }}}
+// is_iterator_tag }}}
 
 template <typename Iterator, bool>
 struct iterator_traits_internal {};
@@ -114,7 +114,7 @@ template <typename Iterator>
 struct iterator_traits__<Iterator, true> :
     iterator_traits_internal<
         Iterator,
-        ft::is_iterator<typename Iterator::iterator_category>::value> {};
+        ft::is_iterator_tag<typename Iterator::iterator_category>::value> {};
 
 template <typename Iterator>
 struct iterator_traits :
