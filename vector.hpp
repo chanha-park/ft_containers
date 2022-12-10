@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/08 21:05:29 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/10 15:05:46 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -689,12 +689,30 @@ class vector : protected vector_base_<T, Allocator> {
     if (n == 0)
       return (pos);
     const size_type offset__ = pos - this->begin();
-    if (size_type(this->end_of_storage - this->finish) >= n
-        && pos == this->end()) {
-      while (n > 0) {
-        constructObject_(this->finish, val);
-        ++this->finish;
-        --n;
+    if (size_type(this->end_of_storage - this->finish) >= n) {
+      if (pos == this->end()) {
+        while (n > 0) {
+          constructObject_(this->finish, val);
+          ++this->finish;
+          --n;
+        }
+        // need to check logic else if, else case. + optimize
+      } else if (n < size_type(this->end() - pos)) {
+        iterator mid__(this->finish - n);
+        this->finish
+            = &*std::uninitialized_copy(mid__, this->end(), this->end());
+        std::copy(pos, mid__, pos + n);
+        std::fill(pos, pos + n, val);
+      } else {
+        iterator oldEnd__ = this->end();
+        pointer mid__ = (&*pos) + n;
+        while (this->finish != mid__) {
+          constructObject_(this->finish, val);
+          ++this->finish;
+        }
+        // std::uninitialized_fill(this->end(), pos + n, val);
+        this->finish = &*std::uninitialized_copy(pos, oldEnd__, pos + n);
+        std::fill(pos, oldEnd__, val);
       }
     } else {
       const size_type oldSize__ = this->size();
