@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/10 15:05:46 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/12 14:38:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,7 +305,7 @@ class vector : protected vector_base_<T, Allocator> {
   void assign_range__(InputIter first, InputIter last, ft::input_iterator_tag) {
     iterator cur__(this->begin());
 
-    for (; first != last && cur__ != this->end(); ++cur__, ++first)
+    for (; first != last && cur__ != this->end(); ++cur__, (void)++first)
       *cur__ = *first;
     if (first == last)
       this->erase(cur__, this->end());
