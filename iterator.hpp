@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/09 11:57:13 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/12 21:33:50 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,16 @@ struct has_iterator_typedef__ {
   };
 
   template <typename U>
-  static two__ test__(...);
+  static two__
+  test__(...);
 
   template <typename U>
-  static char test__(
-      typename void_t__<typename U::iterator_category>::type* = 0,
-      typename void_t__<typename U::difference_type>::type* = 0,
-      typename void_t__<typename U::value_type>::type* = 0,
-      typename void_t__<typename U::reference>::type* = 0,
-      typename void_t__<typename U::pointer>::type* = 0);
+  static char
+  test__(typename void_t__<typename U::iterator_category>::type* = 0,
+         typename void_t__<typename U::difference_type>::type* = 0,
+         typename void_t__<typename U::value_type>::type* = 0,
+         typename void_t__<typename U::reference>::type* = 0,
+         typename void_t__<typename U::pointer>::type* = 0);
 
  public:
   static const bool value = sizeof(test__<T>(0, 0, 0, 0, 0)) == 1;
@@ -154,13 +155,15 @@ struct iterator {
 // advance {{{
 
 template <typename InputIter, typename Distance>
-void advance__(InputIter& i, Distance n, input_iterator_tag) {
+void
+advance__(InputIter& i, Distance n, input_iterator_tag) {
   for (; n > 0; --n)
     ++i;
 }
 
 template <typename BidirectionalIter, typename Distance>
-void advance__(BidirectionalIter& i, Distance n, bidirectional_iterator_tag) {
+void
+advance__(BidirectionalIter& i, Distance n, bidirectional_iterator_tag) {
   if (n >= 0)
     for (; n > 0; --n)
       ++i;
@@ -170,12 +173,14 @@ void advance__(BidirectionalIter& i, Distance n, bidirectional_iterator_tag) {
 }
 
 template <typename RandomIter, typename Distance>
-void advance__(RandomIter& i, Distance n, random_access_iterator_tag) {
+void
+advance__(RandomIter& i, Distance n, random_access_iterator_tag) {
   i += n;
 }
 
 template <typename InputIter, typename Distance>
-void advance(InputIter& i, Distance n) {
+void
+advance(InputIter& i, Distance n) {
   advance__(i, n, typename iterator_traits<InputIter>::iterator_category());
 }
 
@@ -199,8 +204,8 @@ distance__(RandomIter first, RandomIter last, random_access_iterator_tag) {
 }
 
 template <typename InputIter>
-typename iterator_traits<InputIter>::difference_type distance(InputIter first,
-                                                              InputIter last) {
+typename iterator_traits<InputIter>::difference_type
+distance(InputIter first, InputIter last) {
   return (distance__(
       first, last, typename iterator_traits<InputIter>::iterator_category()));
 }
@@ -243,65 +248,78 @@ class reverse_iterator :
   }
 
   template <typename U>
-  reverse_iterator& operator=(const reverse_iterator<U>& u) {
+  reverse_iterator&
+  operator=(const reverse_iterator<U>& u) {
     current = u.base();
     return (*this);
   }
 
-  iterator_type base(void) const {
+  iterator_type
+  base(void) const {
     return (current);
   }
 
-  reference operator*(void) const {
+  reference
+  operator*(void) const {
     iterator_type tmp__ = current;
     return (*--tmp__);
   }
 
-  pointer operator->(void) const {
+  pointer
+  operator->(void) const {
     return (&(operator*()));
   }
 
-  reverse_iterator& operator++(void) {
+  reverse_iterator&
+  operator++(void) {
     --current;
     return (*this);
   }
 
-  reverse_iterator operator++(int) {
+  reverse_iterator
+  operator++(int) {
     reverse_iterator tmp__(*this);
     --current;
     return (tmp__);
   }
 
-  reverse_iterator& operator--(void) {
+  reverse_iterator&
+  operator--(void) {
     ++current;
     return (*this);
   }
 
-  reverse_iterator operator--(int) {
+  reverse_iterator
+  operator--(int) {
     reverse_iterator tmp__(*this);
     ++current;
     return (tmp__);
   }
 
-  reverse_iterator operator+(difference_type n) const {
+  reverse_iterator
+  operator+(difference_type n) const {
     return (reverse_iterator(current - n));
   }
 
-  reverse_iterator& operator+=(difference_type n) {
+  reverse_iterator&
+  operator+=(difference_type n) {
     current -= n;
     return (*this);
   }
 
-  reverse_iterator operator-(difference_type n) const {
+  reverse_iterator
+  operator-(difference_type n) const {
     return (reverse_iterator(current + n));
   }
 
-  reverse_iterator& operator-=(difference_type n) {
+  reverse_iterator&
+  operator-=(difference_type n) {
     current += n;
     return (*this);
   }
 
-  reference operator[](difference_type n) const {
+  reference
+  operator[](difference_type n) const {
     return (*(*this + n));
   }
 };
@@ -311,38 +329,38 @@ class reverse_iterator :
 // reverse_iterator: relational operators {{{2
 
 template <typename Iter1, typename Iter2>
-bool operator==(const reverse_iterator<Iter1>& x,
-                const reverse_iterator<Iter2>& y) {
+bool
+operator==(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (x.base() == y.base());
 }
 
 template <typename Iter1, typename Iter2>
-bool operator!=(const reverse_iterator<Iter1>& x,
-                const reverse_iterator<Iter2>& y) {
+bool
+operator!=(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (!(x == y));
 }
 
 template <typename Iter1, typename Iter2>
-bool operator<(const reverse_iterator<Iter1>& x,
-               const reverse_iterator<Iter2>& y) {
+bool
+operator<(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (y.base() < x.base());
 }
 
 template <typename Iter1, typename Iter2>
-bool operator<=(const reverse_iterator<Iter1>& x,
-                const reverse_iterator<Iter2>& y) {
+bool
+operator<=(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (!(y < x));
 }
 
 template <typename Iter1, typename Iter2>
-bool operator>(const reverse_iterator<Iter1>& x,
-               const reverse_iterator<Iter2>& y) {
+bool
+operator>(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (y < x);
 }
 
 template <typename Iter1, typename Iter2>
-bool operator>=(const reverse_iterator<Iter1>& x,
-                const reverse_iterator<Iter2>& y) {
+bool
+operator>=(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (!(x < y));
 }
 
@@ -351,16 +369,15 @@ bool operator>=(const reverse_iterator<Iter1>& x,
 // reverse_iterator: addition, subtraction operators {{{
 
 template <typename Iter1, typename Iter2>
-typename reverse_iterator<Iter1>::difference_type operator-(
-    const reverse_iterator<Iter1>& x,
-    const reverse_iterator<Iter2>& y) {
+typename reverse_iterator<Iter1>::difference_type
+operator-(const reverse_iterator<Iter1>& x, const reverse_iterator<Iter2>& y) {
   return (y.base() - x.base());
 }
 
 template <typename Iterator>
-reverse_iterator<Iterator> operator+(
-    typename reverse_iterator<Iterator>::difference_type n,
-    const reverse_iterator<Iterator>& x) {
+reverse_iterator<Iterator>
+operator+(typename reverse_iterator<Iterator>::difference_type n,
+          const reverse_iterator<Iterator>& x) {
   return (reverse_iterator<Iterator>(x.base() - n));
 }
 
@@ -369,40 +386,42 @@ reverse_iterator<Iterator> operator+(
 // reverse iterator }}}
 
 template <typename T1, typename T2>
-void constructObject_(T1* p, const T2& value) {
+void
+constructObject_(T1* p, const T2& value) {
   new (static_cast<void*>(p)) T1(value);
 }
 
 template <typename T>
-void constructObject_(T* p) {
+void
+constructObject_(T* p) {
   new (static_cast<void*>(p)) T();
 }
 
 template <typename T>
-void destructObject_(T* p) {
+void
+destructObject_(T* p) {
   p->~T();
 }
 
 template <typename ForwardIter>
-typename ft::enable_if<
-    !ft::is_trivially_destructible<
-        typename ft::iterator_traits<ForwardIter>::value_type>::value,
-    void>::type
+typename ft::enable_if<!ft::has_trivial_destructor<typename ft::iterator_traits<
+                           ForwardIter>::value_type>::value,
+                       void>::type
 destruct_(ForwardIter first, ForwardIter last) {
   for (; first != last; ++first)
     ft::destructObject_(&*first);
 }
 
 template <typename ForwardIter>
-typename ft::enable_if<
-    ft::is_trivially_destructible<
-        typename ft::iterator_traits<ForwardIter>::value_type>::value,
-    void>::type
+typename ft::enable_if<ft::has_trivial_destructor<typename ft::iterator_traits<
+                           ForwardIter>::value_type>::value,
+                       void>::type
 destruct_(ForwardIter, ForwardIter) {
 }
 
 template <typename ForwardIter>
-void destructObject_(ForwardIter first, ForwardIter last) {
+void
+destructObject_(ForwardIter first, ForwardIter last) {
   ft::destruct_<ForwardIter>(first, last);
 }
 
