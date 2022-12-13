@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/12 23:03:18 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/13 18:04:21 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,8 +210,9 @@ class vector_base_ {
       start(data_allocator.allocate(n)),
       finish(start),
       end_of_storage(start + n) {
-  } catch (const std::exception& e) {
-    throw(std::length_error("ft::vector"));
+  } catch (...) {
+    throw;
+    // throw(std::length_error("ft::vector"));
   }
 
   T*
@@ -662,7 +663,7 @@ class vector : protected vector_base_<T, Allocator> {
           this->finish, n - this->size(), val, this->data_allocator);
       this->finish = this->start + n;
     } else {
-      // std::fill_n(this->begin(), n, val);
+      std::fill_n(this->begin(), n, val);
       this->erase(this->begin() + n, this->end());
     }
   }
@@ -833,7 +834,7 @@ class vector : protected vector_base_<T, Allocator> {
 
   void
   swap(vector<T, Allocator>& other) {
-	std::swap(this->data_allocator, other.data_allocator);  // XXX swap alloc ?
+    std::swap(this->data_allocator, other.data_allocator);  // XXX swap alloc ?
     std::swap(this->start, other.start);
     std::swap(this->finish, other.finish);
     std::swap(this->end_of_storage, other.end_of_storage);

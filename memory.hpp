@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/12 21:59:48 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/13 17:57:36 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,49 +25,54 @@ addressof(T& val) throw() {
       &const_cast<char&>(reinterpret_cast<const volatile char&>(val))));
 }
 
-template <typename T, typename Allocator>
-typename ft::enable_if<ft::has_trivial_destructor<T>::value, void>::type
-destroy_at(T*, Allocator) {
-}
+// template <typename T, typename Allocator>
+// typename ft::enable_if<ft::has_trivial_destructor<T>::value, void>::type
+// destroy_at(T*, Allocator) {
+// }
 
+// typename ft::enable_if<!ft::has_trivial_destructor<T>::value, void>::type
 template <typename T, typename Allocator>
-typename ft::enable_if<!ft::has_trivial_destructor<T>::value, void>::type
+void
 destroy_at(T* p, Allocator alloc) {
   alloc.destroy(p);
 }
 
-template <typename ForwardIter, typename Allocator>
-typename ft::enable_if<ft::has_trivial_destructor<typename ft::iterator_traits<
-                           ForwardIter>::value_type>::value,
-                       void>::type
-destroy(ForwardIter, ForwardIter, Allocator) {
-}
+// template <typename ForwardIter, typename Allocator>
+// typename ft::enable_if<ft::has_trivial_destructor<typename
+// ft::iterator_traits<
+//                            ForwardIter>::value_type>::value,
+//                        void>::type
+// destroy(ForwardIter, ForwardIter, Allocator) {
+// }
 
+// typename ft::enable_if<!ft::has_trivial_destructor<typename
+// ft::iterator_traits<
+//                            ForwardIter>::value_type>::value,
+//                        void>::type
 template <typename ForwardIter, typename Allocator>
-typename ft::enable_if<!ft::has_trivial_destructor<typename ft::iterator_traits<
-                           ForwardIter>::value_type>::value,
-                       void>::type
+void
 destroy(ForwardIter first, ForwardIter last, Allocator alloc) {
   for (; first != last; ++first)
     alloc.destroy(ft::addressof(*first));
-  // ft::destroy_at(ft::addressof(*first), alloc);
 }
 
-template <typename ForwardIter, typename Size, typename Allocator>
-typename ft::enable_if<ft::has_trivial_destructor<typename ft::iterator_traits<
-                           ForwardIter>::value_type>::value,
-                       void>::type
-destroy_n(ForwardIter, Size, Allocator) {
-}
+// template <typename ForwardIter, typename Size, typename Allocator>
+// typename ft::enable_if<ft::has_trivial_destructor<typename
+// ft::iterator_traits<
+//                            ForwardIter>::value_type>::value,
+//                        void>::type
+// destroy_n(ForwardIter, Size, Allocator) {
+// }
 
+// typename ft::enable_if<!ft::has_trivial_destructor<typename
+// ft::iterator_traits<
+//                            ForwardIter>::value_type>::value,
+//                        void>::type
 template <typename ForwardIter, typename Size, typename Allocator>
-typename ft::enable_if<!ft::has_trivial_destructor<typename ft::iterator_traits<
-                           ForwardIter>::value_type>::value,
-                       void>::type
+void
 destroy_n(ForwardIter first, Size count, Allocator alloc) {
   for (; count > 0; --count, (void)++first)
     alloc.destroy(ft::addressof(*first));
-  // ft::destroy_at(ft::addressof(*first), alloc);
 }
 
 template <typename InputIter, typename ForwardIter, typename Allocator>
