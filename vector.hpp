@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/14 20:17:01 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/14 20:50:51 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,7 +399,7 @@ class vector : protected vector_base_<T, Allocator> {
                   const value_type& val = value_type(),
                   const allocator_type& alloc = allocator_type()) :
       Base_(n, alloc) {
-    ft::uninitialized_fill_n(this->start, n, val, alloc);
+    ft::uninitialized_fill_n(this->start, n, val, this->data_allocator);
     this->finish = this->start + n;
   }
 
@@ -419,7 +419,7 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type n = static_cast<size_type>(first);
     const value_type val = static_cast<value_type>(last);
 
-    ft::uninitialized_fill_n(this->start, n, val, alloc);
+    ft::uninitialized_fill_n(this->start, n, val, this->data_allocator);
     this->finish = this->start + n;
   }
 
@@ -449,8 +449,8 @@ class vector : protected vector_base_<T, Allocator> {
       InputIter last,
       const allocator_type& alloc = allocator_type()) :
       Base_(ft::distance(first, last), alloc) {
-    this->finish = ft::addressof(
-        *ft::uninitialized_copy(first, last, this->start, alloc));
+    this->finish = ft::addressof(*ft::uninitialized_copy(
+        first, last, this->start, this->data_allocator));
   }
 
   // constructor }}}
@@ -692,41 +692,44 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX need test
   iterator
   insert(iterator pos, const value_type& val) {
-    const size_type n__ = pos - this->begin();
-    if (this->finish != this->end_of_storage) {
-      // enough space. no need to realloc
-      if (pos == this->end()) {
-        ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
-        // constructObject_(this->finish, val);
-        ++this->finish;
-      } else {
-        // enough space, but need to shift elements back
-        ft::uninitialized_fill_n(
-            this->finish, 1, *(this->finish - 1), this->data_allocator);
-        // constructObject_(this->finish, *(this->finish - 1));
-        ++this->finish;
-        std::copy_backward(
-            pos, iterator(this->finish - 2), iterator(this->finish - 1));
-        *pos = val;
-      }
-    } else {
-      const size_type oldSize__ = this->size();
-      const size_type maxSize__ = this->max_size();
-      if (oldSize__ >= maxSize__)
-        throw(std::length_error("ft::vector"));
-      const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
-                                      ? maxSize__
-                                      : ((oldSize__ << 1) + 1);
-      vector<T, Allocator> tmp__(
-          newSize__, this->begin(), pos, this->get_allocator());
-      ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
-      // constructObject_(tmp__.finish, val);
-      ++tmp__.finish;
-      tmp__.finish = ft::addressof(*ft::uninitialized_copy(
-          pos, this->end(), tmp__.end(), tmp__.data_allocator));
-      this->swap(tmp__);
-    }
-    return (this->begin() + n__);
+    return (this->insert(pos, 1, val));
+    // old code {{{
+    // const size_type n__ = pos - this->begin();
+    // if (this->finish != this->end_of_storage) {
+    //   // enough space. no need to realloc
+    //   if (pos == this->end()) {
+    //     ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
+    //     // constructObject_(this->finish, val);
+    //     ++this->finish;
+    //   } else {
+    //     // enough space, but need to shift elements back
+    //     ft::uninitialized_fill_n(
+    //         this->finish, 1, *(this->finish - 1), this->data_allocator);
+    //     // constructObject_(this->finish, *(this->finish - 1));
+    //     ++this->finish;
+    //     std::copy_backward(
+    //         pos, iterator(this->finish - 2), iterator(this->finish - 1));
+    //     *pos = val;
+    //   }
+    // } else {
+    //   const size_type oldSize__ = this->size();
+    //   const size_type maxSize__ = this->max_size();
+    //   if (oldSize__ >= maxSize__)
+    //     throw(std::length_error("ft::vector"));
+    //   const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
+    //                                   ? maxSize__
+    //                                   : ((oldSize__ << 1) + 1);
+    //   vector<T, Allocator> tmp__(
+    //       newSize__, this->begin(), pos, this->get_allocator());
+    //   ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
+    //   // constructObject_(tmp__.finish, val);
+    //   ++tmp__.finish;
+    //   tmp__.finish = ft::addressof(*ft::uninitialized_copy(
+    //       pos, this->end(), tmp__.end(), tmp__.data_allocator));
+    //   this->swap(tmp__);
+    // }
+    // return (this->begin() + n__);
+    // }}}
   }
 
   // XXX need test
