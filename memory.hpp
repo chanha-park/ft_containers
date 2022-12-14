@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/13 17:57:36 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/14 20:38:41 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ destroy_at(T* p, Allocator alloc) {
 //                        void>::type
 template <typename ForwardIter, typename Allocator>
 void
-destroy(ForwardIter first, ForwardIter last, Allocator alloc) {
+destroy(ForwardIter first, ForwardIter last, Allocator& alloc) {
   for (; first != last; ++first)
     alloc.destroy(ft::addressof(*first));
 }
@@ -70,7 +70,7 @@ destroy(ForwardIter first, ForwardIter last, Allocator alloc) {
 //                        void>::type
 template <typename ForwardIter, typename Size, typename Allocator>
 void
-destroy_n(ForwardIter first, Size count, Allocator alloc) {
+destroy_n(ForwardIter first, Size count, Allocator& alloc) {
   for (; count > 0; --count, (void)++first)
     alloc.destroy(ft::addressof(*first));
 }
@@ -80,7 +80,7 @@ ForwardIter
 uninitialized_copy(InputIter first,
                    InputIter last,
                    ForwardIter d_first,
-                   Allocator alloc) {
+                   Allocator& alloc) {
   ForwardIter it(d_first);
   try {
     for (; first != last; ++first, (void)++it)
@@ -101,7 +101,7 @@ ForwardIter
 uninitialized_copy_n(InputIter first,
                      Size count,
                      ForwardIter d_first,
-                     Allocator alloc) {
+                     Allocator& alloc) {
   ForwardIter it(d_first);
   try {
     for (; count > 0; ++first, (void)--count, (void)++it)
@@ -119,7 +119,7 @@ void
 uninitialized_fill(ForwardIter first,
                    ForwardIter last,
                    const T& val,
-                   Allocator alloc) {
+                   Allocator& alloc) {
   ForwardIter it(first);
   try {
     for (; it != last; ++it)
@@ -136,7 +136,7 @@ void
 uninitialized_fill_n(ForwardIter first,
                      Size count,
                      const T& val,
-                     Allocator alloc) {
+                     Allocator& alloc) {
   ForwardIter it(first);
   try {
     for (; count > 0; --count, (void)++it)
