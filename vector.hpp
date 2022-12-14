@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 01:34:20 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 01:51:07 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -399,8 +399,8 @@ class vector : protected vector_base_<T, Allocator> {
                   const value_type& val = value_type(),
                   const allocator_type& alloc = allocator_type()) :
       Base_(n, alloc) {
-    ft::uninitialized_fill_n(this->start, n, val, this->data_allocator);
-    this->finish = this->start + n;
+    this->finish = ft::addressof(
+        *ft::uninitialized_fill_n(this->start, n, val, this->data_allocator));
   }
 
   // copy constructor
@@ -419,8 +419,8 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type n = static_cast<size_type>(first);
     const value_type val = static_cast<value_type>(last);
 
-    ft::uninitialized_fill_n(this->start, n, val, this->data_allocator);
-    this->finish = this->start + n;
+    this->finish = ft::addressof(
+        *ft::uninitialized_fill_n(this->start, n, val, this->data_allocator));
   }
 
   // Base_(ft::distance(first, last), alloc) {
@@ -651,9 +651,8 @@ class vector : protected vector_base_<T, Allocator> {
       this->swap(tmp__);
     } else if (n > this->size()) {
       std::fill(this->begin(), this->end(), val);
-      ft::uninitialized_fill_n(
-          this->finish, n - this->size(), val, this->data_allocator);
-      this->finish = this->start + n;
+      this->finish = ft::addressof(*ft::uninitialized_fill_n(
+          this->finish, n - this->size(), val, this->data_allocator));
     } else {
       std::fill_n(this->begin(), n, val);
       this->erase(this->begin() + n, this->end());
@@ -761,8 +760,8 @@ class vector : protected vector_base_<T, Allocator> {
       // enough space. no need to realloc
       iterator oldEnd__(this->finish);
       if (pos == oldEnd__) {
-        ft::uninitialized_fill_n(oldEnd__, n, val, this->data_allocator);
-        this->finish += n;
+        this->finish = ft::addressof(
+            *ft::uninitialized_fill_n(oldEnd__, n, val, this->data_allocator));
       } else if (n < size_type(oldEnd__ - pos)) {
         // enough space, but need to shift elements back. pos + n < end
         iterator mid__(oldEnd__ - n);
@@ -772,9 +771,11 @@ class vector : protected vector_base_<T, Allocator> {
         std::fill(pos, pos + n, val);
       } else {
         // enough space, but need to shift elements back. pos + n >= end
-        ft::uninitialized_fill_n(
-            oldEnd__, n - size_type(oldEnd__ - pos), val, this->data_allocator);
-        this->finish = ft::addressof(*(pos + n));
+        this->finish = ft::addressof(
+            *ft::uninitialized_fill_n(oldEnd__,
+                                      n - size_type(oldEnd__ - pos),
+                                      val,
+                                      this->data_allocator));
         this->finish = ft::addressof(*ft::uninitialized_copy(
             pos, oldEnd__, pos + n, this->data_allocator));
         std::fill(pos, oldEnd__, val);
@@ -788,8 +789,8 @@ class vector : protected vector_base_<T, Allocator> {
       const size_type newSize__ = oldSize__ + n;
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
-      ft::uninitialized_fill_n(tmp__.finish, n, val, tmp__.data_allocator);
-      tmp__.finish += n;
+      tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
+          tmp__.finish, n, val, tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
           pos, this->end(), tmp__.end(), tmp__.data_allocator));
       this->swap(tmp__);

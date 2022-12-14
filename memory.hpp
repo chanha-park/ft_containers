@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/14 20:38:41 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 01:45:58 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ uninitialized_fill(ForwardIter first,
 }
 
 template <typename ForwardIter, typename Size, typename T, typename Allocator>
-void
+ForwardIter
 uninitialized_fill_n(ForwardIter first,
                      Size count,
                      const T& val,
@@ -146,6 +146,7 @@ uninitialized_fill_n(ForwardIter first,
       alloc.destroy(ft::addressof(*first));
     throw;
   }
+  return (it);
 }
 
 }  // namespace ft
