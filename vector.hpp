@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/14 20:50:51 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 01:30:56 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -758,17 +758,19 @@ class vector : protected vector_base_<T, Allocator> {
       return (pos);
     const size_type offset__ = pos - this->begin();
     if (size_type(this->end_of_storage - this->finish) >= n) {
+      // enough space. no need to realloc
       if (pos == this->end()) {
         ft::uninitialized_fill_n(this->end(), n, val, this->data_allocator);
         this->finish += n;
-        // need to check logic else if, else case. + optimize
       } else if (n < size_type(this->end() - pos)) {
+        // enough space, but need to shift elements back. pos + n < end
         iterator mid__(this->end() - n);
         this->finish = ft::addressof(*ft::uninitialized_copy(
             mid__, this->end(), this->end(), this->data_allocator));
         std::copy_backward(pos, mid__, mid__ + n);
         std::fill(pos, pos + n, val);
       } else {
+        // enough space, but need to shift elements back. pos + n >= end
         iterator oldEnd__ = this->end();
         ft::uninitialized_fill_n(
             oldEnd__, n - size_type(oldEnd__ - pos), val, this->data_allocator);
@@ -778,6 +780,7 @@ class vector : protected vector_base_<T, Allocator> {
         std::fill(pos, oldEnd__, val);
       }
     } else {
+      // need realloc
       const size_type oldSize__ = this->size();
       const size_type maxSize__ = this->max_size();
       if (n >= maxSize__ - oldSize__)
