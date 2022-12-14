@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/13 18:04:21 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/14 18:15:19 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,8 +211,7 @@ class vector_base_ {
       finish(start),
       end_of_storage(start + n) {
   } catch (...) {
-    throw;
-    // throw(std::length_error("ft::vector"));
+    throw(std::length_error("ft::vector"));
   }
 
   T*
@@ -708,7 +707,7 @@ class vector : protected vector_base_<T, Allocator> {
         // constructObject_(this->finish, val);
         ++this->finish;
       } else {
-        // enough space, but need have to shift elements back
+        // enough space, but need to shift elements back
         ft::uninitialized_fill_n(
             this->finish, 1, *(this->finish - 1), this->data_allocator);
         // constructObject_(this->finish, *(this->finish - 1));
@@ -765,23 +764,23 @@ class vector : protected vector_base_<T, Allocator> {
     if (size_type(this->end_of_storage - this->finish) >= n) {
       if (pos == this->end()) {
         while (n > 0) {
-          ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
+          ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator);
           // constructObject_(this->finish, val);
           ++this->finish;
           --n;
         }
         // need to check logic else if, else case. + optimize
       } else if (n < size_type(this->end() - pos)) {
-        iterator mid__(this->finish - n);
+        iterator mid__(this->end() - n);
         this->finish = ft::addressof(*ft::uninitialized_copy(
             mid__, this->end(), this->end(), this->data_allocator));
-        std::copy(pos, mid__, pos + n);
+        std::copy_backward(pos, mid__, mid__ + n);
         std::fill(pos, pos + n, val);
       } else {
         iterator oldEnd__ = this->end();
         pointer mid__ = (&*pos) + n;
         while (this->finish != mid__) {
-          ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
+          ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator);
           // constructObject_(this->finish, val);
           ++this->finish;
         }
