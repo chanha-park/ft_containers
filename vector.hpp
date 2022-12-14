@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/14 18:15:19 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/14 20:17:01 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,11 +303,8 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type offset__ = pos - this->begin();
     if (size_type(this->end_of_storage - this->finish) >= insertSize__
         && pos == this->end()) {
-      for (; first != last; ++first) {
-        ft::uninitialized_fill_n(this->finish, 1, *first, this->data_allocator);
-        // constructObject_(this->finish, *first);
-        ++this->finish;
-      }
+      this->finish = ft::addressof(*ft::uninitialized_copy(
+          first, last, this->end(), this->data_allocator));
     } else {
       const size_type oldSize__ = this->size();
       const size_type maxSize__ = this->max_size();
@@ -316,12 +313,8 @@ class vector : protected vector_base_<T, Allocator> {
       const size_type newSize__ = oldSize__ + insertSize__;
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
-      for (; first != last; ++first) {
-        ft::uninitialized_fill_n(tmp__.finish, 1, *first, tmp__.data_allocator);
-        // constructObject_(tmp__.finish, *first);
-        ++tmp__.finish;
-      }
-
+      tmp__.finish = ft::addressof(*ft::uninitialized_copy(
+          first, last, tmp__.end(), tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
           pos, this->end(), tmp__.end(), tmp__.data_allocator));
       this->swap(tmp__);
@@ -763,12 +756,8 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type offset__ = pos - this->begin();
     if (size_type(this->end_of_storage - this->finish) >= n) {
       if (pos == this->end()) {
-        while (n > 0) {
-          ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator);
-          // constructObject_(this->finish, val);
-          ++this->finish;
-          --n;
-        }
+        ft::uninitialized_fill_n(this->end(), n, val, this->data_allocator);
+        this->finish += n;
         // need to check logic else if, else case. + optimize
       } else if (n < size_type(this->end() - pos)) {
         iterator mid__(this->end() - n);
@@ -778,13 +767,9 @@ class vector : protected vector_base_<T, Allocator> {
         std::fill(pos, pos + n, val);
       } else {
         iterator oldEnd__ = this->end();
-        pointer mid__ = (&*pos) + n;
-        while (this->finish != mid__) {
-          ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator);
-          // constructObject_(this->finish, val);
-          ++this->finish;
-        }
-        // std::uninitialized_fill(this->end(), pos + n, val);
+        ft::uninitialized_fill_n(
+            oldEnd__, n - size_type(oldEnd__ - pos), val, this->data_allocator);
+        this->finish = ft::addressof(*(pos + n));
         this->finish = ft::addressof(*ft::uninitialized_copy(
             pos, oldEnd__, pos + n, this->data_allocator));
         std::fill(pos, oldEnd__, val);
@@ -797,12 +782,8 @@ class vector : protected vector_base_<T, Allocator> {
       const size_type newSize__ = oldSize__ + n;
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
-      while (n > 0) {
-        ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
-        // constructObject_(tmp__.finish, val);
-        ++tmp__.finish;
-        --n;
-      }
+      ft::uninitialized_fill_n(tmp__.finish, n, val, tmp__.data_allocator);
+      tmp__.finish += n;
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
           pos, this->end(), tmp__.end(), tmp__.data_allocator));
       this->swap(tmp__);
