@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 11:55:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 15:04:02 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ class vector : protected vector_base_<T, Allocator> {
       pos = insert(pos, *first);
       ++pos;
     }
-    return (this->begin() + offset__);
+    return (iterator(this->start + offset__));
   }
 
   // XXX need test
@@ -318,7 +318,7 @@ class vector : protected vector_base_<T, Allocator> {
           pos, this->end(), tmp__.end(), tmp__.data_allocator));
       this->swap(tmp__);
     }
-    return (this->begin() + offset__);
+    return (iterator(this->start + offset__));
   }
 
   template <typename InputIter>
@@ -691,43 +691,43 @@ class vector : protected vector_base_<T, Allocator> {
   // XXX need test
   iterator
   insert(iterator pos, const value_type& val) {
-    // return (this->insert(pos, 1, val));
+    return (this->insert(pos, 1, val));
     // old code {{{
-    const size_type offset__ = pos - this->begin();
-    if (this->finish != this->end_of_storage) {
-      // enough space. no need to realloc
-      if (pos == this->end()) {
-        ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
-        // constructObject_(this->finish, val);
-        ++this->finish;
-      } else {
-        // enough space, but need to shift elements back
-        ft::uninitialized_fill_n(
-            this->finish, 1, *(this->finish - 1), this->data_allocator);
-        // constructObject_(this->finish, *(this->finish - 1));
-        ++this->finish;
-        std::copy_backward(
-            pos, iterator(this->finish - 2), iterator(this->finish - 1));
-        *pos = val;
-      }
-    } else {
-      const size_type oldSize__ = this->size();
-      const size_type maxSize__ = this->max_size();
-      if (oldSize__ >= maxSize__)
-        throw(std::length_error("ft::vector"));
-      const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
-                                      ? maxSize__
-                                      : ((oldSize__ << 1) + 1);
-      vector<T, Allocator> tmp__(
-          newSize__, this->begin(), pos, this->get_allocator());
-      ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
-      // constructObject_(tmp__.finish, val);
-      ++tmp__.finish;
-      tmp__.finish = ft::addressof(*ft::uninitialized_copy(
-          pos, this->end(), tmp__.end(), tmp__.data_allocator));
-      this->swap(tmp__);
-    }
-    return (this->begin() + offset__);
+    // const size_type offset__ = pos - this->begin();
+    // if (this->finish != this->end_of_storage) {
+    //   // enough space. no need to realloc
+    //   if (pos == this->end()) {
+    //     ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
+    //     // constructObject_(this->finish, val);
+    //     ++this->finish;
+    //   } else {
+    //     // enough space, but need to shift elements back
+    //     ft::uninitialized_fill_n(
+    //         this->finish, 1, *(this->finish - 1), this->data_allocator);
+    //     // constructObject_(this->finish, *(this->finish - 1));
+    //     ++this->finish;
+    //     std::copy_backward(
+    //         pos, iterator(this->finish - 2), iterator(this->finish - 1));
+    //     *pos = val;
+    //   }
+    // } else {
+    //   const size_type oldSize__ = this->size();
+    //   const size_type maxSize__ = this->max_size();
+    //   if (oldSize__ >= maxSize__)
+    //     throw(std::length_error("ft::vector"));
+    //   const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
+    //                                   ? maxSize__
+    //                                   : ((oldSize__ << 1) | 1);
+    //   vector<T, Allocator> tmp__(
+    //       newSize__, this->begin(), pos, this->get_allocator());
+    //   ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
+    //   // constructObject_(tmp__.finish, val);
+    //   ++tmp__.finish;
+    //   tmp__.finish = ft::addressof(*ft::uninitialized_copy(
+    //       pos, this->end(), tmp__.end(), tmp__.data_allocator));
+    //   this->swap(tmp__);
+    // }
+    // return (iterator(this->start + offset__));
     // }}}
   }
 
@@ -763,14 +763,14 @@ class vector : protected vector_base_<T, Allocator> {
         this->finish = ft::addressof(
             *ft::uninitialized_fill_n(oldEnd__, n, val, this->data_allocator));
       } else if (n <= size_type(oldEnd__ - pos)) {
-        // enough space, but need to shift elements back. pos + n < end
+        // enough space, but need to shift elements back. pos + n <= end
         iterator mid__(oldEnd__ - n);
         this->finish = ft::addressof(*ft::uninitialized_copy(
             mid__, oldEnd__, oldEnd__, this->data_allocator));
         std::copy_backward(pos, mid__, mid__ + n);
         std::fill(pos, pos + n, val);
       } else {
-        // enough space, but need to shift elements back. pos + n >= end
+        // enough space, but need to shift elements back. pos + n > end
         this->finish = ft::addressof(
             *ft::uninitialized_fill_n(oldEnd__,
                                       n - size_type(oldEnd__ - pos),
@@ -782,11 +782,14 @@ class vector : protected vector_base_<T, Allocator> {
       }
     } else {
       // need realloc
+      const size_type oldCap__ = this->capacity();
       const size_type oldSize__ = this->size();
       const size_type maxSize__ = this->max_size();
-      if (n >= maxSize__ - oldSize__)
+      if (n > maxSize__ - oldSize__)
         throw(std::length_error("ft::vector"));
-      const size_type newSize__ = oldSize__ + n;
+      const size_type newSize__ = (oldCap__ >= (maxSize__ >> 1))
+                                      ? maxSize__
+                                      : std::max(oldCap__ << 1, n + oldSize__);
       vector<T, Allocator> tmp__(
           newSize__, this->begin(), pos, this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
@@ -795,7 +798,7 @@ class vector : protected vector_base_<T, Allocator> {
           pos, this->end(), tmp__.end(), tmp__.data_allocator));
       this->swap(tmp__);
     }
-    return (this->begin() + offset__);
+    return (iterator(this->start + offset__));
   }
 
   // XXX need test
