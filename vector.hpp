@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 21:05:20 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 21:29:35 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,10 +321,6 @@ class vector : protected vector_base_<T, Allocator> {
           first, last, this->end(), this->data_allocator));
     } else {
       const size_type oldSize__ = this->size();
-      // const size_type maxSize__ = this->max_size();
-      // if (insertSize__ >= maxSize__ - oldSize__)
-      //   throw(std::length_error("ft::vector"));
-      // const size_type newSize__ = oldSize__ + insertSize__;
       vector_type_ tmp__(this->recommend__(oldSize__ + insertSize__),
                          this->begin(),
                          pos,
@@ -443,8 +439,6 @@ class vector : protected vector_base_<T, Allocator> {
         *ft::uninitialized_fill_n(this->start, n, val, this->data_allocator));
   }
 
-  // Base_(ft::distance(first, last), alloc) {
-  // typename iterator_traits<InputIter>::iterator_category();
   template <typename InputIter>
   vector(
       typename ft::enable_if<
@@ -594,10 +588,6 @@ class vector : protected vector_base_<T, Allocator> {
 
   void
   resize(size_type n, const value_type& val = value_type()) {
-    // if (n > this->max_size())
-    //   throw(std::length_error("ft::vector"));
-
-    // will check length_error in insert
     if (n < this->size())
       this->erase(this->begin() + n, this->end());
     else
@@ -692,40 +682,6 @@ class vector : protected vector_base_<T, Allocator> {
   iterator
   insert(iterator pos, const value_type& val) {
     return (this->insert(pos, 1, val));
-    // old code {{{
-    // const size_type offset__ = pos - this->begin();
-    // if (this->finish != this->end_of_storage) {
-    //   // enough space. no need to realloc
-    //   if (pos == this->end()) {
-    //     ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
-    //     ++this->finish;
-    //   } else {
-    //     // enough space, but need to shift elements back
-    //     ft::uninitialized_fill_n(
-    //         this->finish, 1, *(this->finish - 1), this->data_allocator);
-    //     ++this->finish;
-    //     std::copy_backward(
-    //         pos, iterator(this->finish - 2), iterator(this->finish - 1));
-    //     *pos = val;
-    //   }
-    // } else {
-    //   const size_type oldSize__ = this->size();
-    //   const size_type maxSize__ = this->max_size();
-    //   if (oldSize__ >= maxSize__)
-    //     throw(std::length_error("ft::vector"));
-    //   const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
-    //                                   ? maxSize__
-    //                                   : ((oldSize__ << 1) | 1);
-    //   vector_type_ tmp__(
-    //       newSize__, this->begin(), pos, this->get_allocator());
-    //   ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
-    //   ++tmp__.finish;
-    //   tmp__.finish = ft::addressof(*ft::uninitialized_copy(
-    //       pos, this->end(), tmp__.end(), tmp__.data_allocator));
-    //   this->swap(tmp__);
-    // }
-    // return (iterator(this->start + offset__));
-    // }}}
   }
 
   template <typename InputIter>
@@ -761,7 +717,7 @@ class vector : protected vector_base_<T, Allocator> {
         iterator mid__(oldEnd__ - n);
         this->finish = ft::addressof(*ft::uninitialized_copy(
             mid__, oldEnd__, oldEnd__, this->data_allocator));
-        std::copy_backward(pos, mid__, mid__ + n);
+        std::copy_backward(pos, mid__, oldEnd__);
         std::fill(pos, pos + n, val);
       } else {
         // enough space, but need to shift elements back. pos + n > end
@@ -776,15 +732,6 @@ class vector : protected vector_base_<T, Allocator> {
       }
     } else {
       // need realloc
-      // const size_type oldCap__ = this->capacity();
-      // const size_type oldSize__ = this->size();
-      // const size_type maxSize__ = this->max_size();
-      // if (n > maxSize__ - oldSize__)
-      //   throw(std::length_error("ft::vector"));
-      // const size_type newSize__ = (oldCap__ >= (maxSize__ >> 1))
-      //                                 ? maxSize__
-      //                                 : std::max(oldCap__ << 1, n +
-      //                                 oldSize__);
       vector_type_ tmp__(this->recommend__(this->size() + n),
                          this->begin(),
                          pos,
