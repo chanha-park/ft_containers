@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 15:04:02 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/15 17:25:36 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,9 +261,10 @@ class vector : protected vector_base_<T, Allocator> {
   // member types }}}
 
  private:
-  // private auxiliary functions {{{
+  // private auxiliary functions
 
-  // auxiliary constructor for private use. n > last - first
+  // auxiliary constructor. n > last - first {{{
+
   template <typename InputIter>
   vector(size_type n,
          InputIter first,
@@ -274,7 +275,10 @@ class vector : protected vector_base_<T, Allocator> {
         first, last, this->start, this->data_allocator));
   }
 
-  // XXX need test
+  // auxiliary constructor. n > last - first }}}
+
+  // insert_range__ {{{
+
   template <typename InputIter>
   iterator
   insert_range__(iterator pos,
@@ -289,7 +293,6 @@ class vector : protected vector_base_<T, Allocator> {
     return (iterator(this->start + offset__));
   }
 
-  // XXX need test
   template <typename ForwardIter>
   iterator
   insert_range__(iterator pos,
@@ -310,8 +313,7 @@ class vector : protected vector_base_<T, Allocator> {
       if (insertSize__ >= maxSize__ - oldSize__)
         throw(std::length_error("ft::vector"));
       const size_type newSize__ = oldSize__ + insertSize__;
-      vector<T, Allocator> tmp__(
-          newSize__, this->begin(), pos, this->get_allocator());
+      vector_type_ tmp__(newSize__, this->begin(), pos, this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
           first, last, tmp__.end(), tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
@@ -320,6 +322,10 @@ class vector : protected vector_base_<T, Allocator> {
     }
     return (iterator(this->start + offset__));
   }
+
+  // insert_range__ }}}
+
+  // assign_range__ {{{
 
   template <typename InputIter>
   void
@@ -343,14 +349,13 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type newSize__ = ft::distance(first, last);
 
     if (newSize__ > this->capacity()) {
-      vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());
+      vector_type_ tmp__(newSize__, first, last, this->get_allocator());
       this->swap(tmp__);
       return;
     }
     if (oldSize__ >= newSize__) {
       iterator it__(std::copy(first, last, this->begin()));
       ft::destroy(it__, this->end(), this->data_allocator);
-      // destructObject_(it__, this->end());
     } else {
       ForwardIter mid__(first);
       ft::advance(mid__, oldSize__);
@@ -369,14 +374,13 @@ class vector : protected vector_base_<T, Allocator> {
     const size_type newSize__ = ft::distance(first, last);
 
     if (newSize__ > this->capacity()) {
-      vector<T, Allocator> tmp__(newSize__, first, last, this->get_allocator());
+      vector_type_ tmp__(newSize__, first, last, this->get_allocator());
       this->swap(tmp__);
       return;
     }
     if (this->size() >= newSize__) {
       iterator it__(std::copy(first, last, this->begin()));
       ft::destroy(it__, this->end(), this->data_allocator);
-      // destructObject_(it__, this->end());
     } else {
       std::copy(first, first + oldSize__, this->begin());
       ft::uninitialized_copy(
@@ -385,7 +389,7 @@ class vector : protected vector_base_<T, Allocator> {
     this->finish = this->start + newSize__;
   }
 
-  // private auxiliary functions }}}
+  // assign_range__ }}}
 
  public:
   // constructor {{{
@@ -458,28 +462,25 @@ class vector : protected vector_base_<T, Allocator> {
 
   virtual ~vector(void) {
     ft::destroy(this->start, this->finish, this->data_allocator);
-    // destructObject_(this->start, this->finish);
   }
 
   // destructor }}}
 
   // operator= overload {{{
 
-  // XXX need test
   vector<T, Allocator>&
   operator=(const vector<T, Allocator>& other) {
     if (&other != this) {
       const size_type oldSize__ = this->size();
       const size_type newSize__ = other.size();
       if (this->capacity() < newSize__) {
-        vector<T, Allocator> tmp__(other);
+        vector_type_ tmp__(other);
         this->swap(tmp__);
         return (*this);
       }
       if (oldSize__ >= newSize__) {
         iterator it__(std::copy(other.begin(), other.end(), this->begin()));
         ft::destroy(it__, this->end(), this->data_allocator);
-        // destructObject_(it__, this->end());
       } else {
         std::copy(other.begin(), other.begin() + oldSize__, this->begin());
         ft::uninitialized_copy(other.begin() + oldSize__,
@@ -538,14 +539,13 @@ class vector : protected vector_base_<T, Allocator> {
 
   // iterators }}}
 
-  // capacity {{{
+  // size, max_size, capacity, empty, reserve, resize {{{
 
   size_type
   size(void) const {
     return (size_type(end() - begin()));
   }
 
-  // XXX need test
   size_type
   max_size(void) const {
     static const size_type maxSize__
@@ -564,20 +564,17 @@ class vector : protected vector_base_<T, Allocator> {
     return (begin() == end());
   }
 
-  // XXX need test
   void
   reserve(size_type n) {
     if (n > this->max_size())
       throw(std::length_error("ft::vector"));
 
     if (this->capacity() < n) {
-      vector<T, Allocator> tmp__(
-          n, this->begin(), this->end(), this->get_allocator());
+      vector_type_ tmp__(n, this->begin(), this->end(), this->get_allocator());
       this->swap(tmp__);
     }
   }
 
-  // XXX need test
   void
   resize(size_type n, const value_type& val = value_type()) {
     if (n > this->max_size())
@@ -589,7 +586,7 @@ class vector : protected vector_base_<T, Allocator> {
       this->insert(this->end(), n - this->size(), val);
   }
 
-  // capacity }}}
+  // size, max_size, capacity, empty, reserve, resize }}}
 
   // element access {{{
 
@@ -603,7 +600,6 @@ class vector : protected vector_base_<T, Allocator> {
     return (*(begin() + n));
   }
 
-  // XXX need test
   reference
   at(size_type n) {
     if (n >= this->size())
@@ -611,7 +607,6 @@ class vector : protected vector_base_<T, Allocator> {
     return (this->start[n]);
   }
 
-  // XXX need test
   const_reference
   at(size_type n) const {
     if (n >= this->size())
@@ -641,13 +636,12 @@ class vector : protected vector_base_<T, Allocator> {
 
   // element access }}}
 
-  // modifiers {{{
+  // assign {{{
 
-  // XXX need test
   void
   assign(size_type n, const value_type& val) {
     if (n > this->capacity()) {
-      vector<T, Allocator> tmp__(n, val, this->get_allocator());
+      vector_type_ tmp__(n, val, this->get_allocator());
       this->swap(tmp__);
     } else if (n > this->size()) {
       std::fill(this->begin(), this->end(), val);
@@ -659,7 +653,6 @@ class vector : protected vector_base_<T, Allocator> {
     }
   }
 
-  // XXX need test
   template <typename InputIter>
   typename ft::enable_if<!ft::is_integral<InputIter>::value, void>::type
   assign(InputIter first, InputIter last) {
@@ -667,28 +660,16 @@ class vector : protected vector_base_<T, Allocator> {
         first, last, typename iterator_traits<InputIter>::iterator_category());
   }
 
-  // XXX need test. necessary?
   template <typename InputIter>
   typename ft::enable_if<ft::is_integral<InputIter>::value, void>::type
   assign(InputIter first, InputIter last) {
     this->assign(static_cast<size_type>(first), static_cast<value_type>(last));
   }
 
-  // XXX need test
-  void
-  push_back(const value_type& val) {
-    this->insert(this->end(), val);
-  }
+  // assign }}}
 
-  // XXX need test
-  void
-  pop_back(void) {
-    --this->finish;
-    ft::destroy_at(this->finish, this->data_allocator);
-    // destructObject_(this->finish);
-  }
+  // insert {{{
 
-  // XXX need test
   iterator
   insert(iterator pos, const value_type& val) {
     return (this->insert(pos, 1, val));
@@ -698,13 +679,11 @@ class vector : protected vector_base_<T, Allocator> {
     //   // enough space. no need to realloc
     //   if (pos == this->end()) {
     //     ft::uninitialized_fill_n(this->finish, 1, val, this->data_allocator);
-    //     // constructObject_(this->finish, val);
     //     ++this->finish;
     //   } else {
     //     // enough space, but need to shift elements back
     //     ft::uninitialized_fill_n(
     //         this->finish, 1, *(this->finish - 1), this->data_allocator);
-    //     // constructObject_(this->finish, *(this->finish - 1));
     //     ++this->finish;
     //     std::copy_backward(
     //         pos, iterator(this->finish - 2), iterator(this->finish - 1));
@@ -718,10 +697,9 @@ class vector : protected vector_base_<T, Allocator> {
     //   const size_type newSize__ = (oldSize__ >= (maxSize__ >> 1))
     //                                   ? maxSize__
     //                                   : ((oldSize__ << 1) | 1);
-    //   vector<T, Allocator> tmp__(
+    //   vector_type_ tmp__(
     //       newSize__, this->begin(), pos, this->get_allocator());
     //   ft::uninitialized_fill_n(tmp__.finish, 1, val, tmp__.data_allocator);
-    //   // constructObject_(tmp__.finish, val);
     //   ++tmp__.finish;
     //   tmp__.finish = ft::addressof(*ft::uninitialized_copy(
     //       pos, this->end(), tmp__.end(), tmp__.data_allocator));
@@ -731,7 +709,6 @@ class vector : protected vector_base_<T, Allocator> {
     // }}}
   }
 
-  // XXX need test
   template <typename InputIter>
   typename ft::enable_if<!ft::is_integral<InputIter>::value, iterator>::type
   insert(iterator pos, InputIter first, InputIter last) {
@@ -742,7 +719,6 @@ class vector : protected vector_base_<T, Allocator> {
         typename iterator_traits<InputIter>::iterator_category()));
   }
 
-  // XXX need test. necessary?
   template <typename InputIter>
   typename ft::enable_if<ft::is_integral<InputIter>::value, iterator>::type
   insert(iterator pos, InputIter first, InputIter last) {
@@ -750,7 +726,6 @@ class vector : protected vector_base_<T, Allocator> {
         pos, static_cast<size_type>(first), static_cast<value_type>(last)));
   }
 
-  // XXX need test
   iterator
   insert(iterator pos, size_type n, const value_type& val) {
     if (n == 0)
@@ -790,8 +765,7 @@ class vector : protected vector_base_<T, Allocator> {
       const size_type newSize__ = (oldCap__ >= (maxSize__ >> 1))
                                       ? maxSize__
                                       : std::max(oldCap__ << 1, n + oldSize__);
-      vector<T, Allocator> tmp__(
-          newSize__, this->begin(), pos, this->get_allocator());
+      vector_type_ tmp__(newSize__, this->begin(), pos, this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
           tmp__.finish, n, val, tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
@@ -801,30 +775,29 @@ class vector : protected vector_base_<T, Allocator> {
     return (iterator(this->start + offset__));
   }
 
-  // XXX need test
+  // insert }}}
+
+  // erase, clear, swap, push_back, pop_back {{{
+
   iterator
   erase(iterator pos) {
     if (pos + 1 != this->end())
       std::copy(pos + 1, this->end(), pos);
     --this->finish;
     ft::destroy_at(this->finish, this->data_allocator);
-    // destructObject_(this->finish);
     return (pos);
   }
 
-  // XXX need test
   iterator
   erase(iterator first, iterator last) {
     ft::destroy(
         std::copy(last, this->end(), first), this->end(), this->data_allocator);
-    // destructObject_(std::copy(last, end(), first), end());
     this->finish -= (last - first);
     return (first);
   }
 
   void
   swap(vector<T, Allocator>& other) {
-    std::swap(this->data_allocator, other.data_allocator);  // XXX swap alloc ?
     std::swap(this->start, other.start);
     std::swap(this->finish, other.finish);
     std::swap(this->end_of_storage, other.end_of_storage);
@@ -835,7 +808,18 @@ class vector : protected vector_base_<T, Allocator> {
     this->erase(this->begin(), this->end());
   }
 
-  // modifiers }}}
+  void
+  push_back(const value_type& val) {
+    this->insert(this->end(), val);
+  }
+
+  void
+  pop_back(void) {
+    --this->finish;
+    ft::destroy_at(this->finish, this->data_allocator);
+  }
+
+  // erase, clear, swap, push_back, pop_back }}}
 
   allocator_type
   get_allocator(void) const {
