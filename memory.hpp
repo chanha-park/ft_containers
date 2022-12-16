@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 22:52:10 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/16 10:28:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ uninitialized_copy(InputIter first,
   try {
     for (; first != last; ++first, (void)++it)
       alloc.construct(ft::addressof(*it), *first);
-  } catch (const std::exception&) {
+  } catch (...) {
     for (; d_first != it; ++d_first)
       alloc.destroy(ft::addressof(*d_first));
     throw;
@@ -106,7 +106,7 @@ uninitialized_copy_n(InputIter first,
   try {
     for (; count > 0; ++first, (void)--count, (void)++it)
       alloc.construct(ft::addressof(*it), *first);
-  } catch (const std::exception&) {
+  } catch (...) {
     for (; d_first != it; ++d_first)
       alloc.destroy(ft::addressof(*d_first));
     throw;
