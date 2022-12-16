@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/17 01:32:02 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/17 01:43:38 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,8 +251,8 @@ class vector : protected vector_base_<T, Allocator> {
 
   typedef value_type& reference;
   typedef const value_type& const_reference;
-  typedef size_t size_type;
-  typedef ptrdiff_t difference_type;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
 
   typedef typename Base_::allocator_type allocator_type;
 
