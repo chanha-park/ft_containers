@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/15 21:29:35 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/17 01:32:02 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <memory>
 #include "algorithm.hpp"
 #include "iterator.hpp"
 #include "memory.hpp"
