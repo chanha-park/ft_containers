@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/16 19:05:52 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/16 19:08:31 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,12 @@ addressof(T& val) throw() {
       &const_cast<char&>(reinterpret_cast<const volatile char&>(val))));
 }
 
-// template <typename T, typename Allocator>
-// typename ft::enable_if<ft::has_trivial_destructor<T>::value, void>::type
-// destroy_at(T*, Allocator) {
-// }
-
-// typename ft::enable_if<!ft::has_trivial_destructor<T>::value, void>::type
 template <typename T, typename Allocator>
 void
 destroy_at(T* p, Allocator& alloc) {
   alloc.destroy(p);
 }
 
-// template <typename ForwardIter, typename Allocator>
-// typename ft::enable_if<ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
-// destroy(ForwardIter, ForwardIter, Allocator) {
-// }
-
-// typename ft::enable_if<!ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
 template <typename ForwardIter, typename Allocator>
 void
 destroy(ForwardIter first, ForwardIter last, Allocator& alloc) {
@@ -56,18 +38,6 @@ destroy(ForwardIter first, ForwardIter last, Allocator& alloc) {
     alloc.destroy(ft::addressof(*first));
 }
 
-// template <typename ForwardIter, typename Size, typename Allocator>
-// typename ft::enable_if<ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
-// destroy_n(ForwardIter, Size, Allocator) {
-// }
-
-// typename ft::enable_if<!ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
 template <typename ForwardIter, typename Size, typename Allocator>
 void
 destroy_n(ForwardIter first, Size count, Allocator& alloc) {
