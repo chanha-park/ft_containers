@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:28:40 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/16 10:28:13 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/16 19:05:52 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ addressof(T& val) throw() {
 // typename ft::enable_if<!ft::has_trivial_destructor<T>::value, void>::type
 template <typename T, typename Allocator>
 void
-destroy_at(T* p, Allocator alloc) {
+destroy_at(T* p, Allocator& alloc) {
   alloc.destroy(p);
 }
 
