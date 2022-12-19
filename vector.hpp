@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/17 01:43:38 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/19 16:58:33 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -578,11 +578,11 @@ class vector : protected vector_base_<T, Allocator> {
 
   void
   reserve(size_type n) {
-    if (n > this->max_size())
-      throw(std::length_error("ft::vector"));
-
-    if (this->capacity() < n) {
-      vector_type_ tmp__(n, this->begin(), this->end(), this->get_allocator());
+    if (n > this->capacity()) {
+      vector_type_ tmp__(this->recommend__(n),
+                         this->begin(),
+                         this->end(),
+                         this->get_allocator());
       this->swap(tmp__);
     }
   }
@@ -612,14 +612,14 @@ class vector : protected vector_base_<T, Allocator> {
   reference
   at(size_type n) {
     if (n >= this->size())
-      throw(std::out_of_range("ft::vector"));
+      throw(std::out_of_range("ft::vector::at"));
     return (this->start[n]);
   }
 
   const_reference
   at(size_type n) const {
     if (n >= this->size())
-      throw(std::out_of_range("ft::vector"));
+      throw(std::out_of_range("ft::vector::at"));
     return (this->start[n]);
   }
 
@@ -682,7 +682,44 @@ class vector : protected vector_base_<T, Allocator> {
 
   iterator
   insert(iterator pos, const value_type& val) {
-    return (this->insert(pos, 1, val));
+    const size_type offset__ = pos - this->begin();
+    if (size_type(this->end_of_storage - this->finish) >= 1) {
+      // enough space. no need to realloc
+      iterator oldEnd__(this->finish);
+      if (pos == oldEnd__) {
+        this->finish = ft::addressof(
+            *ft::uninitialized_fill_n(oldEnd__, 1, val, this->data_allocator));
+      } else if (1 <= size_type(oldEnd__ - pos)) {
+        // enough space, but need to shift elements back. pos + 1 <= end
+        iterator mid__(oldEnd__ - 1);
+        this->finish = ft::addressof(*ft::uninitialized_copy(
+            mid__, oldEnd__, oldEnd__, this->data_allocator));
+        std::copy_backward(pos, mid__, oldEnd__);
+        std::fill(pos, pos + 1, val);
+      } else {
+        // enough space, but need to shift elements back. pos + 1 > end
+        this->finish = ft::addressof(
+            *ft::uninitialized_fill_n(oldEnd__,
+                                      1 - size_type(oldEnd__ - pos),
+                                      val,
+                                      this->data_allocator));
+        this->finish = ft::addressof(*ft::uninitialized_copy(
+            pos, oldEnd__, pos + 1, this->data_allocator));
+        std::fill(pos, oldEnd__, val);
+      }
+    } else {
+      // need realloc
+      vector_type_ tmp__(this->recommend__(this->size() + 1),
+                         this->begin(),
+                         pos,
+                         this->get_allocator());
+      tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
+          tmp__.finish, 1, val, tmp__.data_allocator));
+      tmp__.finish = ft::addressof(*ft::uninitialized_copy(
+          pos, this->end(), tmp__.end(), tmp__.data_allocator));
+      this->swap(tmp__);
+    }
+    return (iterator(this->start + offset__));
   }
 
   template <typename InputIter>
@@ -781,7 +818,20 @@ class vector : protected vector_base_<T, Allocator> {
 
   void
   push_back(const value_type& val) {
-    this->insert(this->end(), 1, val);
+    if (size_type(this->end_of_storage - this->finish) >= 1) {
+      // enough space. no need to realloc
+      this->finish = ft::addressof(
+          *ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator));
+    } else {
+      // need realloc
+      vector_type_ tmp__(this->recommend__(this->size() + 1),
+                         this->begin(),
+                         this->end(),
+                         this->get_allocator());
+      tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
+          tmp__.finish, 1, val, tmp__.data_allocator));
+      this->swap(tmp__);
+    }
   }
 
   void
