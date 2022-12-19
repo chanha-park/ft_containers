@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/17 02:01:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/19 18:15:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@
 #include "utility.hpp"
 
 namespace ft {
+
+template <typename Key,
+          typename T,
+          typename Compare,
+          typename Allocator = std::allocator<T> >
+class Rb_Tree__ {};
 
 template <typename Key,
           typename T,
@@ -45,6 +51,8 @@ class map {
   // typedef ft::reverse_iterator<iterator>          reverse_iterator;
   // typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
+  // member class value_compare {{{
+
   class value_compare :
       public std::binary_function<value_type, value_type, bool> {
    private:
@@ -67,9 +75,67 @@ class map {
     }
   };
 
+  // member class value_compare }}}
+
  private:
+  typedef
+      typename ft::Rb_Tree__<key_type, value_type, key_compare, allocator_type>
+          tree_type__;
+  tree_type__ tree__;
+
  protected:
  public:
+  // constructor {{{
+
+  map(void) : tree__(key_compare(), allocator_type()) {
+  }
+
+  explicit map(const key_compare& cmp,
+               const allocator_type& alloc = allocator_type()) :
+      tree__(cmp, alloc) {
+  }
+
+  template <typename InputIter>
+  map(InputIter first, InputIter last) :
+      tree__(key_compare(), allocator_type()) {
+    tree__.insert_unique(first, last);
+  }
+
+  template <typename InputIter>
+  map(InputIter first,
+      InputIter last,
+      const key_compare& cmp,
+      const allocator_type& alloc = allocator_type()) :
+      tree__(cmp, alloc) {
+    tree__.insert_unique(first, last);
+  }
+
+  map(const map<key_type, mapped_type, key_compare, allocator_type>& x) :
+      tree__(x.tree__) {
+  }
+
+  // constructor }}}
+
+  // operator= overload {{{
+
+  map<key_type, mapped_type, key_compare, allocator_type>&
+  operator=(const map<key_type, mapped_type, key_compare, allocator_type>& x) {
+    this->tree__ = x.tree__;
+    return (*this);
+  }
+
+  // operator= overload }}}
+
+  mapped_type&
+  at(const key_type& k);
+
+  const mapped_type&
+  at(const key_type& k) const;
+
+  allocator_type
+  get_allocator(void) const {
+    return (tree__.get_allocator());
+  }
 };
 
 }  // namespace ft
