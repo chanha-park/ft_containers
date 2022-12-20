@@ -24,7 +24,19 @@ data Color = Red | Black
   deriving (Show)
 
 data Tree a = E | Tree Color (Tree a) a (Tree a)
-  deriving (Show)
+  deriving (Show, Functor)
+
+getColor :: Ord a => Tree a -> Color
+getColor E = Black
+getColor (Tree x _ _ _) = x
+
+getHeight :: Ord a => Tree a -> Integer
+getHeight E = 0
+getHeight (Tree _ l _ r) = 1 + max (getHeight l) (getHeight r)
+
+isBalanced :: Ord a => Tree a -> Bool
+isBalanced E = True
+isBalanced (Tree _ l _ r) = (abs (getHeight l - getHeight r)) <= 1
 
 balance :: Color -> Tree a -> a -> Tree a -> Tree a
 balance Black (Tree Red (Tree Red a x b) y c) z d = Tree Red (Tree Black a x b) y (Tree Black c z d)
@@ -32,6 +44,27 @@ balance Black (Tree Red a x (Tree Red b y c)) z d = Tree Red (Tree Black a x b) 
 balance Black a x (Tree Red (Tree Red b y c) z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
 balance Black a x (Tree Red b y (Tree Red c z d)) = Tree Red (Tree Black a x b) y (Tree Black c z d)
 balance col a x b = Tree col a x b
+
+--             z
+--         y         d      ->            y
+--    x       c                      x          z
+--   a b                          a    b     c      d
+
+--             z
+--         x         d      ->            y
+--    a       y                      x          z
+--           b c                  a    b     c      d
+
+--             x
+--         a         z      ->            y
+--                 y   d             x          z
+--                b c             a    b     c      d
+
+--             x
+--         a         y      ->            y
+--                b    z             x          z
+--                    c d         a    b     c      d
+
 
 makeBlack :: Ord a => Tree a -> Tree a
 makeBlack E = E
@@ -61,3 +94,14 @@ del x t@(Tree _ a y b)
     delL = undefined
     delR = undefined
     fuse = undefined
+
+inOrder :: (Ord a, Show a) => Tree a -> IO ()
+inOrder E = return ()
+inOrder (Tree col l x r) = inOrder l >> (putStr . show $ col) >> (putStr ": ") >> (putStrLn . show $ x) >> inOrder r
+
+-- inOrder (Tree col l x r) = do
+--     inOrder l
+--     putStrLn . show $ col
+--     putStrLn . show $ x
+--     inOrder r
+--     return ()
