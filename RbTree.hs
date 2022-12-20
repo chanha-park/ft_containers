@@ -8,10 +8,22 @@
 -- https://stackoverflow.com/questions/35955246/converting-a-2-3-4-tree-into-a-red-black-tree
 -- https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13b.pdf
 
+data Color = Red | Black
+  deriving (Show)
+
+data Tree a = E | Tree Color (Tree a) a (Tree a)
+  deriving (Show)
+
+instance Functor Tree where
+  fmap _ E = E
+  fmap f (Tree col l x r) = Tree col (fmap f l) (f x) (fmap f r)
+
+-- instance Applicative Tree where
+--   pure f = Tree Black E f E
+--   (<*>) _ _ = E
+
 empty :: Tree a
 empty = E
-
--- type Set a = Tree a
 
 member :: Ord a => a -> Tree a -> Bool
 member _ E = False
@@ -19,12 +31,6 @@ member x (Tree _ a y b)
   | x < y = member x a
   | x > y = member x b
   | otherwise = True
-
-data Color = Red | Black
-  deriving (Show)
-
-data Tree a = E | Tree Color (Tree a) a (Tree a)
-  deriving (Show, Functor)
 
 getColor :: Ord a => Tree a -> Color
 getColor E = Black
@@ -34,9 +40,18 @@ getHeight :: Ord a => Tree a -> Integer
 getHeight E = 0
 getHeight (Tree _ l _ r) = 1 + max (getHeight l) (getHeight r)
 
-isBalanced :: Ord a => Tree a -> Bool
-isBalanced E = True
-isBalanced (Tree _ l _ r) = (abs (getHeight l - getHeight r)) <= 1
+getBlackHeight :: Ord a => Tree a -> Integer
+getBlackHeight E = 0
+getBlackHeight (Tree Red l _ r) = max (getBlackHeight l) (getBlackHeight r)
+getBlackHeight (Tree Black l _ r) = 1 + max (getBlackHeight l) (getBlackHeight r)
+
+compareHeight :: Ord a => Tree a -> ((Integer, Integer), (Integer, Integer))
+compareHeight E = ((0, 0), (0, 0))
+compareHeight (Tree _ l _ r) = ((getHeight l, getHeight r), (getBlackHeight l, getBlackHeight r))
+
+-- isBalanced :: Ord a => Tree a -> Bool
+-- isBalanced E = True
+-- isBalanced (Tree _ l _ r) = (abs (getHeight l - getHeight r)) <= 1
 
 balance :: Color -> Tree a -> a -> Tree a -> Tree a
 balance Black (Tree Red (Tree Red a x b) y c) z d = Tree Red (Tree Black a x b) y (Tree Black c z d)
@@ -65,6 +80,23 @@ balance col a x b = Tree col a x b
 --                b    z             x          z
 --                    c d         a    b     c      d
 
+-- -- Imperative version
+-- -- color flips
+-- balance Black (Tree Red a@(Tree Red _ _ _) x b) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+-- balance Black (Tree Red a x b@(Tree Red _ _ _)) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+-- balance Black (Tree Red a x b) y (Tree Red c@(Tree Red _ _ _) z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+-- balance Black (Tree Red a x b) y (Tree Red c z d@(Tree Red _ _ _)) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+
+-- -- single rotations
+-- balance Black (Tree Red a@(Tree Red _ _ _) x b) y c = Tree Black a x (Tree Red b y c)
+-- balance Black a x (Tree Red b y c@(Tree Red _ _ _)) = Tree Black (Tree Red a x b) y c
+
+-- -- double rotations
+-- balance Black (Tree Red a x (Tree Red b y c)) z d = Tree Black (Tree Red a x b) y (Tree Red c z d)
+-- balance Black a x (Tree Red (Tree Red b y c) z d) = Tree Black (Tree Red a x b) y (Tree Red c z d)
+
+-- -- no balancing
+-- balance col a x b = Tree col a x b
 
 makeBlack :: Ord a => Tree a -> Tree a
 makeBlack E = E
@@ -99,9 +131,7 @@ inOrder :: (Ord a, Show a) => Tree a -> IO ()
 inOrder E = return ()
 inOrder (Tree col l x r) = inOrder l >> (putStr . show $ col) >> (putStr ": ") >> (putStrLn . show $ x) >> inOrder r
 
--- inOrder (Tree col l x r) = do
---     inOrder l
---     putStrLn . show $ col
---     putStrLn . show $ x
---     inOrder r
---     return ()
+-- insert from last element of the list
+listToTree :: Ord a => [a] -> Tree a
+listToTree = foldr insert E
+
