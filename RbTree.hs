@@ -80,23 +80,58 @@ balance col a x b = Tree col a x b
 --                b    z             x          z
 --                    c d         a    b     c      d
 
--- -- Imperative version
--- -- color flips
--- balance Black (Tree Red a@(Tree Red _ _ _) x b) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
--- balance Black (Tree Red a x b@(Tree Red _ _ _)) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
--- balance Black (Tree Red a x b) y (Tree Red c@(Tree Red _ _ _) z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
--- balance Black (Tree Red a x b) y (Tree Red c z d@(Tree Red _ _ _)) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+balance' :: Color -> Tree a -> a -> Tree a -> Tree a
+-- Imperative version
+-- color flips
+balance' Black (Tree Red a@(Tree Red _ _ _) x b) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+balance' Black (Tree Red a x b@(Tree Red _ _ _)) y (Tree Red c z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+balance' Black (Tree Red a x b) y (Tree Red c@(Tree Red _ _ _) z d) = Tree Red (Tree Black a x b) y (Tree Black c z d)
+balance' Black (Tree Red a x b) y (Tree Red c z d@(Tree Red _ _ _)) = Tree Red (Tree Black a x b) y (Tree Black c z d)
 
--- -- single rotations
--- balance Black (Tree Red a@(Tree Red _ _ _) x b) y c = Tree Black a x (Tree Red b y c)
--- balance Black a x (Tree Red b y c@(Tree Red _ _ _)) = Tree Black (Tree Red a x b) y c
+--       y                                Ry
+--  Rx          Rz        ->         x         z
+-- Ra b       c  d                  a b       c d
 
--- -- double rotations
--- balance Black (Tree Red a x (Tree Red b y c)) z d = Tree Black (Tree Red a x b) y (Tree Red c z d)
--- balance Black a x (Tree Red (Tree Red b y c) z d) = Tree Black (Tree Red a x b) y (Tree Red c z d)
+--       y                                Ry
+--  Rx          Rz        ->         x         z
+-- a Rb       c  d                  a b       c d
 
--- -- no balancing
--- balance col a x b = Tree col a x b
+--       y                                Ry
+--  Rx          Rz        ->         x         z
+-- a b        Rc  d                 a b       c d
+
+--       y                                Ry
+--  Rx         Rz        ->          x         z
+-- a b        c  Rd                 a b       c d
+
+-- single rotations
+balance' Black (Tree Red a@(Tree Red _ _ _) x b) y c = Tree Black a x (Tree Red b y c)
+balance' Black a x (Tree Red b y c@(Tree Red _ _ _)) = Tree Black (Tree Red a x b) y c
+
+--       y                              x
+--  Rx         c        ->          a         Ry
+-- Ra b                                      b  c
+
+--       x                              y
+--   a       Ry          ->        Rx         c
+--          b Ra                  a  b
+
+-- double rotations
+balance' Black (Tree Red a x (Tree Red b y c)) z d = Tree Black (Tree Red a x b) y (Tree Red c z d)
+balance' Black a x (Tree Red (Tree Red b y c) z d) = Tree Black (Tree Red a x b) y (Tree Red c z d)
+
+--       z                              y
+--   Rx       d          ->        Rx          Rz
+--  a  Ry                         a  b        c  d
+--    b  c
+
+--       x                              y
+--   a         Rz          ->      Rx          Rz
+--          Ry    d               a  b        c  d
+--         b  c
+
+-- no balancing
+balance' col a x b = Tree col a x b
 
 makeBlack :: Ord a => Tree a -> Tree a
 makeBlack E = E
@@ -134,4 +169,3 @@ inOrder (Tree col l x r) = inOrder l >> (putStr . show $ col) >> (putStr ": ") >
 -- insert from last element of the list
 listToTree :: Ord a => [a] -> Tree a
 listToTree = foldr insert E
-
