@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/19 18:15:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/22 22:09:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,9 @@
 #include <memory>
 #include "iterator.hpp"
 #include "utility.hpp"
+#include "tree__.hpp"
 
 namespace ft {
-
-template <typename Key,
-          typename T,
-          typename Compare,
-          typename Allocator = std::allocator<T> >
-class Rb_Tree__ {};
 
 template <typename Key,
           typename T,
@@ -79,7 +74,7 @@ class map {
 
  private:
   typedef
-      typename ft::Rb_Tree__<key_type, value_type, key_compare, allocator_type>
+      typename ft::rb_tree__<key_type, value_type, key_compare, allocator_type>
           tree_type__;
   tree_type__ tree__;
 
