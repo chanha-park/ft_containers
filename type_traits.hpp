@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/27 17:12:13 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/27 20:16:38 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,11 @@ struct is_integral_internal<long> : public ft::true_type {};
 template <>
 struct is_integral_internal<unsigned long> : public ft::true_type {};
 
-template <>
-struct is_integral_internal<long long> : public ft::true_type {};
+// template <>
+// struct is_integral_internal<long long> : public ft::true_type {};
 
-template <>
-struct is_integral_internal<unsigned long long> : public ft::true_type {};
+// template <>
+// struct is_integral_internal<unsigned long long> : public ft::true_type {};
 
 // is_integral_internal }}}
 
