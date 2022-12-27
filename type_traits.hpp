@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/12 21:33:44 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/27 17:12:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,20 @@ struct enable_if<true, T> {
 };
 
 // enable_if }}}
+
+// conditional {{{
+
+template <bool b, typename If, typename Else>
+struct conditional {
+  typedef If type;
+};
+
+template <typename If, typename Else>
+struct conditional<false, If, Else> {
+  typedef Else type;
+};
+
+// conditional }}}
 
 // helper class: integral_constant, true_type, false_type {{{
 
