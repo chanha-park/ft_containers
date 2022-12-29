@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/29 16:01:19 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/29 16:59:00 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,9 +177,46 @@ class rb_tree__ {
     // class rb_tree_iterator__ }}}
   };
 
-  struct rb_tree_alloc_base__ {};
+  class rb_tree_alloc_base__ {
+   public:
+    typedef typename Allocator::template rebind<Value>::other allocator_type;
 
-  struct rb_tree_node__ : public rb_tree_alloc_base__ {};
+    allocator_type
+    get_allocator(void) const {
+      return (node_allocator);
+    }
+
+    rb_tree_alloc_base__(const allocator_type& a) :
+        node_allocator(a), header(NULL) {
+    }
+
+   protected:
+    typename Allocator::template rebind<value_node__>::other node_allocator;
+    value_node__* header;
+
+    value_node__*
+    get_node__(void) {
+      return (node_allocator.allocate(1));
+    }
+
+    void
+    put_node__(value_node__* ptr) {
+      node_allocator.deallocate(ptr, 1);
+    }
+  };
+
+  struct rb_tree_node__ : public rb_tree_alloc_base__ {
+    typedef rb_tree_alloc_base__ Base_;
+    typedef typename Base_::allocator_type allocator_type;
+
+    rb_tree_node__(const allocator_type& a) : Base_(a) {
+      this->header = this->get_node__();
+    }
+
+    ~rb_tree_node__(void) {
+      this->put_node__(this->header);
+    }
+  };
 
  protected:
  public:
@@ -195,8 +232,8 @@ class rb_tree__ {
   const_iterator cdummy3;
   reverse_iterator rdummy3;
   const_reverse_iterator crdummy3;
-  rb_tree_alloc_base__ dummy4;
-  rb_tree_node__ dummy5;
+  rb_tree_alloc_base__ dummy4(Allocator());
+  rb_tree_node__ dummy5(Allocator());
 
 };  // class rb_tree__
 
