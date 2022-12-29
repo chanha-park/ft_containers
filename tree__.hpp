@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/28 18:02:18 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:16:19 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ template <typename Key,
 class rb_tree__ {
  private:
   // XXX consider virtual?
-  struct rb_tree_node_base__ {
-    // struct rb_tree_node_base__ {{{
+  struct rb_tree_base_node__ {
+    // struct rb_tree_base_node__ {{{
 
-    rb_tree_node_base__* parent;
-    rb_tree_node_base__* left;
-    rb_tree_node_base__* right;
+    rb_tree_base_node__* parent;
+    rb_tree_base_node__* left;
+    rb_tree_base_node__* right;
     bool isRed;
 
-    rb_tree_node_base__*
+    rb_tree_base_node__*
     find_next_node__(void) const {
-      rb_tree_node_base__* curr = this;
+      rb_tree_base_node__* curr = this;
       if (curr->right) {
         curr = curr->right;
         while (curr->left)
@@ -51,9 +51,9 @@ class rb_tree__ {
       return (curr);
     }
 
-    rb_tree_node_base__*
+    rb_tree_base_node__*
     find_prev_node__(void) const {
-      rb_tree_node_base__* curr = this;
+      rb_tree_base_node__* curr = this;
       if (isRed && curr->parent->parent == curr) {
         curr = curr->right;
       } else if (curr->left) {
@@ -69,10 +69,10 @@ class rb_tree__ {
       return (curr);
     }
 
-    virtual ~rb_tree_node_base__(void) {
+    virtual ~rb_tree_base_node__(void) {
     }
 
-    // struct rb_tree_node_base__ }}}
+    // struct rb_tree_base_node__ }}}
   };
 
  public:
@@ -87,12 +87,12 @@ class rb_tree__ {
 
  private:
   template <typename T>
-  struct rb_tree_node_value__ : public rb_tree_node_base__ {
+  struct rb_tree_value_node__ : public rb_tree_base_node__ {
     T val;
   };
 
-  typedef rb_tree_node_base__ base_node__;
-  typedef rb_tree_node_value__<value_type> value_node__;
+  typedef rb_tree_base_node__ base_node__;
+  typedef rb_tree_value_node__<value_type> value_node__;
 
   template <typename T>
   struct rb_tree_iterator__ {
@@ -102,7 +102,7 @@ class rb_tree__ {
     rb_tree_iterator__(void) {
     }
 
-    rb_tree_iterator__(rb_tree_node_value__<T>* x) :
+    rb_tree_iterator__(rb_tree_value_node__<T>* x) :
         node__(static_cast<base_node__*>(x)) {
     }
 
@@ -111,7 +111,7 @@ class rb_tree__ {
 
     reference
     operator*() const {
-      return (dynamic_cast<rb_tree_node_value__<T>*>(node__)->val);
+      return (dynamic_cast<rb_tree_value_node__<T>*>(node__)->val);
     }
 
     pointer
@@ -129,8 +129,8 @@ class rb_tree__ {
 
  protected:
  public:
-  rb_tree_node_base__ dummy1;
-  rb_tree_node_value__<value_type> dummy2;
+  rb_tree_base_node__ dummy1;
+  rb_tree_value_node__<value_type> dummy2;
   iterator dummy3;
   rb_tree_alloc_base__ dummy4;
   rb_tree_node__ dummy5;
