@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/29 12:16:19 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:20:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,14 +96,19 @@ class rb_tree__ {
 
   template <typename T>
   struct rb_tree_iterator__ {
+   public:
+    typedef ptrdiff_t difference_type;
+    typedef T value_type;
+    typedef T* pointer;
+    typedef T& reference;
     typedef ft::bidirectional_iterator_tag iterator_category;
+
     base_node__* node__;
 
     rb_tree_iterator__(void) {
     }
 
-    rb_tree_iterator__(rb_tree_value_node__<T>* x) :
-        node__(static_cast<base_node__*>(x)) {
+    rb_tree_iterator__(value_node__* x) : node__(static_cast<base_node__*>(x)) {
     }
 
     rb_tree_iterator__(const rb_tree_iterator__& it) : node__(it.node__) {
@@ -111,7 +116,7 @@ class rb_tree__ {
 
     reference
     operator*() const {
-      return (dynamic_cast<rb_tree_value_node__<T>*>(node__)->val);
+      return (dynamic_cast<value_node__*>(node__)->val);
     }
 
     pointer
@@ -120,15 +125,17 @@ class rb_tree__ {
     }
   };
 
-  typedef rb_tree_iterator__<value_type> iterator;
-  typedef rb_tree_iterator__<const value_type> const_iterator;
-
   struct rb_tree_alloc_base__ {};
 
   struct rb_tree_node__ : public rb_tree_alloc_base__ {};
 
  protected:
  public:
+  typedef rb_tree_iterator__<value_type> iterator;
+  typedef rb_tree_iterator__<const value_type> const_iterator;
+  typedef ft::reverse_iterator<iterator> reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+
   rb_tree_base_node__ dummy1;
   rb_tree_value_node__<value_type> dummy2;
   iterator dummy3;
