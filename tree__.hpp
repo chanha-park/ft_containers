@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/29 13:58:03 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/29 16:01:19 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ class rb_tree__ {
    private:
     base_node__* node__;
 
+    // iterate_node {{{2
+
     void
     iter_next_node__(void) {
       if (node__->right) {
@@ -104,6 +106,8 @@ class rb_tree__ {
       }
     }
 
+    // iterate_node }}}
+
    public:
     rb_tree_iterator__(void) {
     }
@@ -124,31 +128,51 @@ class rb_tree__ {
       return (ft::addressof(operator*()));
     }
 
-    rb_tree_iterator__<T>&
+    rb_tree_iterator__<value_type>&
     operator++(void) {
       iter_next_node__();
       return (*this);
     }
 
-    rb_tree_iterator__<T>
+    rb_tree_iterator__<value_type>
     operator++(int) {
-      rb_tree_iterator__<T> tmp__(*this);
+      rb_tree_iterator__<value_type> tmp__(*this);
       iter_next_node__();
       return (tmp__);
     }
 
-    rb_tree_iterator__<T>&
+    rb_tree_iterator__<value_type>&
     operator--(void) {
       iter_prev_node__();
       return (*this);
     }
 
-    rb_tree_iterator__<T>
+    rb_tree_iterator__<value_type>
     operator--(int) {
-      rb_tree_iterator__<T> tmp__(*this);
+      rb_tree_iterator__<value_type> tmp__(*this);
       iter_prev_node__();
       return (tmp__);
     }
+
+    bool
+    operator==(const rb_tree_iterator__<const value_type>& other) const {
+      return (this->node__ == other.node__);
+    }
+
+    // bool
+    // operator==(const rb_tree_iterator__<value_type>& other) const {
+    //   return (this->node__ == other.node__);
+    // }
+
+    bool
+    operator!=(const rb_tree_iterator__<const value_type>& other) const {
+      return (this->node__ != other.node__);
+    }
+
+    // bool
+    // operator!=(const rb_tree_iterator__<value_type>& other) const {
+    //   return (this->node__ != other.node__);
+    // }
 
     // class rb_tree_iterator__ }}}
   };
