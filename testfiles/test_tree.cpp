@@ -17,5 +17,6 @@ main(void) {
   (void)cit;
   (void)rit;
   (void)crit;
+  ++it;
   return (0);
 }
