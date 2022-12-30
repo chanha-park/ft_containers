@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/22 22:09:13 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/30 17:36:27 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 #include <functional>
 #include <memory>
 #include "iterator.hpp"
-#include "utility.hpp"
 #include "tree__.hpp"
+#include "utility.hpp"
 
 namespace ft {
 
@@ -73,9 +73,13 @@ class map {
   // member class value_compare }}}
 
  private:
-  typedef
-      typename ft::rb_tree__<key_type, value_type, key_compare, allocator_type>
-          tree_type__;
+  typedef typename ft::rb_tree__<key_type,
+                                 value_type,
+                                 ft::functor_first__<value_type>,
+                                 key_compare,
+                                 allocator_type>
+      tree_type__;
+
   tree_type__ tree__;
 
  protected:

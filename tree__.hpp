@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/29 16:59:00 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/30 17:49:45 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ namespace ft {
 
 template <typename Key,
           typename Value,
+          typename KeyFromValue,
           typename Compare,
           typename Allocator = std::allocator<Value> >
 class rb_tree__ {
@@ -29,7 +30,6 @@ class rb_tree__ {
   // XXX consider virtual?
   struct rb_tree_base_node__ {
     // struct rb_tree_base_node__ {{{
-
     rb_tree_base_node__* parent;
     rb_tree_base_node__* left;
     rb_tree_base_node__* right;
@@ -45,10 +45,13 @@ class rb_tree__ {
   typedef Key key_type;
   typedef Value value_type;
   typedef Compare key_compare;
-  typedef ptrdiff_t difference_type;
+
+  typedef std::ptrdiff_t difference_type;
+  typedef std::size_t size_type;
+
   typedef value_type* pointer;
-  typedef const value_type* const_pointer;
   typedef value_type& reference;
+  typedef const value_type* const_pointer;
   typedef const value_type& const_reference;
 
  private:
@@ -63,7 +66,6 @@ class rb_tree__ {
   template <typename T>
   class rb_tree_iterator__ {
     // class rb_tree_iterator__ {{{
-
    public:
     typedef ptrdiff_t difference_type;
     typedef T value_type;
@@ -159,6 +161,7 @@ class rb_tree__ {
       return (this->node__ == other.node__);
     }
 
+    // XXX
     // bool
     // operator==(const rb_tree_iterator__<value_type>& other) const {
     //   return (this->node__ == other.node__);
@@ -178,6 +181,7 @@ class rb_tree__ {
   };
 
   class rb_tree_alloc_base__ {
+    // class rb_tree_alloc_base__ {{{
    public:
     typedef typename Allocator::template rebind<Value>::other allocator_type;
 
@@ -203,29 +207,174 @@ class rb_tree__ {
     put_node__(value_node__* ptr) {
       node_allocator.deallocate(ptr, 1);
     }
+
+    // class rb_tree_alloc_base__ }}}
   };
 
   struct rb_tree_node__ : public rb_tree_alloc_base__ {
-    typedef rb_tree_alloc_base__ Base_;
-    typedef typename Base_::allocator_type allocator_type;
+    // struct rb_tree_node__ {{{
+    typedef rb_tree_alloc_base__ Base__;
+    typedef typename Base__::allocator_type allocator_type;
 
-    rb_tree_node__(const allocator_type& a) : Base_(a) {
+    rb_tree_node__(const allocator_type& a) : Base__(a) {
       this->header = this->get_node__();
     }
 
     ~rb_tree_node__(void) {
       this->put_node__(this->header);
     }
+
+    // struct rb_tree_node__ }}}
   };
 
- protected:
+ private:
+  rb_tree_node__ Base__;
+  size_type node_count__;
+  key_compare comp__;
+
  public:
+  typedef typename rb_tree_node__::allocator_type allocator_type;
+
   typedef rb_tree_iterator__<value_type> iterator;
   typedef rb_tree_iterator__<const value_type> const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
+ public:
+  allocator_type
+  get_allocator(void) const {
+    return (Base__.get_allocator());
+  }
+
+ private:
+  // create, clone, destroy node {{{
+
+  value_node__*
+  create_node__(const value_type& x) {
+    value_node__* tmp__ = Base__.get_node__();
+    try {
+      Base__.get_allocator().allocate(ft::addressof(tmp__->val), x);
+    } catch (...) {
+      Base__.put_node__(tmp__);
+      throw;
+    }
+    return (tmp__);
+  }
+
+  value_node__*
+  clone_node__(value_node__* other) {
+    value_node__* tmp__ = this->create_node__(other->val);
+    tmp__->isRed = other->isRed;
+    tmp__->left = NULL;
+    tmp__->right = NULL;
+    tmp__->parent = NULL;
+    return (tmp__);
+  }
+
+  void
+  destroy_node__(value_node__* ptr) {
+    Base__.get_allocator().destroy(ft::addressof(ptr->val));
+    Base__.put_node__(ptr);
+  }
+
+  // create, clone, destroy node }}}
+
+  value_node__*&
+  get_root__(void) const {
+    return (dynamic_cast<value_node__*&>(Base__.header->parent));
+  }
+
+  value_node__*&
+  get_leftmost__(void) const {
+    return (dynamic_cast<value_node__*&>(Base__.header->left));
+  }
+
+  value_node__*&
+  get_rightmost__(void) const {
+    return (dynamic_cast<value_node__*&>(Base__.header->right));
+  }
+
+  // static getter for value_node__* type {{{
+
+  static value_node__*&
+  get_left(value_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->left));
+  }
+
+  static value_node__*&
+  get_right(value_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->right));
+  }
+
+  static value_node__*&
+  get_parent(value_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->parent));
+  }
+
+  static reference
+  get_value(value_node__* x) {
+    return (x->val);
+  }
+
+  static const key_type&
+  get_key(value_node__* x) {
+    return (KeyFromValue()(get_value(x)));
+  }
+
+  static bool&
+  is_red(value_node__* x) {
+    return (x->isRed);
+  }
+
+  // static getter for value_node__* type }}}
+
+  // static getter for base_node__* type {{{
+
+  static value_node__*&
+  get_left(base_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->left));
+  }
+
+  static value_node__*&
+  get_right(base_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->right));
+  }
+
+  static value_node__*&
+  get_parent(base_node__* x) {
+    return (dynamic_cast<value_node__*&>(x->parent));
+  }
+
+  static reference
+  get_value(base_node__* x) {
+    return (dynamic_cast<value_node__*>(x)->val);
+  }
+
+  static const key_type&
+  get_key(base_node__* x) {
+    return (KeyFromValue()(get_value(dynamic_cast<value_node__*>(x))));
+  }
+
+  static bool&
+  is_red(base_node__* x) {
+    return (x->isRed);
+  }
+
+  // static getter for base_node__* type }}}
+
+  // XXX
+  void
+  empty_initialize(void) {
+  }
+
+ public:
+  // XXX have to implement constructors
+  rb_tree__(void) : Base__(allocator_type()), node_count__(0), comp__() {
+    empty_initialize();
+  }
+
   // XXX remove when done;
+ public:
   rb_tree_base_node__ dummy1;
   rb_tree_value_node__<value_type> dummy2;
   iterator dummy3;
