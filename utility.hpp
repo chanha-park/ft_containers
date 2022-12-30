@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:20:01 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/16 19:20:40 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/30 17:34:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,57 @@ make_pair(T1 x, T2 y) {
 }
 
 // make_pair }}}
+
+// struct for functor {{{
+
+template <typename Arg, typename Result>
+struct unary_function {
+  typedef Arg argument_type;
+  typedef Result result_type;
+};
+
+template <typename T>
+struct functor_identity__ : public ft::unary_function<T, T> {
+  T&
+  operator()(T& x) const {
+    return (x);
+  }
+
+  const T&
+  operator()(const T& x) const {
+    return (x);
+  }
+};
+
+template <typename Pair>
+struct functor_first__ :
+    public ft::unary_function<Pair, typename Pair::first_type> {
+  typename Pair::first_type&
+  operator()(Pair& x) const {
+    return (x.first);
+  }
+
+  const typename Pair::first_type&
+  operator()(const Pair& x) const {
+    return (x.first);
+  }
+};
+
+template <typename Pair>
+struct functor_second__ :
+    public ft::unary_function<Pair, typename Pair::second_type> {
+  typename Pair::second_type&
+  operator()(Pair& x) const {
+    return (x.second);
+  }
+
+  const typename Pair::second_type&
+  operator()(const Pair& x) const {
+    return (x.second);
+  }
+};
+
+// struct for functor }}}
 
 }  // namespace ft
 
