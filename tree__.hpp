@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/30 17:49:45 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/30 18:34:07 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,20 @@ class rb_tree__ {
     rb_tree_base_node__* left;
     rb_tree_base_node__* right;
     bool isRed;
+
+    static rb_tree_base_node__*
+    local_leftmost(rb_tree_base_node__* x) {
+      while (x->left)
+        x = x->left;
+      return (x);
+    }
+
+    static rb_tree_base_node__*
+    local_rightmost(rb_tree_base_node__* x) {
+      while (x->right)
+        x = x->right;
+      return (x);
+    }
 
     virtual ~rb_tree_base_node__(void) {
     }
@@ -362,6 +376,28 @@ class rb_tree__ {
 
   // static getter for base_node__* type }}}
 
+  static value_node__*
+  local_leftmost(value_node__* x) {
+    return (dynamic_cast<value_node__*>(base_node__::local_leftmost(x)));
+  }
+
+  static value_node__*
+  local_rightmost(value_node__* x) {
+    return (dynamic_cast<value_node__*>(base_node__::local_rightmost(x)));
+  }
+
+  // XXX
+  iterator
+  _M_insert(base_node__* x, base_node__* y, const value_type& v);
+
+  // XXX
+  value_node__*
+  _M_copy(value_node__* x, value_node__* p);
+
+  // XXX
+  void
+  _M_erase(value_node__* x);
+
   // XXX
   void
   empty_initialize(void) {
@@ -370,7 +406,7 @@ class rb_tree__ {
  public:
   // XXX have to implement constructors
   rb_tree__(void) : Base__(allocator_type()), node_count__(0), comp__() {
-    empty_initialize();
+    this->empty_initialize();
   }
 
   // XXX remove when done;
