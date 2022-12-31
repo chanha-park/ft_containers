@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/30 18:34:07 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/31 12:38:26 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ class rb_tree__ {
     tmp__->isRed = other->isRed;
     tmp__->left = NULL;
     tmp__->right = NULL;
-    tmp__->parent = NULL;
+    tmp__->parent = NULL;  // XXX maybe unnecessary?
     return (tmp__);
   }
 
@@ -404,10 +404,65 @@ class rb_tree__ {
   }
 
  public:
-  // XXX have to implement constructors
+  // ctor, operator=, dtor {{{
+
   rb_tree__(void) : Base__(allocator_type()), node_count__(0), comp__() {
     this->empty_initialize();
   }
+
+  rb_tree__(const key_compare& comp) :
+      Base__(allocator_type()), node_count__(0), comp__(comp) {
+    this->empty_initialize();
+  }
+
+  rb_tree__(const key_compare& comp, const allocator_type& a) :
+      Base__(a), node_count__(0), comp__(comp) {
+    this->empty_initialize();
+  }
+
+  rb_tree__(
+      const rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>& other) :
+      Base__(other.get_allocator()),
+      node_count__(other.node_count__),
+      comp__(other.comp__) {
+    if (other.get_root__() == NULL)
+      this->empty_initialize();
+    else {
+      this->is_red(Base__.header) = true;
+      this->get_root__() = _M_copy(other.get_root__(), Base__.header);
+      this->get_leftmost__() = this->local_leftmost(this->get_root__());
+      this->get_rightmost__() = this->local_rightmost(this->get_root__());
+    }
+  }
+
+  rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>&
+  operator=(
+      const rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>& other) {
+    if (this != &other) {
+      this->clear();
+      this->comp__ = other.comp__;
+
+      if (other.get_root__() == 0) {
+        this->get_root__() = NULL;
+        this->get_leftmost__() = Base__.header;
+        this->get_rightmost__() = Base__.header;
+        this->node_count__ = 0;
+
+      } else {
+        this->get_root__() = _M_copy(other.get_root__(), Base__.header);
+        this->get_leftmost__() = this->local_leftmost(this->get_root__());
+        this->get_rightmost__() = this->local_rightmost(this->get_root__());
+        this->node_count__ = other.node_count__;
+      }
+    }
+    return (*this);
+  }
+
+  ~rb_tree__(void) {
+    this->clear();
+  }
+
+  // ctor, operator=, dtor }}}
 
   // XXX remove when done;
  public:
