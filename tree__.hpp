@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/31 12:38:26 by chanhpar         ###   ########.fr       */
+/*   Updated: 2022/12/31 15:46:43 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ template <typename Key,
 class rb_tree__ {
  private:
   // XXX consider virtual?
-  struct rb_tree_base_node__ {
-    // struct rb_tree_base_node__ {{{
+  class rb_tree_base_node__ {
+   public:
+    // class rb_tree_base_node__ {{{
     rb_tree_base_node__* parent;
     rb_tree_base_node__* left;
     rb_tree_base_node__* right;
@@ -52,7 +53,7 @@ class rb_tree__ {
     virtual ~rb_tree_base_node__(void) {
     }
 
-    // struct rb_tree_base_node__ }}}
+    // class rb_tree_base_node__ }}}
   };
 
  public:
@@ -70,7 +71,8 @@ class rb_tree__ {
 
  private:
   template <typename T>
-  struct rb_tree_value_node__ : public rb_tree_base_node__ {
+  class rb_tree_value_node__ : public rb_tree_base_node__ {
+   public:
     T val;
   };
 
@@ -199,6 +201,10 @@ class rb_tree__ {
    public:
     typedef typename Allocator::template rebind<Value>::other allocator_type;
 
+   protected:
+    typename Allocator::template rebind<value_node__>::other node_allocator;
+
+   public:
     allocator_type
     get_allocator(void) const {
       return (node_allocator);
@@ -208,10 +214,9 @@ class rb_tree__ {
         node_allocator(a), header(NULL) {
     }
 
-   protected:
-    typename Allocator::template rebind<value_node__>::other node_allocator;
     value_node__* header;
 
+   protected:
     value_node__*
     get_node__(void) {
       return (node_allocator.allocate(1));
@@ -225,8 +230,9 @@ class rb_tree__ {
     // class rb_tree_alloc_base__ }}}
   };
 
-  struct rb_tree_node__ : public rb_tree_alloc_base__ {
-    // struct rb_tree_node__ {{{
+  class rb_tree_node__ : public rb_tree_alloc_base__ {
+    // class rb_tree_node__ {{{
+   public:
     typedef rb_tree_alloc_base__ Base__;
     typedef typename Base__::allocator_type allocator_type;
 
@@ -238,7 +244,7 @@ class rb_tree__ {
       this->put_node__(this->header);
     }
 
-    // struct rb_tree_node__ }}}
+    // class rb_tree_node__ }}}
   };
 
  private:
@@ -257,7 +263,7 @@ class rb_tree__ {
  public:
   allocator_type
   get_allocator(void) const {
-    return (Base__.get_allocator());
+    return (this->Base__.get_allocator());
   }
 
  private:
@@ -265,11 +271,11 @@ class rb_tree__ {
 
   value_node__*
   create_node__(const value_type& x) {
-    value_node__* tmp__ = Base__.get_node__();
+    value_node__* tmp__ = this->Base__.get_node__();
     try {
-      Base__.get_allocator().allocate(ft::addressof(tmp__->val), x);
+      this->Base__.get_allocator().allocate(ft::addressof(tmp__->val), x);
     } catch (...) {
-      Base__.put_node__(tmp__);
+      this->Base__.put_node__(tmp__);
       throw;
     }
     return (tmp__);
@@ -287,25 +293,25 @@ class rb_tree__ {
 
   void
   destroy_node__(value_node__* ptr) {
-    Base__.get_allocator().destroy(ft::addressof(ptr->val));
-    Base__.put_node__(ptr);
+    this->Base__.get_allocator().destroy(ft::addressof(ptr->val));
+    this->Base__.put_node__(ptr);
   }
 
   // create, clone, destroy node }}}
 
   value_node__*&
   get_root__(void) const {
-    return (dynamic_cast<value_node__*&>(Base__.header->parent));
+    return (dynamic_cast<value_node__*&>(this->Base__.header->parent));
   }
 
   value_node__*&
   get_leftmost__(void) const {
-    return (dynamic_cast<value_node__*&>(Base__.header->left));
+    return (dynamic_cast<value_node__*&>(this->Base__.header->left));
   }
 
   value_node__*&
   get_rightmost__(void) const {
-    return (dynamic_cast<value_node__*&>(Base__.header->right));
+    return (dynamic_cast<value_node__*&>(this->Base__.header->right));
   }
 
   // static getter for value_node__* type {{{
@@ -401,6 +407,10 @@ class rb_tree__ {
   // XXX
   void
   empty_initialize(void) {
+    this->is_red(this->Base__.header) = true;
+    this->get_root__() = static_cast<value_node__*>(NULL);
+    this->get_leftmost__() = this->Base__.header;
+    this->get_rightmost__() = this->Base__.header;
   }
 
  public:
@@ -428,8 +438,8 @@ class rb_tree__ {
     if (other.get_root__() == NULL)
       this->empty_initialize();
     else {
-      this->is_red(Base__.header) = true;
-      this->get_root__() = _M_copy(other.get_root__(), Base__.header);
+      this->is_red(this->Base__.header) = true;
+      this->get_root__() = _M_copy(other.get_root__(), this->Base__.header);
       this->get_leftmost__() = this->local_leftmost(this->get_root__());
       this->get_rightmost__() = this->local_rightmost(this->get_root__());
     }
@@ -444,12 +454,12 @@ class rb_tree__ {
 
       if (other.get_root__() == 0) {
         this->get_root__() = NULL;
-        this->get_leftmost__() = Base__.header;
-        this->get_rightmost__() = Base__.header;
+        this->get_leftmost__() = this->Base__.header;
+        this->get_rightmost__() = this->Base__.header;
         this->node_count__ = 0;
 
       } else {
-        this->get_root__() = _M_copy(other.get_root__(), Base__.header);
+        this->get_root__() = _M_copy(other.get_root__(), this->Base__.header);
         this->get_leftmost__() = this->local_leftmost(this->get_root__());
         this->get_rightmost__() = this->local_rightmost(this->get_root__());
         this->node_count__ = other.node_count__;
@@ -463,6 +473,38 @@ class rb_tree__ {
   }
 
   // ctor, operator=, dtor }}}
+
+  // erase, clear {{{
+
+  void
+  erase(iterator pos) {
+    (void)pos;
+  }
+
+  // size_type
+  // erase(const key_type& x) {
+  // }
+
+  void
+  erase(iterator first, iterator last) {
+  }
+
+  void
+  erase(const key_type* first, const key_type* last) {
+  }
+
+  void
+  clear(void) {
+    if (this->node_count__ != 0) {
+      this->erase(this->get_root__());
+      this->get_leftmost__() = this->Base__.header;
+      this->get_root__() = NULL;
+      this->get_rightmost__() = this->Base__.header;
+      this->node_count__ = 0;
+    }
+  }
+
+  // erase, clear }}}
 
   // XXX remove when done;
  public:
