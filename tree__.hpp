@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/31 15:46:43 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/01 13:47:15 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ class rb_tree__ {
       while (x->right)
         x = x->right;
       return (x);
-    }
-
-    virtual ~rb_tree_base_node__(void) {
     }
 
     // class rb_tree_base_node__ }}}
@@ -138,7 +135,7 @@ class rb_tree__ {
 
     reference
     operator*() const {
-      return (dynamic_cast<value_node__*>(node__)->val);
+      return (static_cast<value_node__*>(node__)->val);
     }
 
     pointer
@@ -299,36 +296,39 @@ class rb_tree__ {
 
   // create, clone, destroy node }}}
 
+  // XXX check casting
   value_node__*&
   get_root__(void) const {
-    return (dynamic_cast<value_node__*&>(this->Base__.header->parent));
+    return ((value_node__*&)(this->Base__.header->parent));
   }
 
+  // XXX check casting
   value_node__*&
   get_leftmost__(void) const {
-    return (dynamic_cast<value_node__*&>(this->Base__.header->left));
+    return ((value_node__*&)(this->Base__.header->left));
   }
 
+  // XXX check casting
   value_node__*&
   get_rightmost__(void) const {
-    return (dynamic_cast<value_node__*&>(this->Base__.header->right));
+    return ((value_node__*&)(this->Base__.header->right));
   }
 
   // static getter for value_node__* type {{{
 
   static value_node__*&
   get_left(value_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->left));
+    return (static_cast<value_node__*&>(x->left));
   }
 
   static value_node__*&
   get_right(value_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->right));
+    return (static_cast<value_node__*&>(x->right));
   }
 
   static value_node__*&
   get_parent(value_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->parent));
+    return (static_cast<value_node__*&>(x->parent));
   }
 
   static reference
@@ -352,27 +352,27 @@ class rb_tree__ {
 
   static value_node__*&
   get_left(base_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->left));
+    return (static_cast<value_node__*&>(x->left));
   }
 
   static value_node__*&
   get_right(base_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->right));
+    return (static_cast<value_node__*&>(x->right));
   }
 
   static value_node__*&
   get_parent(base_node__* x) {
-    return (dynamic_cast<value_node__*&>(x->parent));
+    return (static_cast<value_node__*&>(x->parent));
   }
 
   static reference
   get_value(base_node__* x) {
-    return (dynamic_cast<value_node__*>(x)->val);
+    return (static_cast<value_node__*>(x)->val);
   }
 
   static const key_type&
   get_key(base_node__* x) {
-    return (KeyFromValue()(get_value(dynamic_cast<value_node__*>(x))));
+    return (KeyFromValue()(get_value(static_cast<value_node__*>(x))));
   }
 
   static bool&
@@ -384,12 +384,12 @@ class rb_tree__ {
 
   static value_node__*
   local_leftmost(value_node__* x) {
-    return (dynamic_cast<value_node__*>(base_node__::local_leftmost(x)));
+    return (static_cast<value_node__*>(base_node__::local_leftmost(x)));
   }
 
   static value_node__*
   local_rightmost(value_node__* x) {
-    return (dynamic_cast<value_node__*>(base_node__::local_rightmost(x)));
+    return (static_cast<value_node__*>(base_node__::local_rightmost(x)));
   }
 
   // XXX
