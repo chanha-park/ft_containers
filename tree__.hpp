@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 17:50:15 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 18:13:44 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -522,76 +522,89 @@ class rb_tree__ {
 
   // erase, clear }}}
 
-  // // accessors {{{
+  // accessors {{{
 
-  // key_compare
-  // get_key_compare(void) const {
-  //   return (this->comp__);
-  // }
+  // accessors }}}
 
-  // iterator
-  // begin(void) {
-  //   return (this->get_leftmost__());
-  // }
+  // observer
 
-  // const_iterator
-  // begin(void) const {
-  //   return _M_leftmost();
-  // }
+  key_compare
+  key_comp(void) const {
+    return (this->comp__);
+  }
 
-  // iterator
-  // end(void) {
-  //   return _M_header;
-  // }
+  // iterator {{{
 
-  // const_iterator
-  // end(void) const {
-  //   return _M_header;
-  // }
+  iterator
+  begin(void) {
+    return (this->get_leftmost__());
+  }
 
-  // reverse_iterator
-  // rbegin(void) {
-  //   return reverse_iterator(end());
-  // }
+  const_iterator
+  begin(void) const {
+    return (this->get_leftmost__());
+  }
 
-  // const_reverse_iterator
-  // rbegin(void) const {
-  //   return const_reverse_iterator(end());
-  // }
+  iterator
+  end(void) {
+    return (this->get_rightmost__());
+  }
 
-  // reverse_iterator
-  // rend(void) {
-  //   return reverse_iterator(begin());
-  // }
+  const_iterator
+  end(void) const {
+    return (this->get_rightmost__());
+  }
 
-  // const_reverse_iterator
-  // rend(void) const {
-  //   return const_reverse_iterator(begin());
-  // }
+  reverse_iterator
+  rbegin(void) {
+    return (reverse_iterator(this->end()));
+  }
 
-  // bool
-  // empty(void) const {
-  //   return _M_node_count == 0;
-  // }
+  const_reverse_iterator
+  rbegin(void) const {
+    return (const_reverse_iterator(this->end()));
+  }
 
-  // size_type
-  // size(void) const {
-  //   return _M_node_count;
-  // }
+  reverse_iterator
+  rend(void) {
+    return (reverse_iterator(this->begin()));
+  }
 
-  // size_type
-  // max_size(void) const {
-  //   return size_type(-1);
-  // }
+  const_reverse_iterator
+  rend(void) const {
+    return (const_reverse_iterator(this->begin()));
+  }
 
-  // void
-  // swap(_Rb_tree<_Key, _Value, _KeyOfValue, _Compare, _Alloc>& __t) {
-  //   std::swap(_M_header, __t._M_header);
-  //   std::swap(_M_node_count, __t._M_node_count);
-  //   std::swap(_M_key_compare, __t._M_key_compare);
-  // }
+  // iterator }}}
 
-  // // accessors }}}
+  // capacity {{{
+
+  bool
+  empty(void) const {
+    return (this->node_count__ == 0);
+  }
+
+  size_type
+  size(void) const {
+    return (this->node_count__);
+  }
+
+  size_type
+  max_size(void) const {
+    static const size_type maxSize__
+        = std::min<size_type>(this->node_allocator.max_size(),
+                              std::numeric_limits<difference_type>::max());
+    return (maxSize__);
+  }
+
+  // capacity }}}
+
+  void
+  swap(rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>& other) {
+    std::swap(this->Base__.header, other.Base__.header);
+    std::swap(this->node_count__, other.node_count__);
+    std::swap(this->comp__, other.comp__);
+  }
 
   // XXX remove when done;
  public:
