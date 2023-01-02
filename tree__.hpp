@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/01 13:47:15 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 16:55:49 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,22 +296,34 @@ class rb_tree__ {
 
   // create, clone, destroy node }}}
 
-  // XXX check casting
-  value_node__*&
+  value_node__*
   get_root__(void) const {
-    return ((value_node__*&)(this->Base__.header->parent));
+    return (static_cast<value_node__*>(this->Base__.header->parent));
   }
 
-  // XXX check casting
-  value_node__*&
+  value_node__*
   get_leftmost__(void) const {
-    return ((value_node__*&)(this->Base__.header->left));
+    return (static_cast<value_node__*>(this->Base__.header->left));
   }
 
-  // XXX check casting
-  value_node__*&
+  value_node__*
   get_rightmost__(void) const {
-    return ((value_node__*&)(this->Base__.header->right));
+    return (static_cast<value_node__*>(this->Base__.header->right));
+  }
+
+  void
+  set_root__(value_node__* other) {
+    this->Base__.header->parent = static_cast<base_node__*>(other);
+  }
+
+  void
+  set_leftmost__(value_node__* other) {
+    this->Base__.header->left = static_cast<base_node__*>(other);
+  }
+
+  void
+  set_rightmost__(value_node__* other) {
+    this->Base__.header->right = static_cast<base_node__*>(other);
   }
 
   // static getter for value_node__* type {{{
@@ -408,9 +420,9 @@ class rb_tree__ {
   void
   empty_initialize(void) {
     this->is_red(this->Base__.header) = true;
-    this->get_root__() = static_cast<value_node__*>(NULL);
-    this->get_leftmost__() = this->Base__.header;
-    this->get_rightmost__() = this->Base__.header;
+    this->set_root__(NULL);
+    this->set_leftmost__(this->Base__.header);
+    this->set_rightmost__(this->Base__.header);
   }
 
  public:
@@ -485,21 +497,21 @@ class rb_tree__ {
   // erase(const key_type& x) {
   // }
 
-  void
-  erase(iterator first, iterator last) {
-  }
+  // void
+  // erase(iterator first, iterator last) {
+  // }
 
-  void
-  erase(const key_type* first, const key_type* last) {
-  }
+  // void
+  // erase(const key_type* first, const key_type* last) {
+  // }
 
   void
   clear(void) {
     if (this->node_count__ != 0) {
       this->erase(this->get_root__());
-      this->get_leftmost__() = this->Base__.header;
-      this->get_root__() = NULL;
-      this->get_rightmost__() = this->Base__.header;
+      this->set_leftmost__(this->Base__.header);
+      this->set_root__(NULL);
+      this->set_rightmost__(this->Base__.header);
       this->node_count__ = 0;
     }
   }
