@@ -6,13 +6,14 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 19:14:53 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 22:11:16 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_TREE_HPP
 #define FT_CONTAINERS_TREE_HPP
 
+#include <algorithm>
 #include <memory>
 #include "iterator.hpp"
 #include "memory.hpp"
@@ -27,7 +28,6 @@ template <typename Key,
           typename Allocator = std::allocator<Value> >
 class rb_tree__ {
  private:
-  // XXX consider virtual?
   class rb_tree_base_node__ {
    public:
     // class rb_tree_base_node__ {{{
@@ -38,14 +38,14 @@ class rb_tree__ {
 
     static rb_tree_base_node__*
     local_leftmost__(rb_tree_base_node__* x) {
-      while (x->left)
+      while (x->left != NULL)
         x = x->left;
       return (x);
     }
 
     static rb_tree_base_node__*
     local_rightmost__(rb_tree_base_node__* x) {
-      while (x->right)
+      while (x->right != NULL)
         x = x->right;
       return (x);
     }
@@ -93,9 +93,9 @@ class rb_tree__ {
 
     void
     iter_next_node__(void) {
-      if (node__->right) {
+      if (node__->right != NULL) {
         node__ = node__->right;
-        while (node__->left)
+        while (node__->left != NULL)
           node__ = node__->left;
       } else {
         while (node__ == node__->parent->right)
@@ -109,9 +109,9 @@ class rb_tree__ {
     iter_prev_node__(void) {
       if (node__->isRed && node__->parent->parent == node__) {
         node__ = node__->right;
-      } else if (node__->left) {
+      } else if (node__->left != NULL) {
         node__ = node__->left;
-        while (node__->right)
+        while (node__->right != NULL)
           node__ = node__->right;
 
       } else {
@@ -213,7 +213,6 @@ class rb_tree__ {
 
     value_node__* header;
 
-   protected:
     value_node__*
     allocate_node__(void) {
       return (node_allocator.allocate(1));
@@ -270,7 +269,7 @@ class rb_tree__ {
   create_node__(const value_type& x) {
     value_node__* tmp__ = this->Base__.allocate_node__();
     try {
-      this->Base__.get_allocator().allocate(ft::addressof(tmp__->val), x);
+      this->Base__.get_allocator().construct(ft::addressof(tmp__->val), x);
     } catch (...) {
       this->Base__.deallocate_node__(tmp__);
       throw;
@@ -284,7 +283,6 @@ class rb_tree__ {
     tmp__->isRed = other->isRed;
     tmp__->left = NULL;
     tmp__->right = NULL;
-    tmp__->parent = NULL;  // XXX maybe unnecessary?
     return (tmp__);
   }
 
@@ -410,17 +408,57 @@ class rb_tree__ {
 
   // XXX
   iterator
-  _M_insert(base_node__* x, base_node__* y, const value_type& v);
+  _M_insert(base_node__* x, base_node__* y, const value_type& v) {
+    // to compile
+    (void)x;
+    (void)y;
+    (void)v;
+    return (iterator());
+    // to compile
+  }
 
-  // XXX
   value_node__*
-  _M_copy(value_node__* x, value_node__* p);
+  _M_copy(value_node__* x, value_node__* parent) {
+    value_node__* tmp__;
 
-  // XXX
+    value_node__* top__ = this->clone_node__(x);
+    top__->parent = parent;
+
+    try {
+      if (x->right != NULL) {
+        top__->right
+            = static_cast<base_node__*>(_M_copy(get_right__(x), top__));
+      }
+      parent = top__;
+      x = get_left__(x);
+      while (x != NULL) {
+        tmp__ = this->clone_node__(x);
+        parent->left = tmp__;
+        tmp__->parent = parent;
+        if (x->right != NULL)
+          tmp__->right = _M_copy(get_right__(x), tmp__);
+        parent = tmp__;
+        x = get_left__(x);
+      }
+    } catch (...) {
+      _M_erase(top__);
+      throw;
+    }
+    return (top__);
+  }
+
+  // XXX Need Rename: erase every nodes below x (inclusive)
   void
-  _M_erase(value_node__* x);
+  _M_erase(value_node__* x) {
+    value_node__* tmp__;
+    while (x != NULL) {
+      _M_erase(get_right__(x));
+      tmp__ = x;
+      x = get_left__(x);
+      destroy_node__(tmp__);
+    }
+  }
 
-  // XXX
   void
   empty_initialize(void) {
     this->is_red__(this->Base__.header) = true;
@@ -515,12 +553,12 @@ class rb_tree__ {
 
   iterator
   end(void) {
-    return (this->get_rightmost__());
+    return (this->Base__.header);
   }
 
   const_iterator
   end(void) const {
-    return (this->get_rightmost__());
+    return (this->Base__.header);
   }
 
   reverse_iterator
@@ -576,30 +614,98 @@ class rb_tree__ {
 
   // insert {{{
 
+  // XXX
+  ft::pair<iterator, bool>
+  insert_unique(const value_type& x) {
+    // to compile
+    (void)x;
+    return (ft::pair<iterator, bool>(iterator(x), true));
+    // to compile
+  }
+
+  // XXX
+  iterator
+  insert_equal(const value_type& x) {
+    // to compile
+    (void)x;
+    return (iterator());
+    // to compile
+  }
+
+  // XXX
+  iterator
+  insert_unique(iterator position, const value_type& x) {
+    // to compile
+    (void)position;
+    (void)x;
+    return (iterator());
+    // to compile
+  }
+
+  // XXX
+  iterator
+  insert_equal(iterator position, const value_type& x) {
+    // to compile
+    (void)position;
+    (void)x;
+    return (iterator());
+    // to compile
+  }
+
+  // XXX
+  template <class InputIter>
+  void
+  insert_unique(InputIter first, InputIter last) {
+    // to compile
+    (void)first;
+    (void)last;
+    // to compile
+  }
+
+  // XXX
+  template <class InputIter>
+  void
+  insert_equal(InputIter first, InputIter last) {
+    // to compile
+    (void)first;
+    (void)last;
+    // to compile
+  }
+
   // insert }}}
 
   // erase, clear {{{
 
+  // XXX
   void
   erase(iterator pos) {
+    // to compile
+    (void)pos;
+    // to compile
   }
 
+  // XXX
   size_type
   erase(const key_type& x) {
+    // to compile
+    (void)x;
+    // to compile
   }
 
   void
   erase(iterator first, iterator last) {
-  }
-
-  void
-  erase(const key_type* first, const key_type* last) {
+    if (first == this->begin() && last == this->end())
+      this->clear();
+    else {
+      while (first != last)
+        this->erase(first++);
+    }
   }
 
   void
   clear(void) {
     if (this->node_count__ != 0) {
-      this->erase(this->get_root__());
+      this->_M_erase(this->get_root__());
       this->set_leftmost__(this->Base__.header);
       this->set_root__(NULL);
       this->set_rightmost__(this->Base__.header);
@@ -612,32 +718,124 @@ class rb_tree__ {
   // find, count, lower_bound, upper_bound, equal_range {{{
 
   iterator
-  find(const key_type& x);
+  find(const key_type& key) {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL)
+      if (this->comp__(get_key__(curr__), key)) {
+        curr__ = get_right__(curr__);
+      } else {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      }
+
+    iterator it__(prev__);
+    return ((it__ == this->end() || this->comp__(key, get_key__(prev__)))
+                ? this->end()
+                : it__);
+  }
 
   const_iterator
-  find(const key_type& x) const;
+  find(const key_type& key) const {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL)
+      if (this->comp__(get_key__(curr__), key)) {
+        curr__ = get_right__(curr__);
+      } else {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      }
+
+    const_iterator it__(prev__);
+    return ((it__ == this->end() || this->comp__(key, get_key__(prev__)))
+                ? this->end()
+                : it__);
+  }
 
   size_type
-  count(const key_type& x) const;
+  count(const key_type& key) const {
+    ft::pair<const_iterator, const_iterator> range__ = equal_range(key);
+    size_type n__ = distance(range__.first, range__.second);
+    return (n__);
+  }
 
   iterator
-  lower_bound(const key_type& x);
+  lower_bound(const key_type& key) {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL) {
+      if (this->comp__(get_key__(curr__), key)) {
+        curr__ = get_right__(curr__);
+      } else {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      }
+    }
+    return (iterator(prev__));
+  }
 
   const_iterator
-  lower_bound(const key_type& x) const;
+  lower_bound(const key_type& key) const {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL) {
+      if (this->comp__(get_key__(curr__), key)) {
+        curr__ = get_right__(curr__);
+      } else {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      }
+    }
+    return (const_iterator(prev__));
+  }
 
   iterator
-  upper_bound(const key_type& x);
+  upper_bound(const key_type& key) {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL) {
+      if (this->comp__(key, get_key__(curr__))) {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      } else {
+        curr__ = get_right__(curr__);
+      }
+    }
+    return (iterator(prev__));
+  }
 
   const_iterator
-  upper_bound(const key_type& x) const;
+  upper_bound(const key_type& key) const {
+    value_node__* prev__ = this->Base__.header;
+    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+
+    while (curr__ != NULL) {
+      if (this->comp__(key, get_key__(curr__))) {
+        prev__ = curr__;
+        curr__ = get_left__(curr__);
+      } else {
+        curr__ = get_right__(curr__);
+      }
+    }
+    return (const_iterator(prev__));
+  }
 
   ft::pair<iterator, iterator>
-  equal_range(const key_type& x);
+  equal_range(const key_type& key) {
+    return (ft::pair<iterator, iterator>(lower_bound(key), upper_bound(key)));
+  }
 
   ft::pair<const_iterator, const_iterator>
-  equal_range(const key_type& x) const;
-
+  equal_range(const key_type& key) const {
+    return (ft::pair<const_iterator, const_iterator>(lower_bound(key),
+                                                     upper_bound(key)));
+  }
 
   // find, count, lower_bound, upper_bound, equal_range }}}
 
