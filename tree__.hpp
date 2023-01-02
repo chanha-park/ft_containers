@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 22:11:16 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 22:20:19 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,19 +330,37 @@ class rb_tree__ {
 
   // static getter for value_node__* type {{{
 
-  static value_node__*&
+  static value_node__*
   get_left__(value_node__* x) {
-    return (static_cast<value_node__*&>(x->left));
+    return (static_cast<value_node__*>(x->left));
   }
 
-  static value_node__*&
+  static value_node__*
   get_right__(value_node__* x) {
-    return (static_cast<value_node__*&>(x->right));
+    return (static_cast<value_node__*>(x->right));
   }
 
-  static value_node__*&
+  static value_node__*
   get_parent__(value_node__* x) {
-    return (static_cast<value_node__*&>(x->parent));
+    return (static_cast<value_node__*>(x->parent));
+  }
+
+  // XXX
+  void
+  set_left__(value_node__* x, value_node__* other) {
+    x->left = static_cast<base_node__*>(other);
+  }
+
+  void
+  // XXX
+  set_right__(value_node__* x, value_node__* other) {
+    x->right = static_cast<base_node__*>(other);
+  }
+
+  // XXX
+  void
+  set_parent__(value_node__* x, value_node__* other) {
+    x->parent = static_cast<base_node__*>(other);
   }
 
   static reference
@@ -377,6 +395,24 @@ class rb_tree__ {
   static value_node__*&
   get_parent__(base_node__* x) {
     return (static_cast<value_node__*&>(x->parent));
+  }
+
+  // XXX
+  void
+  set_left__(base_node__* x, base_node__* other) {
+    x->left = static_cast<base_node__*>(other);
+  }
+
+  // XXX
+  void
+  set_right__(base_node__* x, base_node__* other) {
+    x->right = static_cast<base_node__*>(other);
+  }
+
+  // XXX
+  void
+  set_parent__(base_node__* x, base_node__* other) {
+    x->parent = static_cast<base_node__*>(other);
   }
 
   static reference
