@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 18:13:44 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 19:14:53 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,12 +215,12 @@ class rb_tree__ {
 
    protected:
     value_node__*
-    get_node__(void) {
+    allocate_node__(void) {
       return (node_allocator.allocate(1));
     }
 
     void
-    put_node__(value_node__* ptr) {
+    deallocate_node__(value_node__* ptr) {
       node_allocator.deallocate(ptr, 1);
     }
 
@@ -234,11 +234,11 @@ class rb_tree__ {
     typedef typename Base__::allocator_type allocator_type;
 
     rb_tree_node__(const allocator_type& a) : Base__(a) {
-      this->header = this->get_node__();
+      this->header = this->allocate_node__();
     }
 
     ~rb_tree_node__(void) {
-      this->put_node__(this->header);
+      this->deallocate_node__(this->header);
     }
 
     // class rb_tree_node__ }}}
@@ -268,11 +268,11 @@ class rb_tree__ {
 
   value_node__*
   create_node__(const value_type& x) {
-    value_node__* tmp__ = this->Base__.get_node__();
+    value_node__* tmp__ = this->Base__.allocate_node__();
     try {
       this->Base__.get_allocator().allocate(ft::addressof(tmp__->val), x);
     } catch (...) {
-      this->Base__.put_node__(tmp__);
+      this->Base__.deallocate_node__(tmp__);
       throw;
     }
     return (tmp__);
@@ -291,7 +291,7 @@ class rb_tree__ {
   void
   destroy_node__(value_node__* ptr) {
     this->Base__.get_allocator().destroy(ft::addressof(ptr->val));
-    this->Base__.put_node__(ptr);
+    this->Base__.deallocate_node__(ptr);
   }
 
   // create, clone, destroy node }}}
@@ -490,38 +490,6 @@ class rb_tree__ {
 
   // ctor, operator=, dtor }}}
 
-  // erase, clear {{{
-
-  void
-  erase(iterator pos) {
-    (void)pos;
-  }
-
-  // size_type
-  // erase(const key_type& x) {
-  // }
-
-  // void
-  // erase(iterator first, iterator last) {
-  // }
-
-  // void
-  // erase(const key_type* first, const key_type* last) {
-  // }
-
-  void
-  clear(void) {
-    if (this->node_count__ != 0) {
-      this->erase(this->get_root__());
-      this->set_leftmost__(this->Base__.header);
-      this->set_root__(NULL);
-      this->set_rightmost__(this->Base__.header);
-      this->node_count__ = 0;
-    }
-  }
-
-  // erase, clear }}}
-
   // accessors {{{
 
   // accessors }}}
@@ -605,6 +573,73 @@ class rb_tree__ {
     std::swap(this->node_count__, other.node_count__);
     std::swap(this->comp__, other.comp__);
   }
+
+  // insert {{{
+
+  // insert }}}
+
+  // erase, clear {{{
+
+  void
+  erase(iterator pos) {
+  }
+
+  size_type
+  erase(const key_type& x) {
+  }
+
+  void
+  erase(iterator first, iterator last) {
+  }
+
+  void
+  erase(const key_type* first, const key_type* last) {
+  }
+
+  void
+  clear(void) {
+    if (this->node_count__ != 0) {
+      this->erase(this->get_root__());
+      this->set_leftmost__(this->Base__.header);
+      this->set_root__(NULL);
+      this->set_rightmost__(this->Base__.header);
+      this->node_count__ = 0;
+    }
+  }
+
+  // erase, clear }}}
+
+  // find, count, lower_bound, upper_bound, equal_range {{{
+
+  iterator
+  find(const key_type& x);
+
+  const_iterator
+  find(const key_type& x) const;
+
+  size_type
+  count(const key_type& x) const;
+
+  iterator
+  lower_bound(const key_type& x);
+
+  const_iterator
+  lower_bound(const key_type& x) const;
+
+  iterator
+  upper_bound(const key_type& x);
+
+  const_iterator
+  upper_bound(const key_type& x) const;
+
+  ft::pair<iterator, iterator>
+  equal_range(const key_type& x);
+
+  ft::pair<const_iterator, const_iterator>
+  equal_range(const key_type& x) const;
+
+
+  // find, count, lower_bound, upper_bound, equal_range }}}
 
   // XXX remove when done;
  public:
