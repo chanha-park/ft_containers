@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 17:41:55 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 17:50:15 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,9 +455,9 @@ class rb_tree__ {
       this->empty_initialize();
     else {
       this->is_red(this->Base__.header) = true;
-      this->get_root__() = _M_copy(other.get_root__(), this->Base__.header);
-      this->get_leftmost__() = this->local_leftmost(this->get_root__());
-      this->get_rightmost__() = this->local_rightmost(this->get_root__());
+      this->set_root__(_M_copy(other.get_root__(), this->Base__.header));
+      this->set_leftmost__(this->local_leftmost(this->get_root__()));
+      this->set_rightmost__(this->local_rightmost(this->get_root__()));
     }
   }
 
@@ -469,15 +469,15 @@ class rb_tree__ {
       this->comp__ = other.comp__;
 
       if (other.get_root__() == 0) {
-        this->get_root__() = NULL;
-        this->get_leftmost__() = this->Base__.header;
-        this->get_rightmost__() = this->Base__.header;
+        this->set_root__(NULL);
+        this->set_leftmost__(this->Base__.header);
+        this->set_rightmost__(this->Base__.header);
         this->node_count__ = 0;
 
       } else {
-        this->get_root__() = _M_copy(other.get_root__(), this->Base__.header);
-        this->get_leftmost__() = this->local_leftmost(this->get_root__());
-        this->get_rightmost__() = this->local_rightmost(this->get_root__());
+        this->set_root__(_M_copy(other.get_root__(), this->Base__.header));
+        this->set_leftmost__(this->local_leftmost(this->get_root__()));
+        this->set_rightmost__(this->local_rightmost(this->get_root__()));
         this->node_count__ = other.node_count__;
       }
     }
@@ -521,6 +521,77 @@ class rb_tree__ {
   }
 
   // erase, clear }}}
+
+  // // accessors {{{
+
+  // key_compare
+  // get_key_compare(void) const {
+  //   return (this->comp__);
+  // }
+
+  // iterator
+  // begin(void) {
+  //   return (this->get_leftmost__());
+  // }
+
+  // const_iterator
+  // begin(void) const {
+  //   return _M_leftmost();
+  // }
+
+  // iterator
+  // end(void) {
+  //   return _M_header;
+  // }
+
+  // const_iterator
+  // end(void) const {
+  //   return _M_header;
+  // }
+
+  // reverse_iterator
+  // rbegin(void) {
+  //   return reverse_iterator(end());
+  // }
+
+  // const_reverse_iterator
+  // rbegin(void) const {
+  //   return const_reverse_iterator(end());
+  // }
+
+  // reverse_iterator
+  // rend(void) {
+  //   return reverse_iterator(begin());
+  // }
+
+  // const_reverse_iterator
+  // rend(void) const {
+  //   return const_reverse_iterator(begin());
+  // }
+
+  // bool
+  // empty(void) const {
+  //   return _M_node_count == 0;
+  // }
+
+  // size_type
+  // size(void) const {
+  //   return _M_node_count;
+  // }
+
+  // size_type
+  // max_size(void) const {
+  //   return size_type(-1);
+  // }
+
+  // void
+  // swap(_Rb_tree<_Key, _Value, _KeyOfValue, _Compare, _Alloc>& __t) {
+  //   std::swap(_M_header, __t._M_header);
+  //   std::swap(_M_node_count, __t._M_node_count);
+  //   std::swap(_M_key_compare, __t._M_key_compare);
+  // }
+
+  // // accessors }}}
 
   // XXX remove when done;
  public:
