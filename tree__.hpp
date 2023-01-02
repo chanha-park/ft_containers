@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/02 16:55:49 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/02 17:41:55 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ class rb_tree__ {
     bool isRed;
 
     static rb_tree_base_node__*
-    local_leftmost(rb_tree_base_node__* x) {
+    local_leftmost__(rb_tree_base_node__* x) {
       while (x->left)
         x = x->left;
       return (x);
     }
 
     static rb_tree_base_node__*
-    local_rightmost(rb_tree_base_node__* x) {
+    local_rightmost__(rb_tree_base_node__* x) {
       while (x->right)
         x = x->right;
       return (x);
@@ -296,6 +296,8 @@ class rb_tree__ {
 
   // create, clone, destroy node }}}
 
+  // getter, setter for root, leftmost, rightmost {{{
+
   value_node__*
   get_root__(void) const {
     return (static_cast<value_node__*>(this->Base__.header->parent));
@@ -326,35 +328,37 @@ class rb_tree__ {
     this->Base__.header->right = static_cast<base_node__*>(other);
   }
 
+  // getter, setter for root, leftmost, rightmost }}}
+
   // static getter for value_node__* type {{{
 
   static value_node__*&
-  get_left(value_node__* x) {
+  get_left__(value_node__* x) {
     return (static_cast<value_node__*&>(x->left));
   }
 
   static value_node__*&
-  get_right(value_node__* x) {
+  get_right__(value_node__* x) {
     return (static_cast<value_node__*&>(x->right));
   }
 
   static value_node__*&
-  get_parent(value_node__* x) {
+  get_parent__(value_node__* x) {
     return (static_cast<value_node__*&>(x->parent));
   }
 
   static reference
-  get_value(value_node__* x) {
+  get_value__(value_node__* x) {
     return (x->val);
   }
 
   static const key_type&
-  get_key(value_node__* x) {
+  get_key__(value_node__* x) {
     return (KeyFromValue()(get_value(x)));
   }
 
   static bool&
-  is_red(value_node__* x) {
+  is_red__(value_node__* x) {
     return (x->isRed);
   }
 
@@ -363,45 +367,45 @@ class rb_tree__ {
   // static getter for base_node__* type {{{
 
   static value_node__*&
-  get_left(base_node__* x) {
+  get_left__(base_node__* x) {
     return (static_cast<value_node__*&>(x->left));
   }
 
   static value_node__*&
-  get_right(base_node__* x) {
+  get_right__(base_node__* x) {
     return (static_cast<value_node__*&>(x->right));
   }
 
   static value_node__*&
-  get_parent(base_node__* x) {
+  get_parent__(base_node__* x) {
     return (static_cast<value_node__*&>(x->parent));
   }
 
   static reference
-  get_value(base_node__* x) {
+  get_value__(base_node__* x) {
     return (static_cast<value_node__*>(x)->val);
   }
 
   static const key_type&
-  get_key(base_node__* x) {
+  get_key__(base_node__* x) {
     return (KeyFromValue()(get_value(static_cast<value_node__*>(x))));
   }
 
   static bool&
-  is_red(base_node__* x) {
+  is_red__(base_node__* x) {
     return (x->isRed);
   }
 
   // static getter for base_node__* type }}}
 
   static value_node__*
-  local_leftmost(value_node__* x) {
-    return (static_cast<value_node__*>(base_node__::local_leftmost(x)));
+  local_leftmost__(value_node__* x) {
+    return (static_cast<value_node__*>(base_node__::local_leftmost__(x)));
   }
 
   static value_node__*
-  local_rightmost(value_node__* x) {
-    return (static_cast<value_node__*>(base_node__::local_rightmost(x)));
+  local_rightmost__(value_node__* x) {
+    return (static_cast<value_node__*>(base_node__::local_rightmost__(x)));
   }
 
   // XXX
@@ -419,7 +423,7 @@ class rb_tree__ {
   // XXX
   void
   empty_initialize(void) {
-    this->is_red(this->Base__.header) = true;
+    this->is_red__(this->Base__.header) = true;
     this->set_root__(NULL);
     this->set_leftmost__(this->Base__.header);
     this->set_rightmost__(this->Base__.header);
