@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 17:59:10 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 03:42:03 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define FT_CONTAINERS_TREE_HPP
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include "iterator.hpp"
 #include "memory.hpp"
@@ -431,23 +432,56 @@ class rb_tree__ {
   }
 
   // XXX
+  // gcc version
+  // rotate_left__(base_node__* x, base_node__*& root) {
+  // clang version
   static void
-  _Rb_tree_rotate_left(base_node__* __x, base_node__*& __root) {
-    (void)__x;
-    (void)__root;
+  rotate_left__(base_node__* x) {
+    base_node__* const y__ = x->right;
+    x->right = y__->left;
+    if (y__->left != NULL)
+      y__->left->parent = x;
+    y__->parent = x->parent;
+
+    // gcc version
+    // if (x == root)
+    //   root = y__;
+    // else if (x == x->parent->left)
+    //   x->parent->left = y__;
+    // else
+    //   x->parent->right = y__;
+
+    // clang version
+    if (x == x->parent->left)
+      x->parent->left = y__;
+    else
+      x->parent->right = y__;
+    y__->left = x;
+    x->parent = y__;
   }
 
   // XXX
   static void
-  _Rb_tree_rotate_right(base_node__* __x, base_node__*& __root) {
-    (void)__x;
-    (void)__root;
+  rotate_right__(base_node__* x) {
+    base_node__* const y__ = x->left;
+    x->left = y__->right;
+    if (y__->right != NULL)
+      y__->right->parent = x;
+    y__->parent = x->parent;
+
+    // clang version
+    if (x == x->parent->left)
+      x->parent->left = y__;
+    else
+      x->parent->right = y__;
+    y__->right = x;
+    x->parent = y__;
   }
 
-  // XXX Need Rename
-  // since x is new node, x's color is red
+  // XXX
+  // since x is newly inserted node, x's color is red
   static void
-  _Rb_tree_rebalance(base_node__* x, base_node__*& root) {
+  rebalance_after_insert__(base_node__* x, base_node__*& root) {
     // while x && x->parent are red, does not satisfy the rule
     while (x != root && x->parent->color == red__) {
       base_node__* grand_parent__ = x->parent->parent;
@@ -455,20 +489,22 @@ class rb_tree__ {
       if (x->parent == grand_parent__->left) {
         base_node__* uncle__ = grand_parent__->right;
 
-        if (uncle__ && uncle__->color == red__) {  //             gp(black)
-          x->parent->color = black__;              //      p(red)    u(red)
-          uncle__->color = black__;                //  ->         gp(red)
-          grand_parent__->color = red__;           //      p(black)  u(black)
+        if (uncle__ != NULL
+            && uncle__->color == red__) {  //             gp(black)
+          x->parent->color = black__;      //      p(red)    u(red)
+          uncle__->color = black__;        //  ->         gp(red)
+          grand_parent__->color = red__;   //      p(black)  u(black)
           x = grand_parent__;
 
         } else {
-          if (x == x->parent->right) {       //             gp(black)
-            x = x->parent;                   //      p(red)    u(black)
-            _Rb_tree_rotate_left(x, root);   //  x(red)   y
-          }                                  //  ->         p(black)
-          x->parent->color = black__;        //         x(red)   gp(red)
-          x->parent->parent->color = red__;  //                 y    u(black__)
-          _Rb_tree_rotate_right(x->parent->parent, root);
+          if (x == x->parent->right) {    //             gp(black)
+            x = x->parent;                //      p(red)    u(black)
+            rotate_left__(x);             //  x(red)   y
+          }                               //  ->         p(black)
+          x->parent->color = black__;     //         x(red)   gp(red)
+          grand_parent__->color = red__;  //                 y    u(black__)
+          rotate_right__(grand_parent__);
+          // break; // XXX maybe???
         }
 
       } else {
@@ -483,23 +519,26 @@ class rb_tree__ {
         } else {
           if (x == x->parent->left) {
             x = x->parent;
-            _Rb_tree_rotate_right(x, root);
+            rotate_right__(x);
           }
           x->parent->color = black__;
           x->parent->parent->color = red__;
-          _Rb_tree_rotate_left(x->parent->parent, root);
+          rotate_left__(x->parent->parent);
+          // break; // XXX maybe???
         }
       }
     }
     root->color = black__;
   }
 
-  // XXX insert new node(v) to y. y must be unsaturated, Need Rename
-  // Precondition: y has right child
+  // XXX insert new node with value v as y' child.
+  // y must be unsaturated
   // bool will_insert_left = (x != NULL || y == this->_header__() ||
   // this->comp__(KeyFromValue()(v), _key__(y__))) )
   iterator
-  _M_insert(bool will_insert_left, base_node__* y, const value_type& v) {
+  insert_and_rebalance__(bool will_insert_left,
+                         base_node__* y,
+                         const value_type& v) {
     value_node__* y__ = static_cast<value_node__*>(y);
     value_node__* node_to_insert__;
 
@@ -526,7 +565,7 @@ class rb_tree__ {
     _right__(node_to_insert__) = NULL;
     _color__(node_to_insert__) = red__;
 
-    _Rb_tree_rebalance(node_to_insert__, _header__()->parent);
+    rebalance_after_insert__(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
     return (iterator(node_to_insert__));
   }
@@ -803,6 +842,7 @@ class rb_tree__ {
   erase(const key_type& x) {
     // to compile
     (void)x;
+    return (0);
     // to compile
   }
 
