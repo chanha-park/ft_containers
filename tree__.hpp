@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 14:53:34 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:13:55 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,22 @@ class rb_tree__ {
       return (x);
     }
 
+    static const rb_tree_base_node__*
+    local_leftmost__(const rb_tree_base_node__* x) {
+      while (x->left != NULL)
+        x = x->left;
+      return (x);
+    }
+
     static rb_tree_base_node__*
     local_rightmost__(rb_tree_base_node__* x) {
+      while (x->right != NULL)
+        x = x->right;
+      return (x);
+    }
+
+    static const rb_tree_base_node__*
+    local_rightmost__(const rb_tree_base_node__* x) {
       while (x->right != NULL)
         x = x->right;
       return (x);
@@ -386,14 +400,24 @@ class rb_tree__ {
 
   // static getter for value_node__* type }}}
 
-  static value_node__*
-  local_leftmost__(value_node__* x) {
-    return (static_cast<value_node__*>(base_node__::local_leftmost__(x)));
+  static base_node__*
+  local_leftmost__(base_node__* x) {
+    return (base_node__::local_leftmost__(x));
   }
 
-  static value_node__*
-  local_rightmost__(value_node__* x) {
-    return (static_cast<value_node__*>(base_node__::local_rightmost__(x)));
+  static const base_node__*
+  local_leftmost__(const base_node__* x) {
+    return (base_node__::local_leftmost__(x));
+  }
+
+  static base_node__*
+  local_rightmost__(base_node__* x) {
+    return (base_node__::local_rightmost__(x));
+  }
+
+  static const base_node__*
+  local_rightmost__(const base_node__* x) {
+    return (base_node__::local_rightmost__(x));
   }
 
   // XXX
