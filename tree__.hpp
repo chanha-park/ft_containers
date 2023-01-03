@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 14:48:13 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/03 14:53:34 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,17 @@ template <typename Key,
           typename Allocator = std::allocator<Value> >
 class rb_tree__ {
  private:
+  typedef bool node_color__;
+  static const node_color__ red__ = true;
+  static const node_color__ black__ = false;
+
   class rb_tree_base_node__ {
     // class rb_tree_base_node__ {{{
    public:
     rb_tree_base_node__* parent;
     rb_tree_base_node__* left;
     rb_tree_base_node__* right;
-    bool isRed;
+    node_color__ color;
 
     static rb_tree_base_node__*
     local_leftmost__(rb_tree_base_node__* x) {
@@ -107,7 +111,7 @@ class rb_tree__ {
 
     void
     iter_prev_node__(void) {
-      if (node__->isRed && node__->parent->parent == node__) {
+      if (node__->color == red__ && node__->parent->parent == node__) {
         node__ = node__->right;
       } else if (node__->left != NULL) {
         node__ = node__->left;
@@ -280,7 +284,7 @@ class rb_tree__ {
   value_node__*
   clone_node__(value_node__* other) {
     value_node__* tmp__ = this->create_node__(other->val);
-    tmp__->isRed = other->isRed;
+    tmp__->color = other->color;
     tmp__->left = NULL;
     tmp__->right = NULL;
     return (tmp__);
@@ -375,9 +379,9 @@ class rb_tree__ {
     return (KeyFromValue()(static_cast<const value_node__*>(x)->val));
   }
 
-  static bool&
+  static node_color__&
   is_red__(base_node__* x) {
-    return (x->isRed);
+    return (x->color);
   }
 
   // static getter for value_node__* type }}}
