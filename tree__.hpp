@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 04:01:25 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 05:01:49 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -774,61 +774,81 @@ class rb_tree__ {
 
   // XXX
   ft::pair<iterator, bool>
-  insert_unique(const value_type& x) {
-    // to compile
-    (void)x;
-    return (ft::pair<iterator, bool>(iterator(x), true));
-    // to compile
+  insert_unique(const value_type& v) {
+    value_node__* y__ = this->_header__();
+    value_node__* x__ = this->_root__();
+    const key_type key__ = KeyFromValue()(v);
+    bool comp_value__ = true;
+
+    while (x__ != NULL) {
+      y__ = x__;
+      comp_value__ = this->comp__(key__, _key__(x__));
+      x__ = comp_value__ ? _left__(x__) : _right__(x__);
+    }
+
+    iterator it__(y__);
+
+    if (comp_value__) {
+      if (it__ == this->begin())
+        return (ft::pair<iterator, bool>(insert_and_rebalance__(true, y__, v),
+                                         true));
+      --it__;
+    }
+    if (this->comp__(_key__(it__.node__), key__))
+      return (ft::pair<iterator, bool>(
+          insert_and_rebalance__(
+              (y__ == this->_header__()) || comp_value__, y__, v),
+          true));
+    return (ft::pair<iterator, bool>(it__, false));
   }
 
   // XXX
   iterator
-  insert_equal(const value_type& x) {
+  insert_hint_unique(iterator pos, const value_type& x) {
     // to compile
+    (void)pos;
     (void)x;
     return (iterator());
     // to compile
   }
 
-  // XXX
-  iterator
-  insert_unique(iterator position, const value_type& x) {
-    // to compile
-    (void)position;
-    (void)x;
-    return (iterator());
-    // to compile
-  }
-
-  // XXX
-  iterator
-  insert_equal(iterator position, const value_type& x) {
-    // to compile
-    (void)position;
-    (void)x;
-    return (iterator());
-    // to compile
-  }
-
-  // XXX
-  template <class InputIter>
+  // XXX ft::enable_if<ft::is_same<value_type,
+  // ft::iterator_traits<InputIter>::value>::value, void>::type
+  template <typename InputIter>
   void
-  insert_unique(InputIter first, InputIter last) {
-    // to compile
-    (void)first;
-    (void)last;
-    // to compile
+  insert_range_unique(InputIter first, InputIter last) {
+    for (; first != last; ++first)
+      insert_unique(*first);
   }
 
-  // XXX
-  template <class InputIter>
-  void
-  insert_equal(InputIter first, InputIter last) {
-    // to compile
-    (void)first;
-    (void)last;
-    // to compile
-  }
+  // XXX for multimap, multiset. not necessary now
+  // iterator
+  // insert_multi(const value_type& x) {
+  //   // to compile
+  //   (void)x;
+  //   return (iterator());
+  //   // to compile
+  // }
+
+  // XXX for multimap, multiset. not necessary now
+  // iterator
+  // insert_multi(iterator pos, const value_type& x) {
+  //   // to compile
+  //   (void)pos;
+  //   (void)x;
+  //   return (iterator());
+  //   // to compile
+  // }
+
+  // XXX for multimap, multiset. not necessary now
+  // template <class InputIter>
+  // void
+  // insert_multi(InputIter first, InputIter last) {
+  //   // to compile
+  //   (void)first;
+  //   (void)last;
+  //   // to compile
+  // }
 
   // insert }}}
 
