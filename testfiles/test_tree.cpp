@@ -32,6 +32,7 @@ main(void) {
   (void)cit;
   (void)rit;
   (void)crit;
+  tr.insert_unique(ft::make_pair(3, 'c'));
   // ++it;
   return (0);
 }
