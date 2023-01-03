@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 17:03:50 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/03 17:59:10 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -404,7 +404,7 @@ class rb_tree__ {
   }
 
   static node_color__&
-  is_red__(base_node__* x) {
+  _color__(base_node__* x) {
     return (x->color);
   }
 
@@ -430,11 +430,68 @@ class rb_tree__ {
     return (base_node__::local_rightmost__(x));
   }
 
+  // XXX
+  static void
+  _Rb_tree_rotate_left(base_node__* __x, base_node__*& __root) {
+    (void)__x;
+    (void)__root;
+  }
+
+  // XXX
+  static void
+  _Rb_tree_rotate_right(base_node__* __x, base_node__*& __root) {
+    (void)__x;
+    (void)__root;
+  }
+
   // XXX Need Rename
-  void
+  // since x is new node, x's color is red
+  static void
   _Rb_tree_rebalance(base_node__* x, base_node__*& root) {
-    (void)x;
-    (void)root;
+    // while x && x->parent are red, does not satisfy the rule
+    while (x != root && x->parent->color == red__) {
+      base_node__* grand_parent__ = x->parent->parent;
+
+      if (x->parent == grand_parent__->left) {
+        base_node__* uncle__ = grand_parent__->right;
+
+        if (uncle__ && uncle__->color == red__) {  //             gp(black)
+          x->parent->color = black__;              //      p(red)    u(red)
+          uncle__->color = black__;                //  ->         gp(red)
+          grand_parent__->color = red__;           //      p(black)  u(black)
+          x = grand_parent__;
+
+        } else {
+          if (x == x->parent->right) {       //             gp(black)
+            x = x->parent;                   //      p(red)    u(black)
+            _Rb_tree_rotate_left(x, root);   //  x(red)   y
+          }                                  //  ->         p(black)
+          x->parent->color = black__;        //         x(red)   gp(red)
+          x->parent->parent->color = red__;  //                 y    u(black__)
+          _Rb_tree_rotate_right(x->parent->parent, root);
+        }
+
+      } else {
+        base_node__* uncle__ = grand_parent__->left;  // opposite direction
+
+        if (uncle__ && uncle__->color == red__) {
+          x->parent->color = black__;
+          uncle__->color = black__;
+          grand_parent__->color = red__;
+          x = grand_parent__;
+
+        } else {
+          if (x == x->parent->left) {
+            x = x->parent;
+            _Rb_tree_rotate_right(x, root);
+          }
+          x->parent->color = black__;
+          x->parent->parent->color = red__;
+          _Rb_tree_rotate_left(x->parent->parent, root);
+        }
+      }
+    }
+    root->color = black__;
   }
 
   // XXX insert new node(v) to y. y must be unsaturated, Need Rename
@@ -467,6 +524,7 @@ class rb_tree__ {
     _parent__(node_to_insert__) = y__;
     _left__(node_to_insert__) = NULL;
     _right__(node_to_insert__) = NULL;
+    _color__(node_to_insert__) = red__;
 
     _Rb_tree_rebalance(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
@@ -516,7 +574,7 @@ class rb_tree__ {
 
   void
   empty_initialize(void) {
-    this->is_red__(this->_header__()) = true;
+    _color__(this->_header__()) = true;
     this->_root__() = NULL;
     this->_leftmost__() = this->_header__();
     this->_rightmost__() = this->_header__();
@@ -547,7 +605,7 @@ class rb_tree__ {
     if (other._root__() == NULL)
       this->empty_initialize();
     else {
-      this->is_red(this->_header__()) = true;
+      _color__(this->_header__()) = true;
       this->_root__() = _M_copy(other._root__(), this->_header__());
       this->_leftmost__() = this->local_leftmost(this->_root__());
       this->_rightmost__() = this->local_rightmost(this->_root__());
