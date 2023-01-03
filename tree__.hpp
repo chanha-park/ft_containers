@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 16:16:22 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/03 17:03:50 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,14 +438,17 @@ class rb_tree__ {
   }
 
   // XXX insert new node(v) to y. y must be unsaturated, Need Rename
+  // Precondition: y has right child
+  // bool will_insert_left = (x != NULL || y == this->_header__() ||
+  // this->comp__(KeyFromValue()(v), _key__(y__))) )
   iterator
-  _M_insert(bool has_right_child, base_node__* y, const value_type& v) {
+  _M_insert(bool will_insert_left, base_node__* y, const value_type& v) {
     value_node__* y__ = static_cast<value_node__*>(y);
     value_node__* node_to_insert__;
 
     node_to_insert__ = this->create_node__(v);
-    if (y__ == this->_header__() || !has_right_child
-        || this->comp__(KeyFromValue()(v), _key__(y__))) {
+
+    if (will_insert_left) {
       _left__(y__) = node_to_insert__;
 
       if (y__ == this->_header__()) {
