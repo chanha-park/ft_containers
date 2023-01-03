@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/03 15:13:55 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/03 16:16:22 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,16 @@ class rb_tree__ {
 
   // methods for root, leftmost, rightmost {{{
 
+  value_node__*&
+  _header__(void) {
+    return (this->Base__.header);
+  }
+
+  const value_node__*
+  _header__(void) const {
+    return (this->Base__.header);
+  }
+
   base_node__*&
   _root__(void) {
     return (this->Base__.header->parent);
@@ -420,15 +430,44 @@ class rb_tree__ {
     return (base_node__::local_rightmost__(x));
   }
 
-  // XXX
-  iterator
-  _M_insert(base_node__* x, base_node__* y, const value_type& v) {
-    // to compile
+  // XXX Need Rename
+  void
+  _Rb_tree_rebalance(base_node__* x, base_node__*& root) {
     (void)x;
-    (void)y;
-    (void)v;
-    return (iterator());
-    // to compile
+    (void)root;
+  }
+
+  // XXX insert new node(v) to y. y must be unsaturated, Need Rename
+  iterator
+  _M_insert(bool has_right_child, base_node__* y, const value_type& v) {
+    value_node__* y__ = static_cast<value_node__*>(y);
+    value_node__* node_to_insert__;
+
+    node_to_insert__ = this->create_node__(v);
+    if (y__ == this->_header__() || !has_right_child
+        || this->comp__(KeyFromValue()(v), _key__(y__))) {
+      _left__(y__) = node_to_insert__;
+
+      if (y__ == this->_header__()) {
+        this->_root__() = node_to_insert__;
+        this->_rightmost__() = node_to_insert__;
+      } else if (y__ == this->_leftmost__()) {
+        this->_leftmost__() = node_to_insert__;
+      }
+    } else {
+      _right__(y__) = node_to_insert__;
+
+      if (y__ == this->_rightmost__())
+        this->_rightmost__() = node_to_insert__;
+    }
+
+    _parent__(node_to_insert__) = y__;
+    _left__(node_to_insert__) = NULL;
+    _right__(node_to_insert__) = NULL;
+
+    _Rb_tree_rebalance(node_to_insert__, _header__()->parent);
+    ++(this->node_count__);
+    return (iterator(node_to_insert__));
   }
 
   value_node__*
@@ -474,10 +513,10 @@ class rb_tree__ {
 
   void
   empty_initialize(void) {
-    this->is_red__(this->Base__.header) = true;
+    this->is_red__(this->_header__()) = true;
     this->_root__() = NULL;
-    this->_leftmost__() = this->Base__.header;
-    this->_rightmost__() = this->Base__.header;
+    this->_leftmost__() = this->_header__();
+    this->_rightmost__() = this->_header__();
   }
 
  public:
@@ -505,8 +544,8 @@ class rb_tree__ {
     if (other._root__() == NULL)
       this->empty_initialize();
     else {
-      this->is_red(this->Base__.header) = true;
-      this->_root__() = _M_copy(other._root__(), this->Base__.header);
+      this->is_red(this->_header__()) = true;
+      this->_root__() = _M_copy(other._root__(), this->_header__());
       this->_leftmost__() = this->local_leftmost(this->_root__());
       this->_rightmost__() = this->local_rightmost(this->_root__());
     }
@@ -521,12 +560,12 @@ class rb_tree__ {
 
       if (other._root__() == 0) {
         this->_root__() = NULL;
-        this->_leftmost__() = this->Base__.header;
-        this->_rightmost__() = this->Base__.header;
+        this->_leftmost__() = this->_header__();
+        this->_rightmost__() = this->_header__();
         this->node_count__ = 0;
 
       } else {
-        this->_root__() = _M_copy(other._root__(), this->Base__.header);
+        this->_root__() = _M_copy(other._root__(), this->_header__());
         this->_leftmost__() = this->local_leftmost(this->_root__());
         this->_rightmost__() = this->local_rightmost(this->_root__());
         this->node_count__ = other.node_count__;
@@ -720,9 +759,9 @@ class rb_tree__ {
   clear(void) {
     if (this->node_count__ != 0) {
       this->_M_erase(static_cast<value_node__*>(this->_root__()));
-      this->_leftmost__() = this->Base__.header;
+      this->_leftmost__() = this->_header__();
       this->_root__() = NULL;
-      this->_rightmost__() = this->Base__.header;
+      this->_rightmost__() = this->_header__();
       this->node_count__ = 0;
     }
   }
@@ -733,7 +772,7 @@ class rb_tree__ {
 
   iterator
   find(const key_type& key) {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL)
@@ -752,7 +791,7 @@ class rb_tree__ {
 
   const_iterator
   find(const key_type& key) const {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL)
@@ -778,7 +817,7 @@ class rb_tree__ {
 
   iterator
   lower_bound(const key_type& key) {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
@@ -794,7 +833,7 @@ class rb_tree__ {
 
   const_iterator
   lower_bound(const key_type& key) const {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
@@ -810,7 +849,7 @@ class rb_tree__ {
 
   iterator
   upper_bound(const key_type& key) {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
@@ -826,7 +865,7 @@ class rb_tree__ {
 
   const_iterator
   upper_bound(const key_type& key) const {
-    value_node__* prev__ = this->Base__.header;
+    value_node__* prev__ = this->_header__();
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
