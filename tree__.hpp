@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 05:01:49 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 05:43:53 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ class rb_tree__ {
     typedef ft::bidirectional_iterator_tag iterator_category;
 
    private:
+    typedef rb_tree_value_node__<T> value_node__;
     base_node__* node__;
 
     // iterate_node {{{2
@@ -188,26 +189,17 @@ class rb_tree__ {
       return (tmp__);
     }
 
+    template <typename U>
     bool
-    operator==(const rb_tree_iterator__<const value_type>& other) const {
+    operator==(const rb_tree_iterator__<U>& other) const {
       return (this->node__ == other.node__);
     }
 
-    // XXX
-    // bool
-    // operator==(const rb_tree_iterator__<value_type>& other) const {
-    //   return (this->node__ == other.node__);
-    // }
-
+    template <typename U>
     bool
-    operator!=(const rb_tree_iterator__<const value_type>& other) const {
+    operator!=(const rb_tree_iterator__<U>& other) const {
       return (this->node__ != other.node__);
     }
-
-    // bool
-    // operator!=(const rb_tree_iterator__<value_type>& other) const {
-    //   return (this->node__ != other.node__);
-    // }
 
     // class rb_tree_iterator__ }}}
   };
@@ -794,7 +786,7 @@ class rb_tree__ {
                                          true));
       --it__;
     }
-    if (this->comp__(_key__(it__.node__), key__))
+    if (this->comp__(KeyFromValue()(*it__), key__))
       return (ft::pair<iterator, bool>(
           insert_and_rebalance__(
               (y__ == this->_header__()) || comp_value__, y__, v),
