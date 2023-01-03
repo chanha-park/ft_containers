@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 03:42:03 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 04:01:25 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -487,6 +487,7 @@ class rb_tree__ {
       base_node__* grand_parent__ = x->parent->parent;
 
       if (x->parent == grand_parent__->left) {
+        // x->parent == grand_parent__->left {{{
         base_node__* uncle__ = grand_parent__->right;
 
         if (uncle__ != NULL
@@ -507,8 +508,10 @@ class rb_tree__ {
           // break; // XXX maybe???
         }
 
+        // x->parent == grand_parent__->left }}}
       } else {
-        base_node__* uncle__ = grand_parent__->left;  // opposite direction
+        // opposite direction {{{
+        base_node__* uncle__ = grand_parent__->left;
 
         if (uncle__ && uncle__->color == red__) {
           x->parent->color = black__;
@@ -526,6 +529,7 @@ class rb_tree__ {
           rotate_left__(x->parent->parent);
           // break; // XXX maybe???
         }
+        // opposite direction }}}
       }
     }
     root->color = black__;
@@ -593,18 +597,18 @@ class rb_tree__ {
         x = _left__(x);
       }
     } catch (...) {
-      _M_erase(top__);
+      clear_subtree__(top__);
       throw;
     }
     return (top__);
   }
 
-  // XXX Need Rename: erase every nodes below x (inclusive)
+  // XXX erase every nodes below x (inclusive)
   void
-  _M_erase(value_node__* x) {
+  clear_subtree__(value_node__* x) {
     value_node__* tmp__;
     while (x != NULL) {
-      _M_erase(_right__(x));
+      clear_subtree__(_right__(x));
       tmp__ = x;
       x = _left__(x);
       destroy_node__(tmp__);
@@ -674,9 +678,10 @@ class rb_tree__ {
     return (*this);
   }
 
-  // just _M_erase might be enough
+  // XXX just clear_subtree__ might be enough
   ~rb_tree__(void) {
-    this->clear();
+    // this->clear();
+    this->clear_subtree__(static_cast<value_node__*>(this->_root__()));
   }
 
   // ctor, operator=, dtor }}}
@@ -859,7 +864,7 @@ class rb_tree__ {
   void
   clear(void) {
     if (this->node_count__ != 0) {
-      this->_M_erase(static_cast<value_node__*>(this->_root__()));
+      this->clear_subtree__(static_cast<value_node__*>(this->_root__()));
       this->_leftmost__() = this->_header__();
       this->_root__() = NULL;
       this->_rightmost__() = this->_header__();
