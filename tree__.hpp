@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 19:05:44 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:26:26 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,6 +580,7 @@ class rb_tree__ {
     node_to_insert__->right = NULL;
     node_to_insert__->color = red__;
 
+    // XXX leaks from this function! No leaks when comment out
     rebalance_for_insert__(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
     return (iterator(node_to_insert__));
@@ -885,13 +886,12 @@ class rb_tree__ {
     return (iterator(x__));
   }
 
-  // XXX ft::enable_if<ft::is_same<value_type,
-  // ft::iterator_traits<InputIter>::value>::value, void>::type
+  // XXX
   template <typename InputIter>
   void
   insert_range_unique(InputIter first, InputIter last) {
     for (; first != last; ++first)
-      insert_unique(*first);
+      insert_hint_unique(this->end(), *first);
   }
 
   // XXX for multimap, multiset. not necessary now
@@ -949,8 +949,9 @@ class rb_tree__ {
     if (first == this->begin() && last == this->end())
       this->clear();
     else {
-      while (first != last)
-        this->erase(first++);
+      while (first != last) {
+        this->erase(++first);
+      }
     }
   }
 

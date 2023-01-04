@@ -1,8 +1,9 @@
 // #include <__tree>
 #include <iostream>
-#include <map>
+// #include <map>
 #include <string>
 #include "../tree__.hpp"
+#include "../vector.hpp"
 
 void
 f(void) {
@@ -41,6 +42,11 @@ f(void) {
   it++;
   it--;
   tr.insert_hint_unique(it, ft::make_pair(1, 'c'));
+  ft::vector<ft::pair<int, char> > vec;
+  for (int i = 0; i < 10; ++i) {
+	  vec.push_back(ft::make_pair(i + 100, i + 100));
+  }
+  tr.insert_range_unique(vec.begin(), vec.end());
 }
 
 int
