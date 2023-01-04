@@ -33,6 +33,13 @@ main(void) {
   (void)rit;
   (void)crit;
   tr.insert_unique(ft::make_pair(3, 'c'));
-  // ++it;
+  tr.insert_unique(ft::make_pair(9, 'c'));
+  tr.insert_unique(ft::make_pair(0, 'c'));
+  tr.insert_unique(ft::make_pair(1, 'c'));
+  it = tr.begin();
+  ++it;
+  --it;
+  it++;
+  it--;
   return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 17:10:46 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 17:25:45 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -791,7 +791,7 @@ class rb_tree__ {
     bool comp_value__ = true;
 
     while (x__ != NULL) {
-      y__ = x__;
+      y__ = static_cast<base_node__*>(x__);
       comp_value__ = this->comp__(key__, _key__(x__));
       x__ = comp_value__ ? _left__(x__) : _right__(x__);
     }
