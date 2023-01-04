@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 05:43:53 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 16:56:29 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,10 +144,10 @@ class rb_tree__ {
     // iterate_node }}}
 
    public:
-    rb_tree_iterator__(void) {
+    rb_tree_iterator__(void) : node__() {
     }
 
-    rb_tree_iterator__(value_node__* x) : node__(static_cast<base_node__*>(x)) {
+    explicit rb_tree_iterator__(base_node__* x) : node__(x) {
     }
 
     rb_tree_iterator__(const rb_tree_iterator__& it) : node__(it.node__) {
@@ -222,7 +222,7 @@ class rb_tree__ {
         node_allocator(a), header(NULL) {
     }
 
-    value_node__* header;
+    base_node__* header;
 
     value_node__*
     allocate_node__(void) {
@@ -244,11 +244,11 @@ class rb_tree__ {
     typedef typename Base__::allocator_type allocator_type;
 
     rb_tree_node__(const allocator_type& a) : Base__(a) {
-      this->header = this->allocate_node__();
+      this->header = static_cast<base_node__*>(this->allocate_node__());
     }
 
     ~rb_tree_node__(void) {
-      this->deallocate_node__(this->header);
+      this->deallocate_node__(static_cast<value_node__*>(this->header));
     }
 
     // class rb_tree_node__ }}}
@@ -307,12 +307,12 @@ class rb_tree__ {
 
   // methods for root, leftmost, rightmost {{{
 
-  value_node__*&
+  base_node__*&
   _header__(void) {
     return (this->Base__.header);
   }
 
-  const value_node__*
+  const base_node__*
   _header__(void) const {
     return (this->Base__.header);
   }
@@ -345,6 +345,26 @@ class rb_tree__ {
   const base_node__*
   _rightmost__(void) const {
     return (this->Base__.header->right);
+  }
+
+  value_node__*
+  _begin__(void) {
+    return (static_cast<value_node__*>(this->Base__.header->parent));
+  }
+
+  const value_node__*
+  _begin__(void) const {
+    return (static_cast<const value_node__*>(this->Base__.header->parent));
+  }
+
+  base_node__*
+  _end__(void) {
+    return (this->Base__.header);
+  }
+
+  const base_node__*
+  _end__(void) const {
+    return (this->Base__.header);
   }
 
   // methods for root, leftmost, rightmost }}}
@@ -473,7 +493,7 @@ class rb_tree__ {
   // XXX
   // since x is newly inserted node, x's color is red
   static void
-  rebalance_after_insert__(base_node__* x, base_node__*& root) {
+  rebalance_for_insert__(base_node__* x, base_node__*& root) {
     // while x && x->parent are red, does not satisfy the rule
     while (x != root && x->parent->color == red__) {
       base_node__* grand_parent__ = x->parent->parent;
@@ -535,33 +555,31 @@ class rb_tree__ {
   insert_and_rebalance__(bool will_insert_left,
                          base_node__* y,
                          const value_type& v) {
-    value_node__* y__ = static_cast<value_node__*>(y);
-    value_node__* node_to_insert__;
-
-    node_to_insert__ = this->create_node__(v);
+    value_node__* node_to_insert__ = this->create_node__(v);
 
     if (will_insert_left) {
-      _left__(y__) = node_to_insert__;
+      y->left = static_cast<base_node__*>(node_to_insert__);
 
-      if (y__ == this->_header__()) {
+      if (y == this->_header__()) {
         this->_root__() = node_to_insert__;
         this->_rightmost__() = node_to_insert__;
-      } else if (y__ == this->_leftmost__()) {
+
+      } else if (y == this->_leftmost__()) {
         this->_leftmost__() = node_to_insert__;
       }
     } else {
-      _right__(y__) = node_to_insert__;
+      y->right = static_cast<base_node__*>(node_to_insert__);
 
-      if (y__ == this->_rightmost__())
+      if (y == this->_rightmost__())
         this->_rightmost__() = node_to_insert__;
     }
 
-    _parent__(node_to_insert__) = y__;
-    _left__(node_to_insert__) = NULL;
-    _right__(node_to_insert__) = NULL;
-    _color__(node_to_insert__) = red__;
+    node_to_insert__->parent = y;
+    node_to_insert__->left = NULL;
+    node_to_insert__->right = NULL;
+    node_to_insert__->color = red__;
 
-    rebalance_after_insert__(node_to_insert__, _header__()->parent);
+    rebalance_for_insert__(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
     return (iterator(node_to_insert__));
   }
@@ -693,22 +711,22 @@ class rb_tree__ {
 
   iterator
   begin(void) {
-    return (this->_leftmost__());
+    return (iterator(this->_leftmost__()));
   }
 
   const_iterator
   begin(void) const {
-    return (this->_leftmost__());
+    return (const_iterator(this->_leftmost__()));
   }
 
   iterator
   end(void) {
-    return (this->Base__.header);
+    return (iterator(this->Base__.header));
   }
 
   const_iterator
   end(void) const {
-    return (this->Base__.header);
+    return (const_iterator(this->Base__.header));
   }
 
   reverse_iterator
@@ -767,8 +785,8 @@ class rb_tree__ {
   // XXX
   ft::pair<iterator, bool>
   insert_unique(const value_type& v) {
-    value_node__* y__ = this->_header__();
-    value_node__* x__ = this->_root__();
+    base_node__* y__ = this->_end__();
+    value_node__* x__ = this->_begin__();
     const key_type key__ = KeyFromValue()(v);
     bool comp_value__ = true;
 
