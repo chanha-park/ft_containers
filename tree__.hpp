@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 16:56:29 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 17:10:46 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -517,7 +517,7 @@ class rb_tree__ {
           x->parent->color = black__;     //         x(red)   gp(red)
           grand_parent__->color = red__;  //                 y    u(black__)
           rotate_right__(grand_parent__);
-          // break; // XXX maybe???
+          break;  // XXX maybe???
         }
 
         // x->parent == grand_parent__->left }}}
@@ -539,7 +539,7 @@ class rb_tree__ {
           x->parent->color = black__;
           x->parent->parent->color = red__;
           rotate_left__(x->parent->parent);
-          // break; // XXX maybe???
+          break;  // XXX maybe???
         }
         // opposite direction }}}
       }
