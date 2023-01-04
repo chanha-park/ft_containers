@@ -35,11 +35,11 @@ main(void) {
   tr.insert_unique(ft::make_pair(3, 'c'));
   tr.insert_unique(ft::make_pair(9, 'c'));
   tr.insert_unique(ft::make_pair(0, 'c'));
-  tr.insert_unique(ft::make_pair(1, 'c'));
   it = tr.begin();
   ++it;
   --it;
   it++;
   it--;
+  tr.insert_hint_unique(it, ft::make_pair(1, 'c'));
   return (0);
 }

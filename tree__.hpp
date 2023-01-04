@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 17:25:45 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 19:05:44 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,10 @@ class rb_tree__ {
     typedef T& reference;
     typedef ft::bidirectional_iterator_tag iterator_category;
 
+    base_node__* node__;
+
    private:
     typedef rb_tree_value_node__<T> value_node__;
-    base_node__* node__;
 
     // iterate_node {{{2
 
@@ -804,7 +805,7 @@ class rb_tree__ {
                                          true));
       --it__;
     }
-    if (this->comp__(KeyFromValue()(*it__), key__))
+    if (this->comp__(_key__(it__.node__), key__))
       return (ft::pair<iterator, bool>(
           insert_and_rebalance__(
               (y__ == this->_header__()) || comp_value__, y__, v),
@@ -814,12 +815,74 @@ class rb_tree__ {
 
   // XXX
   iterator
-  insert_hint_unique(iterator pos, const value_type& x) {
-    // to compile
-    (void)pos;
-    (void)x;
-    return (iterator());
-    // to compile
+  insert_hint_unique(iterator pos, const value_type& v) {
+    const key_type key__ = KeyFromValue()(v);
+    base_node__* x__;
+    base_node__* y__;
+
+    if (pos.node__ == this->_end__()) {
+      if (this->size() > 0
+          && this->comp__(_key__(this->_rightmost__()), key__)) {
+        x__ = NULL;
+        y__ = this->_rightmost__();
+
+      } else {
+        return (insert_unique(v).first);
+      }
+
+    } else if (this->comp__(key__, _key__(pos.node__))) {
+      iterator prev__(pos);
+
+      if (pos.node__ == this->_leftmost__()) {
+        x__ = this->_leftmost__();
+        y__ = this->_leftmost__();
+
+      } else if (this->comp__(_key__((--prev__).node__), key__)) {
+        if (_right__(prev__.node__) == NULL) {
+          x__ = NULL;
+          y__ = prev__.node__;
+
+        } else {
+          x__ = pos.node__;
+          y__ = pos.node__;
+        }
+
+      } else {
+        return (insert_unique(v).first);
+      }
+
+    } else if (this->comp__(_key__(pos.node__), key__)) {
+      iterator next__(pos);
+
+      if (pos.node__ == this->_rightmost__()) {
+        x__ = NULL;
+        y__ = this->_rightmost__();
+
+      } else if (this->comp__(key__, _key__((++next__).node__))) {
+        if (_right__(pos.node__) == NULL) {
+          x__ = NULL;
+          y__ = pos.node__;
+
+        } else {
+          x__ = next__.node__;
+          y__ = next__.node__;
+        }
+
+      } else {
+        return (insert_unique(v).first);
+      }
+
+    } else {
+      x__ = pos.node__;
+      y__ = NULL;
+    }
+
+    bool will_insert_left = (x__ != NULL || y__ == this->_header__()
+                             || this->comp__(KeyFromValue()(v), _key__(y__)));
+
+    if (y__)
+      return (insert_and_rebalance__(will_insert_left, y__, v));
+    return (iterator(x__));
   }
 
   // XXX ft::enable_if<ft::is_same<value_type,
