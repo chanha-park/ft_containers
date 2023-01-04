@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 22:26:26 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/04 22:47:32 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1079,6 +1079,7 @@ class rb_tree__ {
     return (const_iterator(prev__));
   }
 
+  // XXX Change to gcc11 methods? use _M_lower_bound, _M_upper_bound
   ft::pair<iterator, iterator>
   equal_range(const key_type& key) {
     return (ft::pair<iterator, iterator>(lower_bound(key), upper_bound(key)));
