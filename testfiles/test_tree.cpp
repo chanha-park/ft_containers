@@ -4,8 +4,8 @@
 #include <string>
 #include "../tree__.hpp"
 
-int
-main(void) {
+void
+f(void) {
   ft::rb_tree__<int,
                 ft::pair<int, char>,
                 ft::functor_first__<ft::pair<int, char> >,
@@ -41,5 +41,11 @@ main(void) {
   it++;
   it--;
   tr.insert_hint_unique(it, ft::make_pair(1, 'c'));
+}
+
+int
+main(void) {
+  f();
+  system("leaks $PPID");
   return (0);
 }
