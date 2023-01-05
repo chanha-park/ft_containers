@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/05 20:52:01 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/05 22:21:40 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,8 @@ class rb_tree__ {
     explicit rb_tree_const_iterator__(const base_node__* x) : node__(x) {
     }
 
-    rb_tree_const_iterator__(const rb_tree_const_iterator__& it) : node__(it.node__) {
+    rb_tree_const_iterator__(const rb_tree_const_iterator__& it) :
+        node__(it.node__) {
     }
 
     reference
@@ -1032,9 +1033,20 @@ class rb_tree__ {
   // XXX
   void
   erase(iterator pos) {
-    // to compile
-    (void)pos;
-    // to compile
+    value_node__* tmp__ = static_cast<value_node__*>(
+        erase_and_rebalance__(pos.node__, _header__()));
+
+    this->destroy_node__(tmp__);
+    --this->node_count__;
+  }
+
+  // XXX
+  base_node__*
+  erase_and_rebalance__(base_node__* const __z,
+                        base_node__*& __header) throw() {
+    (void)__z;
+    (void)__header;
+    return (NULL);
   }
 
   // XXX

@@ -49,6 +49,10 @@ f(void) {
   tr.insert_range_unique(vec.begin(), vec.end());
   tr.insert_unique(ft::make_pair(100, 'd'));
   tr.insert_unique(ft::make_pair(100, 'd'));
+  for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
+    std::cout << crit->first << std::endl;
+  }
+
   for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
     std::cout << rit->first << std::endl;
   }
