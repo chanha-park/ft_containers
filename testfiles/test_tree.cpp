@@ -52,6 +52,11 @@ f(void) {
   for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
     std::cout << rit->first << std::endl;
   }
+
+  if (tr.verify_tree__())
+    std::cout << "RBTree OK" << std::endl;
+  else
+    std::cout << "RBTree KO" << std::endl;
 }
 
 int

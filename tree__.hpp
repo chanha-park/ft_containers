@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/05 19:20:39 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/05 20:52:01 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,116 @@ class rb_tree__ {
     // class rb_tree_iterator__ }}}
   };
 
+  template <typename T>
+  class rb_tree_const_iterator__ {
+    // class rb_tree_const_iterator__ {{{
+   public:
+    typedef ptrdiff_t difference_type;
+    typedef T value_type;
+    typedef const T* pointer;
+    typedef const T& reference;
+    typedef ft::bidirectional_iterator_tag iterator_category;
+
+    const base_node__* node__;
+
+   private:
+    typedef const rb_tree_value_node__<T> value_node__;
+
+    // iterate_node {{{2
+
+    void
+    iter_next_node__(void) {
+      if (node__->right != NULL) {
+        node__ = node__->right;
+        while (node__->left != NULL)
+          node__ = node__->left;
+      } else {
+        while (node__ == node__->parent->right)
+          node__ = node__->parent;
+        if (node__->parent != node__->right)
+          node__ = node__->parent;
+      }
+    }
+
+    void
+    iter_prev_node__(void) {
+      if (node__->color == red__ && node__->parent->parent == node__) {
+        node__ = node__->right;
+      } else if (node__->left != NULL) {
+        node__ = node__->left;
+        while (node__->right != NULL)
+          node__ = node__->right;
+
+      } else {
+        while (node__ == node__->parent->left)
+          node__ = node__->parent;
+        node__ = node__->parent;
+      }
+    }
+
+    // iterate_node }}}
+
+   public:
+    rb_tree_const_iterator__(void) : node__() {
+    }
+
+    explicit rb_tree_const_iterator__(const base_node__* x) : node__(x) {
+    }
+
+    rb_tree_const_iterator__(const rb_tree_const_iterator__& it) : node__(it.node__) {
+    }
+
+    reference
+    operator*() const {
+      return (static_cast<value_node__*>(node__)->val);
+    }
+
+    pointer
+    operator->() const {
+      return (ft::addressof(operator*()));
+    }
+
+    rb_tree_const_iterator__<value_type>&
+    operator++(void) {
+      iter_next_node__();
+      return (*this);
+    }
+
+    rb_tree_const_iterator__<value_type>
+    operator++(int) {
+      rb_tree_const_iterator__<value_type> tmp__(*this);
+      iter_next_node__();
+      return (tmp__);
+    }
+
+    rb_tree_const_iterator__<value_type>&
+    operator--(void) {
+      iter_prev_node__();
+      return (*this);
+    }
+
+    rb_tree_const_iterator__<value_type>
+    operator--(int) {
+      rb_tree_const_iterator__<value_type> tmp__(*this);
+      iter_prev_node__();
+      return (tmp__);
+    }
+
+    template <typename U>
+    bool
+    operator==(const rb_tree_const_iterator__<U>& other) const {
+      return (this->node__ == other.node__);
+    }
+
+    template <typename U>
+    bool
+    operator!=(const rb_tree_const_iterator__<U>& other) const {
+      return (this->node__ != other.node__);
+    }
+
+    // class rb_tree_const_iterator__ }}}
+  };
+
   class rb_tree_alloc_base__ {
     // class rb_tree_alloc_base__ {{{
    public:
@@ -264,7 +374,7 @@ class rb_tree__ {
   typedef typename rb_tree_node__::allocator_type allocator_type;
 
   typedef rb_tree_iterator__<value_type> iterator;
-  typedef rb_tree_iterator__<const value_type> const_iterator;
+  typedef rb_tree_const_iterator__<value_type> const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -1095,6 +1205,59 @@ class rb_tree__ {
   const_reverse_iterator crdummy3;
   rb_tree_alloc_base__ dummy4(Allocator());
   rb_tree_node__ dummy5(Allocator());
+
+  // debugging helper function {{{
+
+  static size_type
+  count_black_node__(const base_node__* node, const base_node__* root) throw() {
+    if (node == 0)
+      return (0);
+    size_type sum__ = 0;
+    do {
+      if (node->color == black__)
+        ++sum__;
+      if (node == root)
+        break;
+      node = node->parent;
+    } while (1);
+    return (sum__);
+  }
+
+  bool
+  verify_tree__(void) const {
+    if (this->node_count__ == 0 || this->begin() == this->end())
+      return (this->node_count__ == 0 && this->begin() == this->end()
+              && this->Base__.header->left == this->_end__()
+              && this->Base__.header->right == this->_end__());
+
+    size_type len__ = count_black_node__(this->_leftmost__(), this->_root__());
+    for (const_iterator it__ = this->begin(); it__ != this->end(); ++it__) {
+      const value_node__* x__ = static_cast<const value_node__*>(it__.node__);
+      const value_node__* L__ = _left__(x__);
+      const value_node__* R__ = _right__(x__);
+
+      if (x__->color == red__)
+        if ((L__ && L__->color == red__) || (R__ && R__->color == red__))
+          return (false);
+
+      if (L__ && this->comp__(_key__(x__), _key__(L__)))
+        return (false);
+      if (R__ && this->comp__(_key__(R__), _key__(x__)))
+        return (false);
+
+      if (!L__ && !R__ && count_black_node__(x__, this->_root__()) != len__)
+        return (false);
+    }
+
+    if (_leftmost__() != rb_tree_base_node__::local_leftmost__(this->_root__()))
+      return (false);
+    if (_rightmost__()
+        != rb_tree_base_node__::local_rightmost__(this->_root__()))
+      return (false);
+    return (true);
+  }
+
+  // debugging helper function }}}
 
 };  // class rb_tree__
 
