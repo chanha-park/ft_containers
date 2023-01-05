@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/04 22:47:32 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/05 19:20:39 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,48 +445,41 @@ class rb_tree__ {
   }
 
   // XXX
-  // gcc version
-  // rotate_left__(base_node__* x, base_node__*& root) {
-  // clang version
   static void
-  rotate_left__(base_node__* x) {
+  rotate_left__(base_node__* x, base_node__*& root) {
     base_node__* const y__ = x->right;
     x->right = y__->left;
     if (y__->left != NULL)
       y__->left->parent = x;
     y__->parent = x->parent;
 
-    // gcc version
-    // if (x == root)
-    //   root = y__;
-    // else if (x == x->parent->left)
-    //   x->parent->left = y__;
-    // else
-    //   x->parent->right = y__;
-
-    // clang version
-    if (x == x->parent->left)
+    if (x == root)
+      root = y__;
+    else if (x == x->parent->left)
       x->parent->left = y__;
     else
       x->parent->right = y__;
+
     y__->left = x;
     x->parent = y__;
   }
 
   // XXX
   static void
-  rotate_right__(base_node__* x) {
+  rotate_right__(base_node__* x, base_node__*& root) {
     base_node__* const y__ = x->left;
     x->left = y__->right;
     if (y__->right != NULL)
       y__->right->parent = x;
     y__->parent = x->parent;
 
-    // clang version
-    if (x == x->parent->left)
+    if (x == root)
+      root = y__;
+    else if (x == x->parent->left)
       x->parent->left = y__;
     else
       x->parent->right = y__;
+
     y__->right = x;
     x->parent = y__;
   }
@@ -513,11 +506,11 @@ class rb_tree__ {
         } else {
           if (x == x->parent->right) {    //             gp(black)
             x = x->parent;                //      p(red)    u(black)
-            rotate_left__(x);             //  x(red)   y
+            rotate_left__(x, root);       //  x(red)   y
           }                               //  ->         p(black)
           x->parent->color = black__;     //         x(red)   gp(red)
           grand_parent__->color = red__;  //                 y    u(black__)
-          rotate_right__(grand_parent__);
+          rotate_right__(grand_parent__, root);
           break;  // XXX maybe???
         }
 
@@ -535,11 +528,11 @@ class rb_tree__ {
         } else {
           if (x == x->parent->left) {
             x = x->parent;
-            rotate_right__(x);
+            rotate_right__(x, root);
           }
           x->parent->color = black__;
           x->parent->parent->color = red__;
-          rotate_left__(x->parent->parent);
+          rotate_left__(x->parent->parent, root);
           break;  // XXX maybe???
         }
         // opposite direction }}}
@@ -580,7 +573,6 @@ class rb_tree__ {
     node_to_insert__->right = NULL;
     node_to_insert__->color = red__;
 
-    // XXX leaks from this function! No leaks when comment out
     rebalance_for_insert__(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
     return (iterator(node_to_insert__));

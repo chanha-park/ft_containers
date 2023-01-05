@@ -44,9 +44,14 @@ f(void) {
   tr.insert_hint_unique(it, ft::make_pair(1, 'c'));
   ft::vector<ft::pair<int, char> > vec;
   for (int i = 0; i < 10; ++i) {
-	  vec.push_back(ft::make_pair(i + 100, i + 100));
+    vec.push_back(ft::make_pair(200 - i, i + 100));
   }
   tr.insert_range_unique(vec.begin(), vec.end());
+  tr.insert_unique(ft::make_pair(100, 'd'));
+  tr.insert_unique(ft::make_pair(100, 'd'));
+  for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
+    std::cout << rit->first << std::endl;
+  }
 }
 
 int
