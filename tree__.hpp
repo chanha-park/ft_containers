@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/05 22:21:40 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/06 10:01:10 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -689,6 +689,7 @@ class rb_tree__ {
     return (iterator(node_to_insert__));
   }
 
+  // XXX need rename
   value_node__*
   _M_copy(value_node__* x, value_node__* parent) {
     value_node__* tmp__;
