@@ -53,19 +53,23 @@ f(void) {
   //   std::cout << crit->first << std::endl;
   // }
 
+  for (it = tr.begin(); it != tr.end(); ++it) {
+    if (it->first % 2)
+      tr.erase(it);
+  }
   for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
     std::cout << rit->first << std::endl;
   }
 
   if (tr.verify_tree__())
-    std::cout << "RBTree OK" << std::endl;
+    std::cout << "RBTree OK" << std::endl << std::endl;
   else
-    std::cout << "RBTree KO" << std::endl;
+    std::cout << "RBTree KO" << std::endl << std::endl;
 }
 
 int
 main(void) {
   f();
-  system("leaks $PPID");
+  // system("leaks $PPID");
   return (0);
 }
