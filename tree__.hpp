@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 17:11:16 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 18:30:17 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -596,7 +596,7 @@ class rb_tree__ {
   }
 
   // XXX
-  // since x is newly inserted node, x's color is red
+  // since x is newly inserted node, x's color is red and non-NULL
   static void
   rebalance_for_insert__(base_node__* x, base_node__*& root) throw() {
     // while x && x->parent are red, does not satisfy the rule
@@ -691,16 +691,15 @@ class rb_tree__ {
     return (iterator(node_to_insert__));
   }
 
+  // x and parent_new are newly linked by moving successor. need rebalance
   static void
   rebalance_for_erase__(base_node__*& x,
                         base_node__*& parent_new,
                         base_node__*& root) throw() {
-    base_node__* uncle__ = NULL;  // x's uncle
-
     while (x != root && (x == NULL || x->color == black__)) {
       if (x == parent_new->left) {
         // x is a left child {{{
-        uncle__ = parent_new->right;
+        base_node__* uncle__ = parent_new->right;
         if (uncle__->color == red__) {
           uncle__->color = black__;
           parent_new->color = red__;
@@ -735,7 +734,7 @@ class rb_tree__ {
       } else {
         // opposite direction {{{
 
-        uncle__ = parent_new->left;
+        base_node__* uncle__ = parent_new->left;
         if (uncle__->color == red__) {
           uncle__->color = black__;
           parent_new->color = red__;
@@ -798,6 +797,8 @@ class rb_tree__ {
       succ_child__ = succ__->right;
     }
 
+    const node_color__ removed_color__ = succ__->color;
+
     if (succ__ != node_to_delete) {
       node_to_delete->left->parent = succ__;
       succ__->left = node_to_delete->left;
@@ -823,9 +824,9 @@ class rb_tree__ {
         node_to_delete->parent->right = succ__;
 
       succ__->parent = node_to_delete->parent;
-      std::swap(succ__->color, node_to_delete->color);
-      // succ__ = node_to_delete;
-      // succ__ now points to node to be actually deleted
+
+      // XXX check logic
+      succ__->color = node_to_delete->color;
 
     } else {
       // succ__ == node_to_delete i.e. node_to_delete has NULL child
@@ -857,7 +858,7 @@ class rb_tree__ {
       }
     }
 
-    if (succ__->color == black__) {
+    if (removed_color__ == black__) {
       rebalance_for_erase__(succ_child__, parent_new__, root__);
     }
     return (node_to_delete);
@@ -866,7 +867,7 @@ class rb_tree__ {
 
   // XXX need rename
   value_node__*
-  _M_copy(value_node__* x, value_node__* parent) {
+  copy_subtree__(value_node__* x, value_node__* parent) {
     value_node__* tmp__;
 
     value_node__* top__ = this->clone_node__(x);
@@ -874,7 +875,8 @@ class rb_tree__ {
 
     try {
       if (x->right != NULL) {
-        top__->right = static_cast<base_node__*>(_M_copy(_right__(x), top__));
+        top__->right
+            = static_cast<base_node__*>(copy_subtree__(_right__(x), top__));
       }
       parent = top__;
       x = _left__(x);
@@ -883,7 +885,7 @@ class rb_tree__ {
         parent->left = tmp__;
         tmp__->parent = parent;
         if (x->right != NULL)
-          tmp__->right = _M_copy(_right__(x), tmp__);
+          tmp__->right = copy_subtree__(_right__(x), tmp__);
         parent = tmp__;
         x = _left__(x);
       }
@@ -940,7 +942,7 @@ class rb_tree__ {
       this->empty_initialize();
     else {
       _color__(this->_header__()) = red__;
-      this->_root__() = _M_copy(other._root__(), this->_header__());
+      this->_root__() = copy_subtree__(other._root__(), this->_header__());
       this->_leftmost__() = this->local_leftmost(this->_root__());
       this->_rightmost__() = this->local_rightmost(this->_root__());
     }
@@ -960,7 +962,7 @@ class rb_tree__ {
         this->node_count__ = 0;
 
       } else {
-        this->_root__() = _M_copy(other._root__(), this->_header__());
+        this->_root__() = copy_subtree__(other._root__(), this->_header__());
         this->_leftmost__() = this->local_leftmost(this->_root__());
         this->_rightmost__() = this->local_rightmost(this->_root__());
         this->node_count__ = other.node_count__;
