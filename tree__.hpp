@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 18:32:41 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 19:38:26 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1220,11 +1220,12 @@ class rb_tree__ {
 
   // XXX
   size_type
-  erase(const key_type& x) {
-    // to compile
-    (void)x;
-    return (0);
-    // to compile
+  erase_unique(const key_type& x) {
+    iterator it__ = this->find(x);
+    if (it__ == this->end())
+      return (0);
+    this->erase(it__);
+    return (1);
   }
 
   void
