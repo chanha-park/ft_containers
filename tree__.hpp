@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 14:10:56 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 14:29:29 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -691,23 +691,97 @@ class rb_tree__ {
     return (iterator(node_to_insert__));
   }
 
-  // static void
-  // rebalance_for_erase__() throw() {
-  // }
+  static void
+  rebalance_for_erase__(base_node__*& x__,
+                        base_node__*& parent_x__,
+                        base_node__*& root__) throw() {
+    base_node__* w__ = NULL;  // x's uncle
+
+    while (x__ != root__ && (x__ == 0 || x__->color == black__)) {
+      if (x__ == parent_x__->left) {
+        // x__ is a left child {{{
+        w__ = parent_x__->right;
+        if (w__->color == red__) {
+          w__->color = black__;
+          parent_x__->color = red__;
+          rotate_left__(parent_x__, root__);
+          w__ = parent_x__->right;
+        }
+
+        if ((w__->left == 0 || w__->left->color == black__)
+            && (w__->right == 0 || w__->right->color == black__)) {
+          w__->color = red__;
+          x__ = parent_x__;
+          parent_x__ = parent_x__->parent;
+
+        } else {
+          if (w__->right == 0 || w__->right->color == black__) {
+            w__->left->color = black__;
+            w__->color = red__;
+            rotate_right__(w__, root__);
+            w__ = parent_x__->right;
+          }
+          w__->color = parent_x__->color;
+          parent_x__->color = black__;
+
+          if (w__->right)
+            w__->right->color = black__;
+
+          rotate_left__(parent_x__, root__);
+          break;
+        }
+
+        // x__ is a left child }}}
+      } else {
+        // opposite direction {{{
+
+        w__ = parent_x__->left;
+        if (w__->color == red__) {
+          w__->color = black__;
+          parent_x__->color = red__;
+          rotate_right__(parent_x__, root__);
+          w__ = parent_x__->left;
+        }
+        if ((w__->right == 0 || w__->right->color == black__)
+            && (w__->left == 0 || w__->left->color == black__)) {
+          w__->color = red__;
+          x__ = parent_x__;
+          parent_x__ = parent_x__->parent;
+
+        } else {
+          if (w__->left == 0 || w__->left->color == black__) {
+            w__->right->color = black__;
+            w__->color = red__;
+            rotate_left__(w__, root__);
+            w__ = parent_x__->left;
+          }
+          w__->color = parent_x__->color;
+          parent_x__->color = black__;
+
+          if (w__->left)
+            w__->left->color = black__;
+
+          rotate_right__(parent_x__, root__);
+          break;
+        }
+        // opposite direction }}}
+      }
+    }
+    if (x__)
+      x__->color = black__;
+  }
 
   // XXX
   static base_node__*
-  erase_and_rebalance__(
-      base_node__* const z__,
-      base_node__*& header__) throw() {  // XXX Add throw to other functions
-                                         // too? erase_and_rebalance__ {{{
+  erase_and_rebalance__(base_node__* const z__,
+                        base_node__*& header__) throw() {
+    // erase_and_rebalance__ {{{
     base_node__*& root__ = header__->parent;
     base_node__*& leftmost__ = header__->left;  // XXX
     base_node__*& rightmost__ = header__->right;
     base_node__* y__ = z__;
     base_node__* x__ = NULL;
     base_node__* parent_x__ = NULL;
-    base_node__* w__ = NULL;  // x's uncle
 
     if (y__->left == NULL)        // z__ has at most one non-null child. y == z.
       x__ = y__->right;           // x__ might be null.
@@ -767,7 +841,7 @@ class rb_tree__ {
           leftmost__ = z__->parent;
         // makes leftmost__ == _M_header if z__ == root__
         else
-          leftmost__ = base_node__::local_leftmost__(x__);
+          leftmost__ = local_leftmost__(x__);
       }
 
       if (rightmost__ == z__) {
@@ -775,80 +849,12 @@ class rb_tree__ {
           rightmost__ = z__->parent;
         // makes rightmost__ == _M_header if z__ == root__
         else  // x__ == z__->left
-          rightmost__ = base_node__::local_rightmost__(x__);
+          rightmost__ = local_rightmost__(x__);
       }
     }
 
     if (y__->color != red__) {
-      while (x__ != root__ && (x__ == 0 || x__->color == black__))
-
-        if (x__ == parent_x__->left) {
-          w__ = parent_x__->right;
-          if (w__->color == red__) {
-            w__->color = black__;
-            parent_x__->color = red__;
-            rotate_left__(parent_x__, root__);
-            w__ = parent_x__->right;
-          }
-
-          if ((w__->left == 0 || w__->left->color == black__)
-              && (w__->right == 0 || w__->right->color == black__)) {
-            w__->color = red__;
-            x__ = parent_x__;
-            parent_x__ = parent_x__->parent;
-
-          } else {
-            if (w__->right == 0 || w__->right->color == black__) {
-              w__->left->color = black__;
-              w__->color = red__;
-              rotate_right__(w__, root__);
-              w__ = parent_x__->right;
-            }
-            w__->color = parent_x__->color;
-            parent_x__->color = black__;
-
-            if (w__->right)
-              w__->right->color = black__;
-
-            rotate_left__(parent_x__, root__);
-            break;
-          }
-
-        } else {  // same as above, with right <-> left.
-
-          w__ = parent_x__->left;
-          if (w__->color == red__) {
-            w__->color = black__;
-            parent_x__->color = red__;
-            rotate_right__(parent_x__, root__);
-            w__ = parent_x__->left;
-          }
-          if ((w__->right == 0 || w__->right->color == black__)
-              && (w__->left == 0 || w__->left->color == black__)) {
-            w__->color = red__;
-            x__ = parent_x__;
-            parent_x__ = parent_x__->parent;
-
-          } else {
-            if (w__->left == 0 || w__->left->color == black__) {
-              w__->right->color = black__;
-              w__->color = red__;
-              rotate_left__(w__, root__);
-              w__ = parent_x__->left;
-            }
-            w__->color = parent_x__->color;
-            parent_x__->color = black__;
-
-            if (w__->left)
-              w__->left->color = black__;
-
-            rotate_right__(parent_x__, root__);
-            break;
-          }
-        }
-
-      if (x__)
-        x__->color = black__;
+      rebalance_for_erase__(x__, parent_x__, root__);
     }
     return (y__);
     // erase_and_rebalance__  }}}
@@ -1418,10 +1424,9 @@ class rb_tree__ {
         return (false);
     }
 
-    if (_leftmost__() != rb_tree_base_node__::local_leftmost__(this->_root__()))
+    if (_leftmost__() != local_leftmost__(this->_root__()))
       return (false);
-    if (_rightmost__()
-        != rb_tree_base_node__::local_rightmost__(this->_root__()))
+    if (_rightmost__() != local_rightmost__(this->_root__()))
       return (false);
     return (true);
   }
