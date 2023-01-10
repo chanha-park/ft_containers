@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 19:38:26 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 20:19:43 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1252,7 +1252,7 @@ class rb_tree__ {
 
   // erase, clear }}}
 
-  // find, count, lower_bound, upper_bound, equal_range {{{
+  // find {{{
 
   iterator
   find(const key_type& key) {
@@ -1292,12 +1292,32 @@ class rb_tree__ {
                 : it__);
   }
 
+  // find }}}
+
+  // count_unique {{{
+
   size_type
-  count(const key_type& key) const {
-    ft::pair<const_iterator, const_iterator> range__ = equal_range(key);
-    size_type n__ = distance(range__.first, range__.second);
-    return (n__);
+  count_unique(const key_type& key) const {
+    value_node__* curr__ = this->_root__();
+
+    while (curr__ != NULL) {
+      if (this->comp__(_key__(curr__), key)) {
+        curr__ = _right__(curr__);
+
+      } else if (this->comp__(key, _key__(curr__))) {
+        curr__ = _left__(curr__);
+
+      } else {
+        return (1);
+      }
+    }
+
+    return (0);
   }
+
+  // count_unique }}}
+
+  // lower_bound {{{
 
   iterator
   lower_bound(const key_type& key) {
@@ -1331,6 +1351,10 @@ class rb_tree__ {
     return (const_iterator(prev__));
   }
 
+  // lower_bound }}}
+
+  // upper_bound {{{
+
   iterator
   upper_bound(const key_type& key) {
     value_node__* prev__ = this->_header__();
@@ -1363,19 +1387,56 @@ class rb_tree__ {
     return (const_iterator(prev__));
   }
 
-  // XXX Change to gcc11 methods? use _M_lower_bound, _M_upper_bound
+  // upper_bound }}}
+
+  // equal_range_unique {{{
+
+  // XXX
   ft::pair<iterator, iterator>
-  equal_range(const key_type& key) {
-    return (ft::pair<iterator, iterator>(lower_bound(key), upper_bound(key)));
+  equal_range_unique(const key_type& key) {
+    value_node__* prev__ = this->_header__();
+    value_node__* curr__ = this->_root__();
+
+    while (curr__ != NULL) {
+      if (this->comp__(_key__(curr__), key)) {
+        curr__ = _right__(curr__);
+
+      } else if (this->comp__(key, _key__(curr__))) {
+        prev__ = curr__;
+        curr__ = _leftmost__(curr__);
+      } else {
+        return (ft::pair<iterator, iterator>(
+            iterator(curr__),
+            iterator(curr__->right != NULL ? static_cast<value_node__*>(
+                         local_leftmost__(curr__->right))
+                                           : prev__)));
+      }
+    }
   }
 
   ft::pair<const_iterator, const_iterator>
-  equal_range(const key_type& key) const {
-    return (ft::pair<const_iterator, const_iterator>(lower_bound(key),
-                                                     upper_bound(key)));
+  equal_range_unique(const key_type& key) const {
+    value_node__* prev__ = this->_header__();
+    value_node__* curr__ = this->_root__();
+
+    while (curr__ != NULL) {
+      if (this->comp__(_key__(curr__), key)) {
+        curr__ = _right__(curr__);
+
+      } else if (this->comp__(key, _key__(curr__))) {
+        prev__ = curr__;
+        curr__ = _leftmost__(curr__);
+      } else {
+        return (ft::pair<const_iterator, const_iterator>(
+            const_iterator(curr__),
+            const_iterator(curr__->right != NULL ? static_cast<value_node__*>(
+                               local_leftmost__(curr__->right))
+                                                 : prev__)));
+      }
+    }
   }
 
-  // find, count, lower_bound, upper_bound, equal_range }}}
+  // equal_range_unique }}}
 
   // XXX remove when done;
  public:
