@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 18:30:17 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 18:32:41 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,7 +530,7 @@ class rb_tree__ {
 
   static node_color__&
   _color__(base_node__* x) {
-    return (x->color);  // XXX NULL node is considered black
+    return (x->color);
   }
 
   // static getter for value_node__* type }}}
