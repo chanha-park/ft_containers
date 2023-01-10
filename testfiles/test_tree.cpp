@@ -56,6 +56,8 @@ f(void) {
 
   print_verify(tr);
 
+  cit = tr.begin();
+
   // for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
   //   std::cout << crit->first << std::endl;
   // }
