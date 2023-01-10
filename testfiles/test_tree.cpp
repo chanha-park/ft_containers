@@ -54,8 +54,10 @@ f(void) {
   // }
 
   for (it = tr.begin(); it != tr.end(); ++it) {
-    if (it->first % 2)
+    if (it->first % 2 == 0) {
       tr.erase(it);
+      it = tr.begin();
+    }
   }
   for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
     std::cout << rit->first << std::endl;
@@ -70,6 +72,6 @@ f(void) {
 int
 main(void) {
   f();
-  // system("leaks $PPID");
+  system("leaks $PPID");
   return (0);
 }

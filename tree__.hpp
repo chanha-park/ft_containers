@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/09 22:46:34 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/10 14:10:56 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ class rb_tree__ {
     // iterate_node {{{2
 
     void
-    iter_next_node__(void) {
+    iter_next_node__(void) throw() {
       if (node__->right != NULL) {
         node__ = node__->right;
         while (node__->left != NULL)
@@ -127,7 +127,7 @@ class rb_tree__ {
     }
 
     void
-    iter_prev_node__(void) {
+    iter_prev_node__(void) throw() {
       if (node__->color == red__ && node__->parent->parent == node__) {
         node__ = node__->right;
       } else if (node__->left != NULL) {
@@ -223,7 +223,7 @@ class rb_tree__ {
     // iterate_node {{{2
 
     void
-    iter_next_node__(void) {
+    iter_next_node__(void) throw() {
       if (node__->right != NULL) {
         node__ = node__->right;
         while (node__->left != NULL)
@@ -237,7 +237,7 @@ class rb_tree__ {
     }
 
     void
-    iter_prev_node__(void) {
+    iter_prev_node__(void) throw() {
       if (node__->color == red__ && node__->parent->parent == node__) {
         node__ = node__->right;
       } else if (node__->left != NULL) {
@@ -598,7 +598,7 @@ class rb_tree__ {
   // XXX
   // since x is newly inserted node, x's color is red
   static void
-  rebalance_for_insert__(base_node__* x, base_node__*& root) {
+  rebalance_for_insert__(base_node__* x, base_node__*& root) throw() {
     // while x && x->parent are red, does not satisfy the rule
     while (x != root && x->parent->color == red__) {
       base_node__* grand_parent__ = x->parent->parent;
@@ -660,6 +660,7 @@ class rb_tree__ {
   insert_and_rebalance__(bool will_insert_left,
                          base_node__* y,
                          const value_type& v) {
+    // insert_and_rebalance__ {{{
     value_node__* node_to_insert__ = this->create_node__(v);
 
     if (will_insert_left) {
@@ -686,7 +687,171 @@ class rb_tree__ {
 
     rebalance_for_insert__(node_to_insert__, _header__()->parent);
     ++(this->node_count__);
+    // insert_and_rebalance__ }}}
     return (iterator(node_to_insert__));
+  }
+
+  // static void
+  // rebalance_for_erase__() throw() {
+  // }
+
+  // XXX
+  static base_node__*
+  erase_and_rebalance__(
+      base_node__* const z__,
+      base_node__*& header__) throw() {  // XXX Add throw to other functions
+                                         // too? erase_and_rebalance__ {{{
+    base_node__*& root__ = header__->parent;
+    base_node__*& leftmost__ = header__->left;  // XXX
+    base_node__*& rightmost__ = header__->right;
+    base_node__* y__ = z__;
+    base_node__* x__ = NULL;
+    base_node__* parent_x__ = NULL;
+    base_node__* w__ = NULL;  // x's uncle
+
+    if (y__->left == NULL)        // z__ has at most one non-null child. y == z.
+      x__ = y__->right;           // x__ might be null.
+    else if (y__->right == NULL)  // z__ has exactly one non-null child. y == z.
+      x__ = y__->left;            // x__ is not null.
+    else {                        // z__ has two non-null children.  Set y__ to
+      y__ = y__->right;           //   z__'s successor.  x__ might be null.
+      while (y__->left != NULL)
+        y__ = y__->left;
+      x__ = y__->right;
+    }
+
+    if (y__ != z__) {  // relink y in place of z.  y is z's successor
+
+      z__->left->parent = y__;
+      y__->left = z__->left;
+
+      if (y__ != z__->right) {
+        parent_x__ = y__->parent;
+        if (x__)
+          x__->parent = y__->parent;
+        y__->parent->left = x__;  // y__ must be a child of left
+        y__->right = z__->right;
+        z__->right->parent = y__;
+
+      } else {
+        parent_x__ = y__;
+      }
+
+      if (root__ == z__)
+        root__ = y__;
+      else if (z__->parent->left == z__)
+        z__->parent->left = y__;
+      else
+        z__->parent->right = y__;
+
+      y__->parent = z__->parent;
+      std::swap(y__->color, z__->color);
+      y__ = z__;
+      // y__ now points to node to be actually deleted
+
+    } else {  // y__ == z__
+
+      parent_x__ = y__->parent;
+      if (x__)
+        x__->parent = y__->parent;
+
+      if (root__ == z__)
+        root__ = x__;
+      else if (z__->parent->left == z__)
+        z__->parent->left = x__;
+      else
+        z__->parent->right = x__;
+
+      if (leftmost__ == z__) {
+        if (z__->right == 0)  // z__->left must be null also
+          leftmost__ = z__->parent;
+        // makes leftmost__ == _M_header if z__ == root__
+        else
+          leftmost__ = base_node__::local_leftmost__(x__);
+      }
+
+      if (rightmost__ == z__) {
+        if (z__->left == 0)  // z__->right must be null also
+          rightmost__ = z__->parent;
+        // makes rightmost__ == _M_header if z__ == root__
+        else  // x__ == z__->left
+          rightmost__ = base_node__::local_rightmost__(x__);
+      }
+    }
+
+    if (y__->color != red__) {
+      while (x__ != root__ && (x__ == 0 || x__->color == black__))
+
+        if (x__ == parent_x__->left) {
+          w__ = parent_x__->right;
+          if (w__->color == red__) {
+            w__->color = black__;
+            parent_x__->color = red__;
+            rotate_left__(parent_x__, root__);
+            w__ = parent_x__->right;
+          }
+
+          if ((w__->left == 0 || w__->left->color == black__)
+              && (w__->right == 0 || w__->right->color == black__)) {
+            w__->color = red__;
+            x__ = parent_x__;
+            parent_x__ = parent_x__->parent;
+
+          } else {
+            if (w__->right == 0 || w__->right->color == black__) {
+              w__->left->color = black__;
+              w__->color = red__;
+              rotate_right__(w__, root__);
+              w__ = parent_x__->right;
+            }
+            w__->color = parent_x__->color;
+            parent_x__->color = black__;
+
+            if (w__->right)
+              w__->right->color = black__;
+
+            rotate_left__(parent_x__, root__);
+            break;
+          }
+
+        } else {  // same as above, with right <-> left.
+
+          w__ = parent_x__->left;
+          if (w__->color == red__) {
+            w__->color = black__;
+            parent_x__->color = red__;
+            rotate_right__(parent_x__, root__);
+            w__ = parent_x__->left;
+          }
+          if ((w__->right == 0 || w__->right->color == black__)
+              && (w__->left == 0 || w__->left->color == black__)) {
+            w__->color = red__;
+            x__ = parent_x__;
+            parent_x__ = parent_x__->parent;
+
+          } else {
+            if (w__->left == 0 || w__->left->color == black__) {
+              w__->right->color = black__;
+              w__->color = red__;
+              rotate_left__(w__, root__);
+              w__ = parent_x__->left;
+            }
+            w__->color = parent_x__->color;
+            parent_x__->color = black__;
+
+            if (w__->left)
+              w__->left->color = black__;
+
+            rotate_right__(parent_x__, root__);
+            break;
+          }
+        }
+
+      if (x__)
+        x__->color = black__;
+    }
+    return (y__);
+    // erase_and_rebalance__  }}}
   }
 
   // XXX need rename
@@ -1029,174 +1194,16 @@ class rb_tree__ {
 
   // insert }}}
 
-  // erase, clear
+  // erase, clear {{{
 
   // XXX
   void
   erase(iterator pos) {
     value_node__* tmp__ = static_cast<value_node__*>(
-        erase_and_rebalance__(pos.node__, _header__()));
+        erase_and_rebalance__(pos.node__, this->_header__()));
 
     this->destroy_node__(tmp__);
     --this->node_count__;
-  }
-
-  // XXX
-  static base_node__*
-  erase_and_rebalance__(
-      base_node__* const z__,
-      base_node__*&
-          header__) throw() {  // XXX Add throw to other functions too?
-    base_node__*& root__ = header__->parent;
-    base_node__*& leftmost__ = header__->left;  // XXX
-    base_node__*& rightmost__ = header__->right;
-    base_node__* y__ = z__;
-    base_node__* x__ = NULL;
-    base_node__* parent_x__ = NULL;
-    base_node__* w__ = NULL;  // x's uncle
-
-    if (y__->left == NULL)        // z__ has at most one non-null child. y == z.
-      x__ = y__->right;           // x__ might be null.
-    else if (y__->right == NULL)  // z__ has exactly one non-null child. y == z.
-      x__ = y__->left;            // x__ is not null.
-    else {                        // z__ has two non-null children.  Set y__ to
-      y__ = y__->right;           //   z__'s successor.  x__ might be null.
-      while (y__->left != NULL)
-        y__ = y__->left;
-      x__ = y__->right;
-    }
-
-    if (y__ != z__) {  // relink y in place of z.  y is z's successor
-
-      z__->left->parent = y__;
-      y__->left = z__->left;
-
-      if (y__ != z__->right) {
-        parent_x__ = y__->parent;
-        if (x__)
-          x__->parent = y__->parent;
-        y__->parent->left = x__;  // y__ must be a child of left
-        y__->right = z__->right;
-        z__->right->parent = y__;
-
-      } else {
-        parent_x__ = y__;
-      }
-
-      if (root__ == z__)
-        root__ = y__;
-      else if (z__->parent->left == z__)
-        z__->parent->left = y__;
-      else
-        z__->parent->right = y__;
-
-      y__->parent = z__->parent;
-      std::swap(y__->color, z__->color);
-      y__ = z__;
-      // y__ now points to node to be actually deleted
-
-    } else {  // y__ == z__
-
-      parent_x__ = y__->parent;
-      if (x__)
-        x__->parent = y__->parent;
-
-      if (root__ == z__)
-        root__ = x__;
-      else if (z__->parent->left == z__)
-        z__->parent->left = x__;
-      else
-        z__->parent->right = x__;
-
-      if (leftmost__ == z__) {
-        if (z__->right == 0)  // z__->left must be null also
-          leftmost__ = z__->parent;
-        // makes leftmost__ == _M_header if z__ == root__
-        else
-          leftmost__ = base_node__::local_leftmost__(x__);
-      }
-
-      if (rightmost__ == z__) {
-        if (z__->left == 0)  // z__->right must be null also
-          rightmost__ = z__->parent;
-        // makes rightmost__ == _M_header if z__ == root__
-        else  // x__ == z__->left
-          rightmost__ = base_node__::local_rightmost__(x__);
-      }
-    }
-
-    if (y__->color != red__) {
-      while (x__ != root__ && (x__ == 0 || x__->color == black__))
-
-        if (x__ == parent_x__->left) {
-          w__ = parent_x__->right;
-          if (w__->color == red__) {
-            w__->color = black__;
-            parent_x__->color = red__;
-            rotate_left__(parent_x__, root__);
-            w__ = parent_x__->right;
-          }
-
-          if ((w__->left == 0 || w__->left->color == black__)
-              && (w__->right == 0 || w__->right->color == black__)) {
-            w__->color = red__;
-            x__ = parent_x__;
-            parent_x__ = parent_x__->parent;
-
-          } else {
-            if (w__->right == 0 || w__->right->color == black__) {
-              w__->left->color = black__;
-              w__->color = red__;
-              rotate_right__(w__, root__);
-              w__ = parent_x__->right;
-            }
-            w__->color = parent_x__->color;
-            parent_x__->color = black__;
-
-            if (w__->right)
-              w__->right->color = black__;
-
-            rotate_left__(parent_x__, root__);
-            break;
-          }
-
-        } else {  // same as above, with right <-> left.
-
-          w__ = parent_x__->left;
-          if (w__->color == red__) {
-            w__->color = black__;
-            parent_x__->color = red__;
-            rotate_right__(parent_x__, root__);
-            w__ = parent_x__->left;
-          }
-          if ((w__->right == 0 || w__->right->color == black__)
-              && (w__->left == 0 || w__->left->color == black__)) {
-            w__->color = red__;
-            x__ = parent_x__;
-            parent_x__ = parent_x__->parent;
-
-          } else {
-            if (w__->left == 0 || w__->left->color == black__) {
-              w__->right->color = black__;
-              w__->color = red__;
-              rotate_left__(w__, root__);
-              w__ = parent_x__->left;
-            }
-            w__->color = parent_x__->color;
-            parent_x__->color = black__;
-
-            if (w__->left)
-              w__->left->color = black__;
-
-            rotate_right__(parent_x__, root__);
-            break;
-          }
-        }
-
-      if (x__)
-        x__->color = black__;
-    }
-    return (y__);
   }
 
   // XXX
@@ -1230,7 +1237,7 @@ class rb_tree__ {
     }
   }
 
-  // erase, clear
+  // erase, clear }}}
 
   // find, count, lower_bound, upper_bound, equal_range {{{
 
