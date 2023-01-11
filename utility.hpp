@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:20:01 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/30 17:34:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/11 22:09:47 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,13 @@ make_pair(T1 x, T2 y) {
 template <typename Arg, typename Result>
 struct unary_function {
   typedef Arg argument_type;
+  typedef Result result_type;
+};
+
+template <typename Arg1, typename Arg2, typename Result>
+struct binary_function {
+  typedef Arg1 first_argument_type;
+  typedef Arg2 second_argument_type;
   typedef Result result_type;
 };
 
