@@ -24,14 +24,14 @@ f(void) {
   tree_t tr;
   tree_t::iterator it;
   tree_t::const_iterator cit;
-  tree_t::reverse_iterator rit;
-  tree_t::const_reverse_iterator crit;
+  // tree_t::reverse_iterator rit;
+  // tree_t::const_reverse_iterator crit;
 
   (void)tr;
   (void)it;
   (void)cit;
-  (void)rit;
-  (void)crit;
+  // (void)rit;
+  // (void)crit;
 
   tr.insert_unique(ft::make_pair(3, 'c'));
   tr.insert_unique(ft::make_pair(9, 'c'));
@@ -58,9 +58,9 @@ f(void) {
 
   cit = tr.begin();
 
-  for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
-	std::cout << crit->first << std::endl;
-  }
+  // for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
+  //   std::cout << crit->first << std::endl;
+  // }
 
   for (it = tr.begin(); it != tr.end(); ++it) {
     if (it->first % 2 == 0) {
@@ -70,9 +70,9 @@ f(void) {
     }
   }
 
-  for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
-    std::cout << rit->first << std::endl;
-  }
+  // for (rit = tr.rbegin(); rit != tr.rend(); ++rit) {
+  //   std::cout << rit->first << std::endl;
+  // }
 
   print_verify(tr);
 

@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/11 17:44:57 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/12 00:28:55 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,8 +378,8 @@ class rb_tree__ {
 
   typedef rb_tree_iterator__<value_type> iterator;
   typedef rb_tree_const_iterator__<value_type> const_iterator;
-  typedef ft::reverse_iterator<iterator> reverse_iterator;
-  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+  // typedef ft::reverse_iterator<iterator> reverse_iterator;
+  // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
  public:
   allocator_type
@@ -624,7 +624,7 @@ class rb_tree__ {
           x->parent->color = black__;     //         x(red)   gp(red)
           grand_parent__->color = red__;  //                 y    u(black__)
           rotate_right__(grand_parent__, root);
-          break;  // XXX maybe???
+          break;                          // XXX maybe???
         }
 
         // x->parent == grand_parent__->left }}}
@@ -867,7 +867,7 @@ class rb_tree__ {
     // erase_and_rebalance__  }}}
   }
 
-  // XXX need rename
+  // XXX
   value_node__*
   copy_subtree__(value_node__* x, value_node__* parent) {
     value_node__* tmp__;
@@ -945,8 +945,8 @@ class rb_tree__ {
     else {
       _color__(this->_header__()) = red__;
       this->_root__() = copy_subtree__(other._root__(), this->_header__());
-      this->_leftmost__() = this->local_leftmost(this->_root__());
-      this->_rightmost__() = this->local_rightmost(this->_root__());
+      this->_leftmost__() = local_leftmost__(this->_root__());
+      this->_rightmost__() = local_rightmost__(this->_root__());
     }
   }
 
@@ -965,8 +965,8 @@ class rb_tree__ {
 
       } else {
         this->_root__() = copy_subtree__(other._root__(), this->_header__());
-        this->_leftmost__() = this->local_leftmost(this->_root__());
-        this->_rightmost__() = this->local_rightmost(this->_root__());
+        this->_leftmost__() = local_leftmost__(this->_root__());
+        this->_rightmost__() = local_rightmost__(this->_root__());
         this->node_count__ = other.node_count__;
       }
     }
@@ -987,10 +987,10 @@ class rb_tree__ {
 
   // observer
 
-  key_compare
-  key_comp(void) const {
-    return (this->comp__);
-  }
+  // key_compare
+  // key_comp(void) const {
+  //   return (this->comp__);
+  // }
 
   // iterator {{{
 
@@ -1014,25 +1014,26 @@ class rb_tree__ {
     return (const_iterator(this->Base__.header));
   }
 
-  reverse_iterator
-  rbegin(void) {
-    return (reverse_iterator(this->end()));
-  }
+  // XXX Remove after implementing Map
+  // reverse_iterator
+  // rbegin(void) {
+  //   return (reverse_iterator(this->end()));
+  // }
 
-  const_reverse_iterator
-  rbegin(void) const {
-    return (const_reverse_iterator(this->end()));
-  }
+  // const_reverse_iterator
+  // rbegin(void) const {
+  //   return (const_reverse_iterator(this->end()));
+  // }
 
-  reverse_iterator
-  rend(void) {
-    return (reverse_iterator(this->begin()));
-  }
+  // reverse_iterator
+  // rend(void) {
+  //   return (reverse_iterator(this->begin()));
+  // }
 
-  const_reverse_iterator
-  rend(void) const {
-    return (const_reverse_iterator(this->begin()));
-  }
+  // const_reverse_iterator
+  // rend(void) const {
+  //   return (const_reverse_iterator(this->begin()));
+  // }
 
   // iterator }}}
 
@@ -1446,8 +1447,8 @@ class rb_tree__ {
   rb_tree_value_node__<value_type> dummy2;
   iterator dummy3;
   const_iterator cdummy3;
-  reverse_iterator rdummy3;
-  const_reverse_iterator crdummy3;
+  // reverse_iterator rdummy3;
+  // const_reverse_iterator crdummy3;
   rb_tree_alloc_base__ dummy4(Allocator());
   rb_tree_node__ dummy5(Allocator());
 
