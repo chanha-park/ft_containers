@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/10 20:19:43 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/11 17:44:57 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,274 @@
 
 namespace ft {
 
+typedef bool node_color__;
+static const node_color__ red__ = true;
+static const node_color__ black__ = false;
+
+class rb_tree_base_node__ {
+  // class rb_tree_base_node__ {{{
+ public:
+  rb_tree_base_node__* parent;
+  rb_tree_base_node__* left;
+  rb_tree_base_node__* right;
+  node_color__ color;
+
+  static rb_tree_base_node__*
+  local_leftmost__(rb_tree_base_node__* x) {
+    while (x->left != NULL)
+      x = x->left;
+    return (x);
+  }
+
+  static const rb_tree_base_node__*
+  local_leftmost__(const rb_tree_base_node__* x) {
+    while (x->left != NULL)
+      x = x->left;
+    return (x);
+  }
+
+  static rb_tree_base_node__*
+  local_rightmost__(rb_tree_base_node__* x) {
+    while (x->right != NULL)
+      x = x->right;
+    return (x);
+  }
+
+  static const rb_tree_base_node__*
+  local_rightmost__(const rb_tree_base_node__* x) {
+    while (x->right != NULL)
+      x = x->right;
+    return (x);
+  }
+
+  // class rb_tree_base_node__ }}}
+};
+
+template <typename T>
+class rb_tree_value_node__ : public ft::rb_tree_base_node__ {
+ public:
+  T val;
+};
+
+template <typename T>
+class rb_tree_iterator__ {
+  // class rb_tree_iterator__ {{{
+ public:
+  typedef ptrdiff_t difference_type;
+  typedef T value_type;
+  typedef T& reference;
+  typedef T* pointer;
+  typedef ft::bidirectional_iterator_tag iterator_category;
+
+  rb_tree_base_node__* node__;
+
+  typedef rb_tree_iterator__<T> self;
+
+ private:
+  // iterate_node {{{2
+
+  void
+  iter_next_node__(void) throw() {
+    if (node__->right != NULL) {
+      node__ = node__->right;
+      while (node__->left != NULL)
+        node__ = node__->left;
+    } else {
+      while (node__ == node__->parent->right)
+        node__ = node__->parent;
+      if (node__->parent != node__->right)
+        node__ = node__->parent;
+    }
+  }
+
+  void
+  iter_prev_node__(void) throw() {
+    if (node__->color == red__ && node__->parent->parent == node__) {
+      node__ = node__->right;
+    } else if (node__->left != NULL) {
+      node__ = node__->left;
+      while (node__->right != NULL)
+        node__ = node__->right;
+
+    } else {
+      while (node__ == node__->parent->left)
+        node__ = node__->parent;
+      node__ = node__->parent;
+    }
+  }
+
+  // iterate_node }}}
+
+ public:
+  rb_tree_iterator__(void) : node__() {
+  }
+
+  explicit rb_tree_iterator__(rb_tree_base_node__* x) : node__(x) {
+  }
+
+  // XXX
+  // rb_tree_iterator__(const self& it) : node__(it.node__) {
+  // }
+
+  reference
+  operator*() const {
+    return (static_cast<rb_tree_value_node__<T>*>(node__)->val);
+  }
+
+  pointer
+  operator->() const {
+    return (ft::addressof(operator*()));
+  }
+
+  self&
+  operator++(void) {
+    iter_next_node__();
+    return (*this);
+  }
+
+  self
+  operator++(int) {
+    self tmp__(*this);
+    iter_next_node__();
+    return (tmp__);
+  }
+
+  self&
+  operator--(void) {
+    iter_prev_node__();
+    return (*this);
+  }
+
+  self
+  operator--(int) {
+    self tmp__(*this);
+    iter_prev_node__();
+    return (tmp__);
+  }
+
+  bool
+  operator==(const self& other) const {
+    return (this->node__ == other.node__);
+  }
+
+  bool
+  operator!=(const self& other) const {
+    return (this->node__ != other.node__);
+  }
+
+  // class rb_tree_iterator__ }}}
+};
+
+template <typename T>
+class rb_tree_const_iterator__ {
+  // class rb_tree_const_iterator__ {{{
+
+ public:
+  typedef ptrdiff_t difference_type;
+  typedef T value_type;
+  typedef const T& reference;
+  typedef const T* pointer;
+  typedef ft::bidirectional_iterator_tag iterator_category;
+
+  const rb_tree_base_node__* node__;
+
+  typedef rb_tree_const_iterator__<T> self;
+
+ private:
+  // iterate_node {{{2
+
+  void
+  iter_next_node__(void) throw() {
+    if (node__->right != NULL) {
+      node__ = node__->right;
+      while (node__->left != NULL)
+        node__ = node__->left;
+    } else {
+      while (node__ == node__->parent->right)
+        node__ = node__->parent;
+      if (node__->parent != node__->right)
+        node__ = node__->parent;
+    }
+  }
+
+  void
+  iter_prev_node__(void) throw() {
+    if (node__->color == red__ && node__->parent->parent == node__) {
+      node__ = node__->right;
+    } else if (node__->left != NULL) {
+      node__ = node__->left;
+      while (node__->right != NULL)
+        node__ = node__->right;
+
+    } else {
+      while (node__ == node__->parent->left)
+        node__ = node__->parent;
+      node__ = node__->parent;
+    }
+  }
+
+  // iterate_node }}}
+
+ public:
+  rb_tree_const_iterator__(void) : node__() {
+  }
+
+  explicit rb_tree_const_iterator__(const rb_tree_base_node__* x) : node__(x) {
+  }
+
+  rb_tree_const_iterator__(const rb_tree_iterator__<T>& it) :
+      node__(it.node__) {
+  }
+
+  reference
+  operator*() const {
+    return (static_cast<const rb_tree_value_node__<T>*>(node__)->val);
+  }
+
+  pointer
+  operator->() const {
+    return (ft::addressof(operator*()));
+  }
+
+  self&
+  operator++(void) {
+    iter_next_node__();
+    return (*this);
+  }
+
+  self
+  operator++(int) {
+    self tmp__(*this);
+    iter_next_node__();
+    return (tmp__);
+  }
+
+  self&
+  operator--(void) {
+    iter_prev_node__();
+    return (*this);
+  }
+
+  self
+  operator--(int) {
+    self tmp__(*this);
+    iter_prev_node__();
+    return (tmp__);
+  }
+
+  bool
+  operator==(const self& other) const {
+    return (this->node__ == other.node__);
+  }
+
+  bool
+  operator!=(const self& other) const {
+    return (this->node__ != other.node__);
+  }
+
+  // class rb_tree_const_iterator__ }}}
+};
+
 template <typename Key,
           typename Value,
           typename KeyFromValue,
@@ -32,45 +300,6 @@ class rb_tree__ {
   typedef bool node_color__;
   static const node_color__ red__ = true;
   static const node_color__ black__ = false;
-
-  class rb_tree_base_node__ {
-    // class rb_tree_base_node__ {{{
-   public:
-    rb_tree_base_node__* parent;
-    rb_tree_base_node__* left;
-    rb_tree_base_node__* right;
-    node_color__ color;
-
-    static rb_tree_base_node__*
-    local_leftmost__(rb_tree_base_node__* x) {
-      while (x->left != NULL)
-        x = x->left;
-      return (x);
-    }
-
-    static const rb_tree_base_node__*
-    local_leftmost__(const rb_tree_base_node__* x) {
-      while (x->left != NULL)
-        x = x->left;
-      return (x);
-    }
-
-    static rb_tree_base_node__*
-    local_rightmost__(rb_tree_base_node__* x) {
-      while (x->right != NULL)
-        x = x->right;
-      return (x);
-    }
-
-    static const rb_tree_base_node__*
-    local_rightmost__(const rb_tree_base_node__* x) {
-      while (x->right != NULL)
-        x = x->right;
-      return (x);
-    }
-
-    // class rb_tree_base_node__ }}}
-  };
 
  public:
   typedef Key key_type;
@@ -86,235 +315,8 @@ class rb_tree__ {
   typedef const value_type& const_reference;
 
  private:
-  template <typename T>
-  class rb_tree_value_node__ : public rb_tree_base_node__ {
-   public:
-    T val;
-  };
-
   typedef rb_tree_base_node__ base_node__;
   typedef rb_tree_value_node__<value_type> value_node__;
-
-  template <typename T>
-  class rb_tree_iterator__ {
-    // class rb_tree_iterator__ {{{
-   public:
-    typedef ptrdiff_t difference_type;
-    typedef T value_type;
-    typedef T* pointer;
-    typedef T& reference;
-    typedef ft::bidirectional_iterator_tag iterator_category;
-
-    base_node__* node__;
-
-   private:
-    typedef rb_tree_value_node__<T> value_node__;
-
-    // iterate_node {{{2
-
-    void
-    iter_next_node__(void) throw() {
-      if (node__->right != NULL) {
-        node__ = node__->right;
-        while (node__->left != NULL)
-          node__ = node__->left;
-      } else {
-        while (node__ == node__->parent->right)
-          node__ = node__->parent;
-        if (node__->parent != node__->right)
-          node__ = node__->parent;
-      }
-    }
-
-    void
-    iter_prev_node__(void) throw() {
-      if (node__->color == red__ && node__->parent->parent == node__) {
-        node__ = node__->right;
-      } else if (node__->left != NULL) {
-        node__ = node__->left;
-        while (node__->right != NULL)
-          node__ = node__->right;
-
-      } else {
-        while (node__ == node__->parent->left)
-          node__ = node__->parent;
-        node__ = node__->parent;
-      }
-    }
-
-    // iterate_node }}}
-
-   public:
-    rb_tree_iterator__(void) : node__() {
-    }
-
-    explicit rb_tree_iterator__(base_node__* x) : node__(x) {
-    }
-
-    rb_tree_iterator__(const rb_tree_iterator__& it) : node__(it.node__) {
-    }
-
-    reference
-    operator*() const {
-      return (static_cast<value_node__*>(node__)->val);
-    }
-
-    pointer
-    operator->() const {
-      return (ft::addressof(operator*()));
-    }
-
-    rb_tree_iterator__<value_type>&
-    operator++(void) {
-      iter_next_node__();
-      return (*this);
-    }
-
-    rb_tree_iterator__<value_type>
-    operator++(int) {
-      rb_tree_iterator__<value_type> tmp__(*this);
-      iter_next_node__();
-      return (tmp__);
-    }
-
-    rb_tree_iterator__<value_type>&
-    operator--(void) {
-      iter_prev_node__();
-      return (*this);
-    }
-
-    rb_tree_iterator__<value_type>
-    operator--(int) {
-      rb_tree_iterator__<value_type> tmp__(*this);
-      iter_prev_node__();
-      return (tmp__);
-    }
-
-    template <typename U>
-    bool
-    operator==(const rb_tree_iterator__<U>& other) const {
-      return (this->node__ == other.node__);
-    }
-
-    template <typename U>
-    bool
-    operator!=(const rb_tree_iterator__<U>& other) const {
-      return (this->node__ != other.node__);
-    }
-
-    // class rb_tree_iterator__ }}}
-  };
-
-  template <typename T>
-  class rb_tree_const_iterator__ {
-    // class rb_tree_const_iterator__ {{{
-   public:
-    typedef ptrdiff_t difference_type;
-    typedef T value_type;
-    typedef const T* pointer;
-    typedef const T& reference;
-    typedef ft::bidirectional_iterator_tag iterator_category;
-
-    const base_node__* node__;
-
-   private:
-    typedef const rb_tree_value_node__<T> value_node__;
-
-    // iterate_node {{{2
-
-    void
-    iter_next_node__(void) throw() {
-      if (node__->right != NULL) {
-        node__ = node__->right;
-        while (node__->left != NULL)
-          node__ = node__->left;
-      } else {
-        while (node__ == node__->parent->right)
-          node__ = node__->parent;
-        if (node__->parent != node__->right)
-          node__ = node__->parent;
-      }
-    }
-
-    void
-    iter_prev_node__(void) throw() {
-      if (node__->color == red__ && node__->parent->parent == node__) {
-        node__ = node__->right;
-      } else if (node__->left != NULL) {
-        node__ = node__->left;
-        while (node__->right != NULL)
-          node__ = node__->right;
-
-      } else {
-        while (node__ == node__->parent->left)
-          node__ = node__->parent;
-        node__ = node__->parent;
-      }
-    }
-
-    // iterate_node }}}
-
-   public:
-    rb_tree_const_iterator__(void) : node__() {
-    }
-
-    explicit rb_tree_const_iterator__(const base_node__* x) : node__(x) {
-    }
-
-    rb_tree_const_iterator__(const rb_tree_const_iterator__& it) :
-        node__(it.node__) {
-    }
-
-    reference
-    operator*() const {
-      return (static_cast<value_node__*>(node__)->val);
-    }
-
-    pointer
-    operator->() const {
-      return (ft::addressof(operator*()));
-    }
-
-    rb_tree_const_iterator__<value_type>&
-    operator++(void) {
-      iter_next_node__();
-      return (*this);
-    }
-
-    rb_tree_const_iterator__<value_type>
-    operator++(int) {
-      rb_tree_const_iterator__<value_type> tmp__(*this);
-      iter_next_node__();
-      return (tmp__);
-    }
-
-    rb_tree_const_iterator__<value_type>&
-    operator--(void) {
-      iter_prev_node__();
-      return (*this);
-    }
-
-    rb_tree_const_iterator__<value_type>
-    operator--(int) {
-      rb_tree_const_iterator__<value_type> tmp__(*this);
-      iter_prev_node__();
-      return (tmp__);
-    }
-
-    template <typename U>
-    bool
-    operator==(const rb_tree_const_iterator__<U>& other) const {
-      return (this->node__ == other.node__);
-    }
-
-    template <typename U>
-    bool
-    operator!=(const rb_tree_const_iterator__<U>& other) const {
-      return (this->node__ != other.node__);
-    }
-
-    // class rb_tree_const_iterator__ }}}
-  };
 
   class rb_tree_alloc_base__ {
     // class rb_tree_alloc_base__ {{{

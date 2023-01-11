@@ -58,9 +58,9 @@ f(void) {
 
   cit = tr.begin();
 
-  // for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
-  //   std::cout << crit->first << std::endl;
-  // }
+  for (crit = tr.rbegin(); crit != tr.rend(); ++crit) {
+	std::cout << crit->first << std::endl;
+  }
 
   for (it = tr.begin(); it != tr.end(); ++it) {
     if (it->first % 2 == 0) {
@@ -76,8 +76,8 @@ f(void) {
 
   print_verify(tr);
 
-  for (it = tr.begin(); it != tr.end(); ++it) {
-    tr.erase(it);
+  for (it = tr.begin(); it != tr.end();) {
+    tr.erase(it++);
   }
   print_verify(tr);
 }
