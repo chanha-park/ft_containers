@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 01:38:50 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/12 03:48:57 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,9 @@ class rb_tree_value_node__ : public ft::rb_tree_base_node__ {
  public:
   T val;
 };
+
+template <typename T>
+class rb_tree_const_iterator__;
 
 template <typename T>
 class rb_tree_iterator__ {
@@ -174,6 +177,16 @@ class rb_tree_iterator__ {
 
   bool
   operator!=(const self& other) const {
+    return (this->node__ != other.node__);
+  }
+
+  bool
+  operator==(const ft::rb_tree_const_iterator__<T>& other) const {
+    return (this->node__ == other.node__);
+  }
+
+  bool
+  operator!=(const ft::rb_tree_const_iterator__<T>& other) const {
     return (this->node__ != other.node__);
   }
 
@@ -284,6 +297,16 @@ class rb_tree_const_iterator__ {
 
   bool
   operator!=(const self& other) const {
+    return (this->node__ != other.node__);
+  }
+
+  bool
+  operator==(const ft::rb_tree_iterator__<T>& other) const {
+    return (this->node__ == other.node__);
+  }
+
+  bool
+  operator!=(const ft::rb_tree_iterator__<T>& other) const {
     return (this->node__ != other.node__);
   }
 
@@ -991,10 +1014,10 @@ class rb_tree__ {
 
   // observer
 
-  // key_compare
-  // key_comp(void) const {
-  //   return (this->comp__);
-  // }
+  key_compare
+  key_comp(void) const {
+    return (this->comp__);
+  }
 
   // iterator {{{
 

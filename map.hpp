@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 02:01:42 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/12 03:49:46 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ class map {
   class value_compare :
       public ft::binary_function<value_type, value_type, bool> {
    private:
-    // friend class map; // why?
+    friend class map;
+
    protected:
     key_compare comp;
 
@@ -322,12 +323,12 @@ class map {
 
   key_compare
   key_comp(void) const {
-    return (tree__.comp__);
+    return (tree__.key_comp());
   }
 
   value_compare
   value_comp(void) const {
-    return (value_compare(tree__.comp__));
+    return (value_compare(tree__.key_comp()));
   }
 
   // relational operator {{{
