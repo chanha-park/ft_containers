@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/11 23:16:33 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/12 02:01:42 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <functional>
 #include <memory>
+#include "algorithm.hpp"
 #include "iterator.hpp"
 #include "tree__.hpp"
 #include "utility.hpp"
@@ -329,11 +330,47 @@ class map {
     return (value_compare(tree__.comp__));
   }
 
+  // relational operator {{{
+
   bool
-  operator==(ft::map<key_type, mapped_type, key_compare, allocator_type>& other)
-      const {
-    return (tree__ == other.tree__);
+  operator==(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                 other) const {
+    return (this->size() == other.size()
+            && ft::equal(this->begin(), this->end(), other.begin()));
   }
+
+  bool
+  operator!=(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                 other) const {
+    return (!(*this == other));
+  }
+
+  bool
+  operator<(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                other) const {
+    return (ft::lexicographical_compare(
+        this->begin(), this->end(), other.begin(), other.end()));
+  }
+
+  bool
+  operator<=(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                 other) const {
+    return (!(other < *this));
+  }
+
+  bool
+  operator>(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                other) const {
+    return (other < *this);
+  }
+
+  bool
+  operator>=(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
+                 other) const {
+    return (!(*this < other));
+  }
+
+  // relational operator }}}
 };
 
 template <typename Key, typename T, typename Compare, typename Allocator>
