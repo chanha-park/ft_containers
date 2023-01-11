@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 00:28:55 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/12 01:38:50 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,7 +403,7 @@ class rb_tree__ {
   }
 
   value_node__*
-  clone_node__(value_node__* other) {
+  clone_node__(const value_node__* other) {
     value_node__* tmp__ = this->create_node__(other->val);
     tmp__->color = other->color;
     tmp__->left = NULL;
@@ -869,7 +869,7 @@ class rb_tree__ {
 
   // XXX
   value_node__*
-  copy_subtree__(value_node__* x, value_node__* parent) {
+  copy_subtree__(const value_node__* x, value_node__* parent) {
     value_node__* tmp__;
 
     value_node__* top__ = this->clone_node__(x);
@@ -944,7 +944,9 @@ class rb_tree__ {
       this->empty_initialize();
     else {
       _color__(this->_header__()) = red__;
-      this->_root__() = copy_subtree__(other._root__(), this->_header__());
+      this->_root__()
+          = copy_subtree__(static_cast<const value_node__*>(other._root__()),
+                           static_cast<value_node__*>(this->_header__()));
       this->_leftmost__() = local_leftmost__(this->_root__());
       this->_rightmost__() = local_rightmost__(this->_root__());
     }
@@ -964,7 +966,9 @@ class rb_tree__ {
         this->node_count__ = 0;
 
       } else {
-        this->_root__() = copy_subtree__(other._root__(), this->_header__());
+        this->_root__()
+            = copy_subtree__(static_cast<const value_node__*>(other._root__()),
+                             static_cast<value_node__*>(this->_header__()));
         this->_leftmost__() = local_leftmost__(this->_root__());
         this->_rightmost__() = local_rightmost__(this->_root__());
         this->node_count__ = other.node_count__;
@@ -1237,7 +1241,7 @@ class rb_tree__ {
       this->clear();
     else {
       while (first != last) {
-        this->erase(++first);
+        this->erase(first++);
       }
     }
   }
@@ -1259,7 +1263,7 @@ class rb_tree__ {
 
   iterator
   find(const key_type& key) {
-    value_node__* prev__ = this->_header__();
+    value_node__* prev__ = static_cast<value_node__*>(this->_header__());
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL)
@@ -1278,8 +1282,10 @@ class rb_tree__ {
 
   const_iterator
   find(const key_type& key) const {
-    value_node__* prev__ = this->_header__();
-    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+    const value_node__* prev__
+        = static_cast<const value_node__*>(this->_header__());
+    const value_node__* curr__
+        = static_cast<const value_node__*>(prev__->parent);
 
     while (curr__ != NULL)
       if (this->comp__(_key__(curr__), key)) {
@@ -1301,7 +1307,8 @@ class rb_tree__ {
 
   size_type
   count_unique(const key_type& key) const {
-    value_node__* curr__ = this->_root__();
+    const value_node__* curr__
+        = static_cast<const value_node__*>(this->_root__());
 
     while (curr__ != NULL) {
       if (this->comp__(_key__(curr__), key)) {
@@ -1324,7 +1331,7 @@ class rb_tree__ {
 
   iterator
   lower_bound(const key_type& key) {
-    value_node__* prev__ = this->_header__();
+    value_node__* prev__ = static_cast<value_node__*>(this->_header__());
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
@@ -1340,8 +1347,10 @@ class rb_tree__ {
 
   const_iterator
   lower_bound(const key_type& key) const {
-    value_node__* prev__ = this->_header__();
-    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+    const value_node__* prev__
+        = static_cast<const value_node__*>(this->_header__());
+    const value_node__* curr__
+        = static_cast<const value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
       if (this->comp__(_key__(curr__), key)) {
@@ -1360,7 +1369,7 @@ class rb_tree__ {
 
   iterator
   upper_bound(const key_type& key) {
-    value_node__* prev__ = this->_header__();
+    value_node__* prev__ = static_cast<value_node__*>(this->_header__());
     value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
@@ -1376,8 +1385,10 @@ class rb_tree__ {
 
   const_iterator
   upper_bound(const key_type& key) const {
-    value_node__* prev__ = this->_header__();
-    value_node__* curr__ = static_cast<value_node__*>(prev__->parent);
+    const value_node__* prev__
+        = static_cast<const value_node__*>(this->_header__());
+    const value_node__* curr__
+        = static_cast<const value_node__*>(prev__->parent);
 
     while (curr__ != NULL) {
       if (this->comp__(key, _key__(curr__))) {
@@ -1397,8 +1408,8 @@ class rb_tree__ {
   // XXX
   ft::pair<iterator, iterator>
   equal_range_unique(const key_type& key) {
-    value_node__* prev__ = this->_header__();
-    value_node__* curr__ = this->_root__();
+    value_node__* prev__ = static_cast<value_node__*>(this->_header__());
+    value_node__* curr__ = static_cast<value_node__*>(this->_root__());
 
     while (curr__ != NULL) {
       if (this->comp__(_key__(curr__), key)) {
@@ -1406,7 +1417,7 @@ class rb_tree__ {
 
       } else if (this->comp__(key, _key__(curr__))) {
         prev__ = curr__;
-        curr__ = _leftmost__(curr__);
+        curr__ = _left__(curr__);
       } else {
         return (ft::pair<iterator, iterator>(
             iterator(curr__),
@@ -1415,12 +1426,15 @@ class rb_tree__ {
                                            : prev__)));
       }
     }
+    return (ft::pair<iterator, iterator>(iterator(prev__), iterator(prev__)));
   }
 
   ft::pair<const_iterator, const_iterator>
   equal_range_unique(const key_type& key) const {
-    value_node__* prev__ = this->_header__();
-    value_node__* curr__ = this->_root__();
+    const value_node__* prev__
+        = static_cast<const value_node__*>(this->_header__());
+    const value_node__* curr__
+        = static_cast<const value_node__*>(this->_root__());
 
     while (curr__ != NULL) {
       if (this->comp__(_key__(curr__), key)) {
@@ -1428,7 +1442,7 @@ class rb_tree__ {
 
       } else if (this->comp__(key, _key__(curr__))) {
         prev__ = curr__;
-        curr__ = _leftmost__(curr__);
+        curr__ = _left__(curr__);
       } else {
         return (ft::pair<const_iterator, const_iterator>(
             const_iterator(curr__),
@@ -1437,6 +1451,8 @@ class rb_tree__ {
                                                  : prev__)));
       }
     }
+    return (ft::pair<const_iterator, const_iterator>(const_iterator(prev__),
+                                                     const_iterator(prev__)));
   }
 
   // equal_range_unique }}}
