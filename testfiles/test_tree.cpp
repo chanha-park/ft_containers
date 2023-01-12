@@ -85,6 +85,8 @@ f(void) {
 int
 main(void) {
   f();
+#if defined(__APPLE__)
   system("leaks $PPID");
+#endif
   return (0);
 }
