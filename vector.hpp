@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/19 16:58:33 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/13 01:28:11 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -647,7 +647,6 @@ class vector : protected vector_base_<T, Allocator> {
 
   // assign {{{
 
-  // XXX
   void
   assign(size_type n, const value_type& val) {
     if (n > this->capacity()) {

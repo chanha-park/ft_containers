@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 10:06:44 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/13 01:27:39 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,9 +130,8 @@ class rb_tree_iterator__ {
   explicit rb_tree_iterator__(rb_tree_base_node__* x) : node__(x) {
   }
 
-  // XXX
-  // rb_tree_iterator__(const self& it) : node__(it.node__) {
-  // }
+  rb_tree_iterator__(const self& it) : node__(it.node__) {
+  }
 
   reference
   operator*() const {
@@ -580,7 +579,6 @@ class rb_tree__ {
     return (base_node__::local_rightmost__(x));
   }
 
-  // XXX
   static void
   rotate_left__(base_node__* x, base_node__*& root) {
     base_node__* const y__ = x->right;
@@ -600,7 +598,6 @@ class rb_tree__ {
     x->parent = y__;
   }
 
-  // XXX
   static void
   rotate_right__(base_node__* x, base_node__*& root) {
     base_node__* const y__ = x->left;
@@ -620,7 +617,6 @@ class rb_tree__ {
     x->parent = y__;
   }
 
-  // XXX
   // since x is newly inserted node, x's color is red and non-NULL
   static void
   rebalance_for_insert__(base_node__* x, base_node__*& root) throw() {
@@ -647,7 +643,7 @@ class rb_tree__ {
           x->parent->color = black__;     //         x(red)   gp(red)
           grand_parent__->color = red__;  //                 y    u(black__)
           rotate_right__(grand_parent__, root);
-          break;                          // XXX maybe???
+          break;
         }
 
         // x->parent == grand_parent__->left }}}
@@ -669,7 +665,7 @@ class rb_tree__ {
           x->parent->color = black__;
           x->parent->parent->color = red__;
           rotate_left__(x->parent->parent, root);
-          break;  // XXX maybe???
+          break;
         }
         // opposite direction }}}
       }
@@ -677,7 +673,7 @@ class rb_tree__ {
     root->color = black__;
   }
 
-  // XXX insert new node with value v as y's child.
+  // insert new node with value v as y's child.
   // y must be unsaturated
   // bool will_insert_left = (x != NULL || y == this->_header__() ||
   // this->comp__(KeyFromValue()(v), _key__(y__))) )
@@ -795,7 +791,6 @@ class rb_tree__ {
       x->color = black__;
   }
 
-  // XXX
   static base_node__*
   erase_and_rebalance__(base_node__* const node_to_delete,
                         base_node__*& header) throw() {
@@ -850,7 +845,6 @@ class rb_tree__ {
 
       succ__->parent = node_to_delete->parent;
 
-      // XXX check logic
       succ__->color = node_to_delete->color;
 
     } else {
@@ -875,7 +869,6 @@ class rb_tree__ {
       }
 
       if (rightmost__ == node_to_delete) {
-        // if (node_to_delete->left == NULL)
         if (succ_child__ == NULL)
           rightmost__ = node_to_delete->parent;
         else
@@ -890,7 +883,6 @@ class rb_tree__ {
     // erase_and_rebalance__  }}}
   }
 
-  // XXX
   value_node__*
   copy_subtree__(const value_node__* x, value_node__* parent) {
     value_node__* tmp__;
@@ -921,7 +913,7 @@ class rb_tree__ {
     return (top__);
   }
 
-  // XXX erase every nodes below x (inclusive)
+  // erase every nodes below x without balancing (inclusive)
   void
   clear_subtree__(value_node__* x) {
     value_node__* tmp__;
@@ -1000,9 +992,7 @@ class rb_tree__ {
     return (*this);
   }
 
-  // XXX just clear_subtree__ might be enough
   ~rb_tree__(void) {
-    // this->clear();
     this->clear_subtree__(static_cast<value_node__*>(this->_root__()));
   }
 
@@ -1041,27 +1031,6 @@ class rb_tree__ {
     return (const_iterator(this->Base__.header));
   }
 
-  // XXX Remove after implementing Map
-  // reverse_iterator
-  // rbegin(void) {
-  //   return (reverse_iterator(this->end()));
-  // }
-
-  // const_reverse_iterator
-  // rbegin(void) const {
-  //   return (const_reverse_iterator(this->end()));
-  // }
-
-  // reverse_iterator
-  // rend(void) {
-  //   return (reverse_iterator(this->begin()));
-  // }
-
-  // const_reverse_iterator
-  // rend(void) const {
-  //   return (const_reverse_iterator(this->begin()));
-  // }
-
   // iterator }}}
 
   // capacity {{{
@@ -1095,7 +1064,6 @@ class rb_tree__ {
 
   // insert {{{
 
-  // XXX
   ft::pair<iterator, bool>
   insert_unique(const value_type& v) {
     base_node__* y__ = this->_end__();
@@ -1125,7 +1093,6 @@ class rb_tree__ {
     return (ft::pair<iterator, bool>(it__, false));
   }
 
-  // XXX
   iterator
   insert_hint_unique(iterator pos, const value_type& v) {
     const key_type key__ = KeyFromValue()(v);
@@ -1197,7 +1164,6 @@ class rb_tree__ {
     return (iterator(x__));
   }
 
-  // XXX
   template <typename InputIter>
   void
   insert_range_unique(InputIter first, InputIter last) {
@@ -1205,40 +1171,10 @@ class rb_tree__ {
       insert_hint_unique(this->end(), *first);
   }
 
-  // XXX for multimap, multiset. not necessary now
-  // iterator
-  // insert_multi(const value_type& x) {
-  //   // to compile
-  //   (void)x;
-  //   return (iterator());
-  //   // to compile
-  // }
-
-  // XXX for multimap, multiset. not necessary now
-  // iterator
-  // insert_multi(iterator pos, const value_type& x) {
-  //   // to compile
-  //   (void)pos;
-  //   (void)x;
-  //   return (iterator());
-  //   // to compile
-  // }
-
-  // XXX for multimap, multiset. not necessary now
-  // template <class InputIter>
-  // void
-  // insert_multi(InputIter first, InputIter last) {
-  //   // to compile
-  //   (void)first;
-  //   (void)last;
-  //   // to compile
-  // }
-
   // insert }}}
 
   // erase, clear {{{
 
-  // XXX
   void
   erase(iterator pos) {
     value_node__* const tmp__ = static_cast<value_node__* const>(
@@ -1248,7 +1184,6 @@ class rb_tree__ {
     --this->node_count__;
   }
 
-  // XXX
   size_type
   erase_unique(const key_type& x) {
     iterator it__ = this->find(x);
@@ -1428,7 +1363,6 @@ class rb_tree__ {
 
   // equal_range_unique {{{
 
-  // XXX
   ft::pair<iterator, iterator>
   equal_range_unique(const key_type& key) {
     value_node__* prev__ = static_cast<value_node__*>(this->_header__());
@@ -1480,17 +1414,7 @@ class rb_tree__ {
 
   // equal_range_unique }}}
 
-  // XXX remove when done;
  public:
-  rb_tree_base_node__ dummy1;
-  rb_tree_value_node__<value_type> dummy2;
-  iterator dummy3;
-  const_iterator cdummy3;
-  // reverse_iterator rdummy3;
-  // const_reverse_iterator crdummy3;
-  rb_tree_alloc_base__ dummy4(Allocator());
-  rb_tree_node__ dummy5(Allocator());
-
   // debugging helper function {{{
 
   static size_type
