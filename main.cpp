@@ -42,7 +42,7 @@ main(int argc, char** argv) {
   const int seed = atoi(argv[1]);
   srand(seed);
 
-  int fd = open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC);
+  int fd = open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC, 0664);
   dup2(fd, STDOUT_FILENO);
   close(fd);
 
