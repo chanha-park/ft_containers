@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/13 01:22:59 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/13 15:21:15 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CXX				:= c++
 RM				:= rm -f
 
 CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic -O3 -MMD -MP
-CPPFLAGS		:= -I.
+CPPFLAGS		:= -I./include
 
 ifdef DEBUG
 	CXXFLAGS += -fsanitize=address -g
