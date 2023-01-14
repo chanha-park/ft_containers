@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 09:53:59 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 23:26:40 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,13 @@ class set {
   typedef std::ptrdiff_t difference_type;
 
  private:
-  typedef typename ft::rb_tree__<key_type,
-                                 value_type,
-                                 ft::functor_identity__<value_type>,
-                                 key_compare,
-                                 allocator_type>
-      tree_type__;
+  typedef
+      typename ft::detail::rb_tree__<key_type,
+                                     value_type,
+                                     ft::detail::functor_identity__<value_type>,
+                                     key_compare,
+                                     allocator_type>
+          tree_type__;
 
   tree_type__ tree__;
 
@@ -311,7 +312,17 @@ class set {
   }
 
   // relational operator }}}
-};
+
+#ifdef DEBUG
+
+  bool
+  verify_tree(void) const {
+    return (this->tree__.verify_tree__());
+  }
+
+#endif
+
+};  // class set
 
 template <typename Key, typename Compare, typename Allocator>
 void

@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 03:49:46 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 23:26:30 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,13 @@ class map {
   // member class value_compare }}}
 
  private:
-  typedef typename ft::rb_tree__<key_type,
-                                 value_type,
-                                 ft::functor_first__<value_type>,
-                                 key_compare,
-                                 allocator_type>
-      tree_type__;
+  typedef
+      typename ft::detail::rb_tree__<key_type,
+                                     value_type,
+                                     ft::detail::functor_first__<value_type>,
+                                     key_compare,
+                                     allocator_type>
+          tree_type__;
 
   tree_type__ tree__;
 
@@ -372,7 +373,17 @@ class map {
   }
 
   // relational operator }}}
-};
+
+#ifdef DEBUG
+
+  bool
+  verify_tree(void) const {
+    return (this->tree__.verify_tree__());
+  }
+
+#endif
+
+};  // class map
 
 template <typename Key, typename T, typename Compare, typename Allocator>
 void

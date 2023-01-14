@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/13 01:28:11 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 22:47:06 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,8 @@ operator+(typename vector_iterator<Iterator, Container>::difference_type n,
 
 // vector_iterator }}}
 
+namespace detail {
+
 // vector_base_ class {{{
 
 template <typename T, typename Allocator>
@@ -232,11 +234,13 @@ class vector_base_ {
 
 // vector_base_ class }}}
 
+}  // namespace detail
+
 // vector class start
 template <typename T, typename Allocator = std::allocator<T> >
-class vector : protected vector_base_<T, Allocator> {
+class vector : protected ft::detail::vector_base_<T, Allocator> {
  private:
-  typedef vector_base_<T, Allocator> Base_;
+  typedef ft::detail::vector_base_<T, Allocator> Base_;
   typedef vector<T, Allocator> vector_type_;
 
  public:
@@ -845,9 +849,7 @@ class vector : protected vector_base_<T, Allocator> {
   get_allocator(void) const {
     return (this->data_allocator);
   }
-};
-
-// vector class end
+};  // class vector
 
 // vector relational operator {{{
 

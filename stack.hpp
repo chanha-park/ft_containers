@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/16 19:52:15 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 22:48:04 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ bool
 operator<(const stack<T, Container>& x, const stack<T, Container>& y);
 
 // forward declarations }}}
-
-// class stack {{{
 
 template <typename T, typename Container>
 class stack {
@@ -94,9 +92,7 @@ class stack {
   template <typename T_, typename Container_>
   friend bool
   operator<(const stack<T_, Container_>& x, const stack<T_, Container_>& y);
-};
-
-// class stack }}}
+};  // class stack
 
 // relational operator {{{
 

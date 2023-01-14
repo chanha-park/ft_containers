@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:20:01 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/11 22:09:47 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 22:39:57 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ make_pair(T1 x, T2 y) {
 
 // make_pair }}}
 
-// struct for functor {{{
-
 template <typename Arg, typename Result>
 struct unary_function {
   typedef Arg argument_type;
@@ -69,6 +67,10 @@ struct binary_function {
   typedef Arg2 second_argument_type;
   typedef Result result_type;
 };
+
+namespace detail {
+
+// struct for functor {{{
 
 template <typename T>
 struct functor_identity__ : public ft::unary_function<T, T> {
@@ -112,6 +114,8 @@ struct functor_second__ :
 };
 
 // struct for functor }}}
+
+}  // namespace detail
 
 }  // namespace ft
 

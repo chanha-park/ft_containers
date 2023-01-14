@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/13 01:27:39 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 22:45:49 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include "utility.hpp"
 
 namespace ft {
+
+namespace detail {
 
 typedef bool node_color__;
 static const node_color__ red__ = true;
@@ -66,7 +68,7 @@ class rb_tree_base_node__ {
 };
 
 template <typename T>
-class rb_tree_value_node__ : public ft::rb_tree_base_node__ {
+class rb_tree_value_node__ : public ft::detail::rb_tree_base_node__ {
  public:
   T val;
 };
@@ -180,12 +182,12 @@ class rb_tree_iterator__ {
   }
 
   bool
-  operator==(const ft::rb_tree_const_iterator__<T>& other) const {
+  operator==(const ft::detail::rb_tree_const_iterator__<T>& other) const {
     return (this->node__ == other.node__);
   }
 
   bool
-  operator!=(const ft::rb_tree_const_iterator__<T>& other) const {
+  operator!=(const ft::detail::rb_tree_const_iterator__<T>& other) const {
     return (this->node__ != other.node__);
   }
 
@@ -300,12 +302,12 @@ class rb_tree_const_iterator__ {
   }
 
   bool
-  operator==(const ft::rb_tree_iterator__<T>& other) const {
+  operator==(const ft::detail::rb_tree_iterator__<T>& other) const {
     return (this->node__ == other.node__);
   }
 
   bool
-  operator!=(const ft::rb_tree_iterator__<T>& other) const {
+  operator!=(const ft::detail::rb_tree_iterator__<T>& other) const {
     return (this->node__ != other.node__);
   }
 
@@ -400,8 +402,6 @@ class rb_tree__ {
 
   typedef rb_tree_iterator__<value_type> iterator;
   typedef rb_tree_const_iterator__<value_type> const_iterator;
-  // typedef ft::reverse_iterator<iterator> reverse_iterator;
-  // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
  public:
   allocator_type
@@ -1414,7 +1414,7 @@ class rb_tree__ {
 
   // equal_range_unique }}}
 
- public:
+ private:
   // debugging helper function {{{
 
   static size_type
@@ -1431,6 +1431,11 @@ class rb_tree__ {
     } while (1);
     return (sum__);
   }
+
+  // }}}
+
+ public:
+  // debugging helper function {{{
 
   bool
   verify_tree__(void) const {
@@ -1468,6 +1473,8 @@ class rb_tree__ {
   // debugging helper function }}}
 
 };  // class rb_tree__
+
+}  // namespace detail
 
 }  // namespace ft
 
