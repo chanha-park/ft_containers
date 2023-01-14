@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/12 15:14:50 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:13:12 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ typedef std::random_access_iterator_tag random_access_iterator_tag;
 
 // iterator tags }}}
 
+namespace detail {
+
 // has_iterator_typedef__ {{{
 
 template <typename T>
@@ -74,6 +76,8 @@ struct has_iterator_typedef__ {
 
 // has_iterator_typedef__ }}}
 
+}  // namespace detail
+
 // is_iterator_tag {{{
 
 template <typename T>
@@ -96,6 +100,10 @@ struct is_iterator_tag<ft::random_access_iterator_tag> : ft::true_type {};
 
 // is_iterator_tag }}}
 
+namespace detail {
+
+// iterator_traits__ {{{
+
 template <typename Iterator, bool>
 struct iterator_traits_internal {};
 
@@ -113,13 +121,19 @@ struct iterator_traits__ {};
 
 template <typename Iterator>
 struct iterator_traits__<Iterator, true> :
-    iterator_traits_internal<
+    ft::detail::iterator_traits_internal<
         Iterator,
         ft::is_iterator_tag<typename Iterator::iterator_category>::value> {};
 
+// iterator_traits__ }}}
+
+}  // namespace detail
+
 template <typename Iterator>
 struct iterator_traits :
-    iterator_traits__<Iterator, ft::has_iterator_typedef__<Iterator>::value> {};
+    ft::detail::iterator_traits__<
+        Iterator,
+        ft::detail::has_iterator_typedef__<Iterator>::value> {};
 
 template <typename T>
 struct iterator_traits<T*> {
@@ -404,7 +418,8 @@ operator+(typename reverse_iterator<Iterator>::difference_type n,
 // }
 
 // template <typename ForwardIter>
-// typename ft::enable_if<!ft::has_trivial_destructor<typename ft::iterator_traits<
+// typename ft::enable_if<!ft::has_trivial_destructor<typename
+// ft::iterator_traits<
 //                            ForwardIter>::value_type>::value,
 //                        void>::type
 // destruct_(ForwardIter first, ForwardIter last) {
@@ -413,7 +428,8 @@ operator+(typename reverse_iterator<Iterator>::difference_type n,
 // }
 
 // template <typename ForwardIter>
-// typename ft::enable_if<ft::has_trivial_destructor<typename ft::iterator_traits<
+// typename ft::enable_if<ft::has_trivial_destructor<typename
+// ft::iterator_traits<
 //                            ForwardIter>::value_type>::value,
 //                        void>::type
 // destruct_(ForwardIter, ForwardIter) {

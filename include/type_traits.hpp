@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2022/12/27 20:16:38 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 17:09:43 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,19 +93,25 @@ struct remove_cv {
 
 // is_void {{{
 
+namespace detail {
+
 template <typename T>
 struct is_void_internal : public ft::false_type {};
 
 template <>
 struct is_void_internal<void> : public ft::true_type {};
 
+}  // namespace detail
+
 template <typename T>
 struct is_void :
-    public ft::is_void_internal<typename ft::remove_cv<T>::type> {};
+    public ft::detail::is_void_internal<typename ft::remove_cv<T>::type> {};
 
 // is_void }}}
 
 // is_integral {{{
+
+namespace detail {
 
 // is_integral_internal {{{
 
@@ -145,21 +151,19 @@ struct is_integral_internal<long> : public ft::true_type {};
 template <>
 struct is_integral_internal<unsigned long> : public ft::true_type {};
 
-// template <>
-// struct is_integral_internal<long long> : public ft::true_type {};
-
-// template <>
-// struct is_integral_internal<unsigned long long> : public ft::true_type {};
-
 // is_integral_internal }}}
+
+}  // namespace detail
 
 template <typename T>
 struct is_integral :
-    public ft::is_integral_internal<typename ft::remove_cv<T>::type> {};
+    public ft::detail::is_integral_internal<typename ft::remove_cv<T>::type> {};
 
 // is_integral }}}
 
 // is_floating_point {{{
+
+namespace detail {
 
 template <typename T>
 struct is_floating_point_internal : public ft::false_type {};
@@ -173,9 +177,12 @@ struct is_floating_point_internal<double> : public ft::true_type {};
 template <>
 struct is_floating_point_internal<long double> : public ft::true_type {};
 
+}  // namespace detail
+
 template <typename T>
 struct is_floating_point :
-    public ft::is_floating_point_internal<typename ft::remove_cv<T>::type> {};
+    public ft::detail::is_floating_point_internal<
+        typename ft::remove_cv<T>::type> {};
 
 // is_floating_point }}}
 
@@ -191,15 +198,19 @@ struct is_arithmetic :
 
 // is_pointer {{{
 
+namespace detail {
+
 template <typename T>
 struct is_pointer_internal : public ft::false_type {};
 
 template <typename T>
 struct is_pointer_internal<T*> : public ft::true_type {};
 
+}  // namespace detail
+
 template <typename T>
 struct is_pointer :
-    public ft::is_pointer_internal<typename ft::remove_cv<T>::type> {};
+    public ft::detail::is_pointer_internal<typename ft::remove_cv<T>::type> {};
 
 // is_pointer }}}
 
@@ -228,11 +239,11 @@ struct is_array<T[N]> : public ft::true_type {};
 
 // has_trivial_destructor {{{
 
-template <typename T>
-struct has_trivial_destructor :
-    public ft::integral_constant<bool,
-                                 ft::is_arithmetic<T>::value
-                                     || ft::is_pointer<T>::value> {};
+// template <typename T>
+// struct has_trivial_destructor :
+//     public ft::integral_constant<bool,
+//                                  ft::is_arithmetic<T>::value
+//                                      || ft::is_pointer<T>::value> {};
 
 // has_trivial_destructor }}}
 
