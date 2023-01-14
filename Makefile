@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/14 14:18:30 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/14 17:16:27 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CXX				:= c++
 RM				:= rm -f
 
 CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic -O3 -MMD -MP
-CPPFLAGS		:= -I./include -I./test
+CPPFLAGS		:= -I. -I./test
 
 ifdef DEBUG
 	CXXFLAGS += -fsanitize=address -g
@@ -53,7 +53,7 @@ OUTPUT_FT		:= ft_output.log
 .PHONY: all
 all: $(NAME)
 
-$(NAME): $(SRCS) $(addprefix ./include/, $(INCS))
+$(NAME): $(SRCS) $(INCS)
 	@$(MAKE) std
 	@$(MAKE) clean
 	@$(MAKE) CXXFLAGS="$(CXXFLAGS) -DFT" ft
