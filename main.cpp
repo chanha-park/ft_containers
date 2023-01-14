@@ -2,18 +2,6 @@
 #include <iostream>
 #include <string>
 
-#ifndef FT
-#  define NAMESPACE std
-#  include <map>
-#  include <stack>
-#  include <vector>
-#else
-#  define NAMESPACE ft
-#  include "map.hpp"
-#  include "stack.hpp"
-#  include "vector.hpp"
-#endif
-
 #include <stdlib.h>
 #include "test.hpp"
 

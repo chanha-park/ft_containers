@@ -1,38 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.hpp                                           :+:      :+:    :+:   */
+/*   TestSet.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/13 16:36:11 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/15 01:44:37 by chanhpar         ###   ########.fr       */
+/*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
+/*   Updated: 2023/01/15 01:43:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_CONTAINERS_TEST_HPP
-#define FT_CONTAINERS_TEST_HPP
+#ifndef FT_CONTAINERS_TEST_SET_HPP
+#define FT_CONTAINERS_TEST_SET_HPP
 
-#include <iostream>
-#include "TestClass.hpp"
-#include "test_map.hpp"
-#include "test_set.hpp"
-#include "test_stack.hpp"
-#include "test_vector.hpp"
+#include "test_macro.hpp"
 
 template <typename T>
 void
-test_others(void) {
+test_set(void) {
 }
 
-template <typename T>
-void
-TEST(void) {
-  test_vector<T>();
-  test_stack<T>();
-  test_map<T>();
-  test_set<T>();
-  test_others<T>();
-}
-
-#endif  // FT_CONTAINERS_TEST_HPP
+#endif  // FT_CONTAINERS_TEST_SET_HPP
