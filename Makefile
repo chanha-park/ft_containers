@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/14 05:36:09 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/14 14:18:30 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,11 +15,7 @@
 CXX				:= c++
 RM				:= rm -f
 
-ifdef STD
-	CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic -O3 -MMD -MP -DSTD
-else
-	CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic -O3 -MMD -MP -DFT
-endif
+CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic -O3 -MMD -MP
 CPPFLAGS		:= -I./include -I./test
 
 ifdef DEBUG
@@ -43,7 +39,7 @@ INCS			:= type_traits.hpp \
 				   set.hpp \
 
 SHELL			:= /bin/bash
-SEED			:= $$RANDOM
+SEED			:= 42
 
 NAME			:= result.log
 
@@ -57,23 +53,21 @@ OUTPUT_FT		:= ft_output.log
 .PHONY: all
 all: $(NAME)
 
-$(NAME): | $(addprefix ./include/, $(INCS))
-	@echo "seed: $(SEED)"
-	$(MAKE) ft
-	clean
-	STD=1
-	$(MAKE) std
+$(NAME): $(SRCS) $(addprefix ./include/, $(INCS))
+	@$(MAKE) std
+	@$(MAKE) clean
+	@$(MAKE) CXXFLAGS="$(CXXFLAGS) -DFT" ft
 	diff $(OUTPUT_STD) $(OUTPUT_FT) > $@
-
-.PHONY: std
-std: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME_STD)
-	./$(NAME_STD) > $(OUTPUT_STD)
 
 .PHONY: ft
 ft: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME_FT)
-	./$(NAME_FT) > $(OUTPUT_FT)
+	./$(NAME_FT) $(SEED) > $(OUTPUT_FT)
+
+.PHONY: std
+std: $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME_STD)
+	./$(NAME_STD) $(SEED) > $(OUTPUT_STD)
 
 .PHONY: clean
 clean:

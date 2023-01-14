@@ -2,23 +2,19 @@
 #include <iostream>
 #include <string>
 
-#ifdef STD
+#ifndef FT
+#  define NAMESPACE std
 #  include <map>
 #  include <stack>
 #  include <vector>
-#  define NAMESPACE std
-#  define FILENAME "std_output.txt"
 #else
+#  define NAMESPACE ft
 #  include "map.hpp"
 #  include "stack.hpp"
 #  include "vector.hpp"
-#  define NAMESPACE ft
-#  define FILENAME "ft_output.txt"
 #endif
 
-#include <fcntl.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "test.hpp"
 
 #define MAX_RAM 4294967296
@@ -41,10 +37,6 @@ main(int argc, char** argv) {
   }
   const int seed = atoi(argv[1]);
   srand(seed);
-
-  int fd = open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC, 0664);
-  dup2(fd, STDOUT_FILENO);
-  close(fd);
 
   TEST_VECTOR();
   TEST_STACK();
