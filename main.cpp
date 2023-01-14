@@ -53,7 +53,9 @@ main(int argc, char** argv) {
   }
 
 #if defined __APPLE__
+#  ifndef SANITIZE
   system("leaks $PPID");
+#  endif
 #endif
   return (0);
 }
