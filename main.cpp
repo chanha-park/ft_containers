@@ -38,11 +38,19 @@ main(int argc, char** argv) {
   const int seed = atoi(argv[1]);
   srand(seed);
 
-  TEST_VECTOR();
-  TEST_STACK();
-  TEST_MAP();
-  TEST_SET();
-  TEST_OTHERS();
+  TEST<int>();
+  TEST<std::string>();
+  TEST<NormalClass<int> >();
+  try {
+    TEST<AssignException<int> >();
+  } catch (std::exception& e) {
+    std::cout << e.what() << std::endl;
+  }
+  try {
+    TEST<CopyException<int> >();
+  } catch (std::exception& e) {
+    std::cout << e.what() << std::endl;
+  }
 
 #if defined __APPLE__
   system("leaks $PPID");

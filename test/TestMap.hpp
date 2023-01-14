@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/13 17:09:12 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 16:45:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 template <typename T>
 void
-TEST_MAP_TYPE(void) {
+TEST_MAP(void) {
 }
 
 #endif  // FT_CONTAINERS_TEST_MAP_HPP

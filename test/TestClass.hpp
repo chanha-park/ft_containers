@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   testClass.hpp                                      :+:      :+:    :+:   */
+/*   TestClass.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 15:28:24 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/13 16:34:09 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/14 16:53:08 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,12 @@
 
 #include <stdexcept>
 
+template <typename T>
 class NormalClass {
-  int value;
+  T value;
 
  public:
-  NormalClass(void) : value() {
-  }
-
-  NormalClass(int value) : value(value) {
+  NormalClass(T value) : value(value) {
   }
 
   const NormalClass&
@@ -33,39 +31,23 @@ class NormalClass {
 
   NormalClass(const NormalClass& other) : value(other.value) {
   }
-};
 
-class NoDefaultCtor {
-  int value;
-
-  NoDefaultCtor(void);
-
- public:
-  NoDefaultCtor(int value) : value(value) {
-  }
-
-  const NoDefaultCtor&
-  operator=(const NoDefaultCtor& other) {
-    this->value = other.value;
-    return (*this);
-  }
-
-  NoDefaultCtor(const NoDefaultCtor& other) : value(other.value) {
+  ~NormalClass(void) {
   }
 };
 
+template <typename T>
 class AssignException {
   static int counter;
-  int* ptr;
+  T* ptr;
 
  public:
-  AssignException(void) : ptr(new int) {
-    *ptr = 0;
+  AssignException(T val) : ptr(new T) {
+    *ptr = val;
     ++counter;
   }
 
-  AssignException(const AssignException& other) {
-    ptr = new int;
+  AssignException(const AssignException& other) : ptr(new T) {
     *ptr = *(other.ptr);
     ++counter;
   }
@@ -76,7 +58,7 @@ class AssignException {
       throw(std::runtime_error("Error from Assignment"));
 
     delete ptr;
-    ptr = new int;
+    ptr = new T;
     *ptr = *(other.ptr);
     ++counter;
     return (*this);
@@ -87,12 +69,13 @@ class AssignException {
   }
 };
 
+template <typename T>
 class CopyException {
   static int counter;
-  int* ptr;
+  T* ptr;
 
  public:
-  CopyException(void) : ptr(new int) {
+  CopyException(void) : ptr(new T) {
     *ptr = 0;
     ++counter;
   }
@@ -100,7 +83,7 @@ class CopyException {
   CopyException(const CopyException& other) {
     if (counter == 20)
       throw(std::runtime_error("Error from Copy Constructor"));
-    ptr = new int;
+    ptr = new T;
     *ptr = *(other.ptr);
     ++counter;
   }
@@ -108,7 +91,7 @@ class CopyException {
   const CopyException&
   operator=(const CopyException& other) {
     delete ptr;
-    ptr = new int;
+    ptr = new T;
     *ptr = *(other.ptr);
     return (*this);
   }
