@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/15 01:03:38 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/16 01:22:33 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,14 @@ INCS			:= type_traits.hpp \
 				   map.hpp \
 				   set.hpp \
 
+TEST_INCS		:= TestClass.hpp \
+				   test.hpp \
+				   test_macro.hpp \
+				   test_map.hpp \
+				   test_set.hpp \
+				   test_stack.hpp \
+				   test_vector.hpp
+
 SHELL			:= /bin/bash
 SEED			:= 42
 
@@ -54,7 +62,7 @@ OUTPUT_FT		:= ft_output.log
 .PHONY: all
 all: $(NAME)
 
-$(NAME): $(SRCS) $(INCS)
+$(NAME): $(SRCS) $(INCS) $(addprefix test/, $(TEST_INCS))
 	@$(MAKE) std
 	@$(MAKE) clean
 	@$(MAKE) CXXFLAGS="$(CXXFLAGS) -DFT" ft
