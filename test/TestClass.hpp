@@ -6,20 +6,22 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 15:28:24 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 16:53:08 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 02:09:17 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_CONTAINERS_TEST_CLASS_HPP
 #define FT_CONTAINERS_TEST_CLASS_HPP
 
+#include <iostream>
 #include <stdexcept>
 
+#define EXCEPTION_COUNT 2000
+
 template <typename T>
-class NormalClass {
+struct NormalClass {
   T value;
 
- public:
   NormalClass(T value) : value(value) {
   }
 
@@ -34,14 +36,30 @@ class NormalClass {
 
   ~NormalClass(void) {
   }
+
+  bool
+  operator==(const NormalClass& other) const {
+    return (this->value == other.value);
+  }
+
+  bool
+  operator<(const NormalClass& other) const {
+    return (this->value < other.value);
+  }
 };
 
 template <typename T>
-class AssignException {
+std::ostream&
+operator<<(std::ostream& os, const NormalClass<T>& x) {
+  os << x.value;
+  return (os);
+}
+
+template <typename T>
+struct AssignException {
   static int counter;
   T* ptr;
 
- public:
   AssignException(T val) : ptr(new T) {
     *ptr = val;
     ++counter;
@@ -54,7 +72,7 @@ class AssignException {
 
   const AssignException&
   operator=(const AssignException& other) {
-    if (counter == 20)
+    if (counter == EXCEPTION_COUNT)
       throw(std::runtime_error("Error from Assignment"));
 
     delete ptr;
@@ -67,21 +85,40 @@ class AssignException {
   ~AssignException(void) {
     delete ptr;
   }
+
+  bool
+  operator==(const AssignException& other) const {
+    return (*this->ptr == *other.ptr);
+  }
+
+  bool
+  operator<(const AssignException& other) const {
+    return (*this->ptr < *other.ptr);
+  }
 };
 
 template <typename T>
-class CopyException {
+int AssignException<T>::counter = 0;
+
+template <typename T>
+std::ostream&
+operator<<(std::ostream& os, const AssignException<T>& x) {
+  os << *x.ptr;
+  return (os);
+}
+
+template <typename T>
+struct CopyException {
   static int counter;
   T* ptr;
 
- public:
-  CopyException(void) : ptr(new T) {
-    *ptr = 0;
+  CopyException(T val) : ptr(new T) {
+    *ptr = val;
     ++counter;
   }
 
   CopyException(const CopyException& other) {
-    if (counter == 20)
+    if (counter == EXCEPTION_COUNT)
       throw(std::runtime_error("Error from Copy Constructor"));
     ptr = new T;
     *ptr = *(other.ptr);
@@ -99,6 +136,26 @@ class CopyException {
   ~CopyException(void) {
     delete ptr;
   }
+
+  bool
+  operator==(const CopyException& other) const {
+    return (*this->ptr == *other.ptr);
+  }
+
+  bool
+  operator<(const CopyException& other) const {
+    return (*this->ptr < *other.ptr);
+  }
 };
+
+template <typename T>
+int CopyException<T>::counter = 0;
+
+template <typename T>
+std::ostream&
+operator<<(std::ostream& os, const CopyException<T>& x) {
+  os << *x.ptr;
+  return (os);
+}
 
 #endif  // FT_CONTAINERS_TEST_CLASS_HPP
