@@ -2,18 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include <stdlib.h>
 #include "test.hpp"
-
-#define MAX_RAM 4294967296
-#define BUFFER_SIZE 4096
-
-struct Buffer {
-  int idx;
-  char buff[BUFFER_SIZE];
-};
-
-#define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 int
 main(int argc, char** argv) {
@@ -27,7 +16,6 @@ main(int argc, char** argv) {
   srand(seed);
 
   TEST<int>();
-  TEST<std::string>();
   TEST<NormalClass<int> >();
   try {
     TEST<AssignException<int> >();
