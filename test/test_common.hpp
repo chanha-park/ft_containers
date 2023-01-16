@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_macro.hpp                                     :+:      :+:    :+:   */
+/*   test_common.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 01:39:56 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 17:21:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:43:06 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_CONTAINERS_TEST_MACRO_HPP
-#define FT_CONTAINERS_TEST_MACRO_HPP
+#ifndef FT_CONTAINERS_TEST_COMMON_HPP
+#define FT_CONTAINERS_TEST_COMMON_HPP
 
 #ifndef FT
 #  define NAMESPACE std
@@ -34,6 +34,8 @@
 
 #include "type_traits.hpp"
 #include "utility.hpp"
+
+#include "TestClass.hpp"
 
 #define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
@@ -77,4 +79,4 @@ print(const T& con) {
 
 }  // namespace test
 
-#endif  // FT_CONTAINERS_TEST_MACRO_HPP
+#endif  // FT_CONTAINERS_TEST_COMMON_HPP

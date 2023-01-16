@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/16 01:22:33 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/16 17:40:53 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ INCS			:= type_traits.hpp \
 
 TEST_INCS		:= TestClass.hpp \
 				   test.hpp \
-				   test_macro.hpp \
+				   test_common.hpp \
 				   test_map.hpp \
 				   test_set.hpp \
 				   test_stack.hpp \
