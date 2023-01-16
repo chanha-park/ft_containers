@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 16:36:11 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 18:44:02 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:31:17 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,15 @@ test_others(void) {
 template <typename T>
 void
 TEST(void) {
-  std::cerr << "=====Test Vector=====" << std::endl;
+  std::cout << "=====Test Vector=====" << std::endl;
   test_vector<T>();
-  std::cerr << "=====Test Stack=====" << std::endl;
+  std::cout << "=====Test Stack=====" << std::endl;
   test_stack<T>();
-  std::cerr << "=====Test Map=====" << std::endl;
+  std::cout << "=====Test Map=====" << std::endl;
   test_map<T>();
-  std::cerr << "=====Test Set=====" << std::endl;
+  std::cout << "=====Test Set=====" << std::endl;
   test_set<T>();
-  std::cerr << "=====Test Other=====" << std::endl;
+  std::cout << "=====Test Other=====" << std::endl;
   test_others<T>();
 }
 

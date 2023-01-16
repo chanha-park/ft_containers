@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 01:39:56 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 18:46:05 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:33:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void
 tree_verify(const T& con) {
   (void)con;
 #ifdef DEBUG
-  std::cerr << "=====Test RBTree=====" << std::endl;
+  std::cout << "=====Test RBTree=====" << std::endl;
 #  ifndef FT
   std::cout << "1";
 #  else
