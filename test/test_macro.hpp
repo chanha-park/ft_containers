@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 01:39:56 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 02:10:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:21:06 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "../type_traits.hpp"
-#include "../utility.hpp"
+
+#include "type_traits.hpp"
+#include "utility.hpp"
 
 #define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
@@ -51,7 +52,7 @@ template <typename T>
 struct is_pair : public ft::false_type {};
 
 template <typename T, typename U>
-struct is_pair<ft::pair<T, U> > : public ft::true_type {};
+struct is_pair<NAMESPACE::pair<T, U> > : public ft::true_type {};
 
 template <typename T>
 typename ft::enable_if<!test::is_pair<typename T::value_type>::value,
