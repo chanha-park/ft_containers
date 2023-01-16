@@ -1,10 +1,12 @@
 #include <iostream>
 
-namespace ft {
+// Substitution Failure Is Not An Error
+
+namespace example {
 
 // enable_if {{{
 
-template <bool, typename T = void>
+template <bool, typename T>
 struct enable_if {};
 
 template <typename T>
@@ -35,14 +37,14 @@ typedef integral_constant<bool, false> false_type;
 // is_same {{{
 
 template <typename T, typename U>
-struct is_same : ft::false_type {};
+struct is_same : example::false_type {};
 
 template <typename T>
-struct is_same<T, T> : ft::true_type {};
+struct is_same<T, T> : example::true_type {};
 
 // is_same }}}
 
-}  // namespace ft
+}  // namespace example
 
 template <typename T>
 class A {
@@ -56,44 +58,25 @@ template <typename T>
 class C : public B<T> {};
 
 template <typename T>
-typename ft::enable_if<ft::is_same<A<int>, T>::value, void>::type
+typename example::enable_if<example::is_same<A<int>, T>::value, void>::type
 print(T k) {
   (void)k;
   std::cout << "Same with A<int>" << std::endl;
 }
 
 template <typename T>
-typename ft::enable_if<ft::is_same<B<int>, T>::value, void>::type
+typename example::enable_if<example::is_same<B<int>, T>::value, void>::type
 print(T k) {
   (void)k;
   std::cout << "Same with B<int>" << std::endl;
 }
 
 template <typename T>
-typename ft::enable_if<ft::is_same<C<int>, T>::value, void>::type
+typename example::enable_if<example::is_same<C<int>, T>::value, void>::type
 print(T k) {
   (void)k;
   std::cout << "Same with C<int>" << std::endl;
 }
-
-// Deduction using upcasting
-// template <typename T>
-// void
-// print(A<T>) {
-//   std::cout << "print A" << std::endl;
-// }
-
-// template <typename T>
-// void
-// print(B<T>) {
-//   std::cout << "print B" << std::endl;
-// }
-
-// template <typename T>
-// void
-// print(C<T>) {
-//   std::cout << "print C" << std::endl;
-// }
 
 int
 main(void) {
