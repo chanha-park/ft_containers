@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 22:45:49 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 16:23:10 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1047,9 +1047,11 @@ class rb_tree__ {
 
   size_type
   max_size(void) const {
-    static const size_type maxSize__
-        = std::min<size_type>(this->get_allocator().max_size(),
-                              std::numeric_limits<difference_type>::max());
+    static const size_type maxSize__ = std::min<size_type>(
+        static_cast<typename Allocator::template rebind<value_node__>::other>(
+            this->get_allocator())
+            .max_size(),
+        std::numeric_limits<difference_type>::max());
     return (maxSize__);
   }
 
