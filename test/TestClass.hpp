@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 15:28:24 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 02:09:17 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:28:41 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#define EXCEPTION_COUNT 2000
+#define EXCEPTION_COUNT 1000
 
 template <typename T>
 struct NormalClass {
@@ -72,7 +72,7 @@ struct AssignException {
 
   const AssignException&
   operator=(const AssignException& other) {
-    if (counter == EXCEPTION_COUNT)
+    if (counter >= EXCEPTION_COUNT)
       throw(std::runtime_error("Error from Assignment"));
 
     delete ptr;
@@ -118,7 +118,7 @@ struct CopyException {
   }
 
   CopyException(const CopyException& other) {
-    if (counter == EXCEPTION_COUNT)
+    if (counter >= EXCEPTION_COUNT)
       throw(std::runtime_error("Error from Copy Constructor"));
     ptr = new T;
     *ptr = *(other.ptr);
