@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 21:14:36 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:06:02 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ test_map(void) {
     // at
     try {
       for (int i = 10; i > -5; --i) {
-        std::cout << m1.at(std::size_t(i));
+        std::cout << m1.at(std::size_t(i)) << std::endl;
       }
     } catch (std::out_of_range& e) {
       std::cout << "out_of_range exception" << std::endl;
@@ -85,13 +85,13 @@ test_map(void) {
       m1[T(rand() % 10)] = i;
       std::cout << m1.count(T(i));
       if (m1.find(T(rand() % 2000)) == m1.end())
-        std::cout << "Found";
+        std::cout << "Found" << std::endl;
       else
-        std::cout << "NoElem";
+        std::cout << "NoElem" << std::endl;
     }
 
     // max_size
-    std::cout << m1.max_size();
+    std::cout << m1.max_size() << std::endl;
 
     // empty, erase
     while (!m1.empty())
@@ -111,7 +111,7 @@ test_map(void) {
       for (typename NAMESPACE::map<T, int>::const_iterator it = p.first;
            it != p.second;
            ++it) {
-        std::cout << it->first << it->second;
+        std::cout << it->first << it->second << std::endl;
       }
     }
 
@@ -119,18 +119,18 @@ test_map(void) {
     for (int i = 0; i < 100; ++i) {
       typename NAMESPACE::map<T, int>::iterator p = m2.lower_bound(T(rand()));
       if (p == m2.end())
-        std::cout << "NoElem";
+        std::cout << "NoElem" << std::endl;
       else
-        std::cout << p->first << p->second;
+        std::cout << p->first << p->second << std::endl;
     }
 
     // upper_bound
     for (int i = 0; i < 100; ++i) {
       typename NAMESPACE::map<T, int>::iterator p = m2.upper_bound(T(rand()));
       if (p == m2.end())
-        std::cout << "NoElem";
+        std::cout << "NoElem" << std::endl;
       else
-        std::cout << p->first << p->second;
+        std::cout << p->first << p->second << std::endl;
     }
 
     test::print(m1);
@@ -141,7 +141,7 @@ test_map(void) {
     test::tree_verify(m3);
 
     // relational operator
-    std::cout << (m1 == m3) << (m3 == m3) << (m1 < m2);
+    std::cout << (m1 == m3) << (m3 == m3) << (m1 < m2) << std::endl;
   }
 }
 

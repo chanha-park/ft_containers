@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 17:40:43 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 22:34:32 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,18 +66,18 @@ test_vector(void) {
     // at
     try {
       for (int i = 10; i > -5; --i) {
-        std::cout << vec1.at(std::size_t(i));
+        std::cout << vec1.at(std::size_t(i)) << std::endl;
       }
     } catch (std::out_of_range& e) {
       std::cout << "out_of_range exception" << std::endl;
     }
 
     // front, back
-    std::cout << vec3.front() << vec3.back();
+    std::cout << vec3.front() << vec3.back() << std::endl;
     vec2.front() = T(rand());
 
     // max_size
-    std::cout << vec1.max_size();
+    std::cout << vec1.max_size() << std::endl;
 
     // empty, pop_back
     while (!vec1.empty())
@@ -88,7 +88,7 @@ test_vector(void) {
 
     // size, capacity
     if (vec1.size() < vec1.capacity())
-      std::cout << Error_MSG << std::endl;
+      std::cout << Error_MSG << std::endl << std::endl;
 
     // clear, resize
     vec1.clear();
@@ -99,7 +99,7 @@ test_vector(void) {
     test::print(vec3);
 
     // relational operator
-    std::cout << (vec1 == vec3) << (vec3 == vec3) << (vec1 < vec2);
+    std::cout << (vec1 == vec3) << (vec3 == vec3) << (vec1 < vec2) << std::endl;
   }
 }
 
