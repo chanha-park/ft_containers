@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/16 17:40:53 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/16 18:40:43 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic \
 CPPFLAGS		:= -I. -I./test
 
 ifdef DEBUG
-	CXXFLAGS += -fsanitize=address -g -DSANITIZE
+	CXXFLAGS += -fsanitize=address -g -DSANITIZE -DDEBUG
 endif
 
 SRCS			:= main.cpp
@@ -77,6 +77,12 @@ ft: $(OBJS)
 std: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME_STD)
 	./$(NAME_STD) $(SEED) > $(OUTPUT_STD)
+
+.PHONY: debug
+debug:
+	@$(MAKE) fclean
+	@DEBUG=1 $(MAKE) all
+
 
 .PHONY: clean
 clean:
