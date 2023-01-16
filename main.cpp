@@ -30,7 +30,8 @@ main(int argc, char** argv) {
 
 #if defined __APPLE__
 #  ifndef SANITIZE
-  system("leaks $PPID");
+  std::cerr << "=====Test Leaks=====" << std::endl;
+  system("leaks $PPID | grep 'leaked' | cut -f 2 -d ':'");
 #  endif
 #endif
   return (0);

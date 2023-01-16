@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 17:40:30 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:50:47 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ test_map(void) {
     test::print(m1);
     test::print(m2);
     test::print(m3);
+	test::tree_verify(m3);
 
     // relational operator
     std::cout << (m1 == m3) << (m3 == m3) << (m1 < m2);

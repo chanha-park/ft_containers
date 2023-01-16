@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 01:39:56 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 17:43:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 18:46:05 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,20 @@ print(const T& con) {
     std::cout << it->first << " " << it->second << " ";
   }
   std::cout << std::endl;
+}
+
+template <typename T>
+void
+tree_verify(const T& con) {
+  (void)con;
+#ifdef DEBUG
+  std::cerr << "=====Test RBTree=====" << std::endl;
+#  ifndef FT
+  std::cout << "1";
+#  else
+  std::cout << con.verify_tree();
+#  endif
+#endif
 }
 
 }  // namespace test
