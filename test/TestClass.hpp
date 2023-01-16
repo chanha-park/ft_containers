@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 15:28:24 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 22:28:41 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/16 23:04:14 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#define EXCEPTION_COUNT 1000
+#define EXCEPTION_COUNT 750
 
 template <typename T>
 struct NormalClass {
