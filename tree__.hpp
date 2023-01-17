@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 16:23:10 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 15:57:19 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -998,10 +998,6 @@ class rb_tree__ {
 
   // ctor, operator=, dtor }}}
 
-  // accessors {{{
-
-  // accessors }}}
-
   // observer
 
   key_compare
@@ -1087,6 +1083,7 @@ class rb_tree__ {
                                          true));
       --it__;
     }
+    // XXX
     if (this->comp__(_key__(it__.node__), key__))
       return (ft::pair<iterator, bool>(
           insert_and_rebalance__(
@@ -1096,10 +1093,10 @@ class rb_tree__ {
   }
 
   iterator
-  insert_hint_unique(iterator pos, const value_type& v) {
+  insert_hint_unique(const_iterator pos, const value_type& v) {
     const key_type key__ = KeyFromValue()(v);
-    base_node__* x__;
-    base_node__* y__;
+    const base_node__* x__;
+    const base_node__* y__;
 
     if (pos.node__ == this->_end__()) {
       if (this->size() > 0
@@ -1112,7 +1109,7 @@ class rb_tree__ {
       }
 
     } else if (this->comp__(key__, _key__(pos.node__))) {
-      iterator prev__(pos);
+      const_iterator prev__(pos);
 
       if (pos.node__ == this->_leftmost__()) {
         x__ = this->_leftmost__();
@@ -1133,7 +1130,7 @@ class rb_tree__ {
       }
 
     } else if (this->comp__(_key__(pos.node__), key__)) {
-      iterator next__(pos);
+      const_iterator next__(pos);
 
       if (pos.node__ == this->_rightmost__()) {
         x__ = NULL;
@@ -1161,9 +1158,11 @@ class rb_tree__ {
     bool will_insert_left = (x__ != NULL || y__ == this->_header__()
                              || this->comp__(KeyFromValue()(v), _key__(y__)));
 
+    // XXX
     if (y__)
-      return (insert_and_rebalance__(will_insert_left, y__, v));
-    return (iterator(x__));
+      return (insert_and_rebalance__(
+          will_insert_left, const_cast<base_node__*>(y__), v));
+    return (iterator(const_cast<base_node__*>(x__)));
   }
 
   template <typename InputIter>
@@ -1178,9 +1177,10 @@ class rb_tree__ {
   // erase, clear {{{
 
   void
-  erase(iterator pos) {
-    value_node__* const tmp__ = static_cast<value_node__* const>(
-        erase_and_rebalance__(pos.node__, this->_header__()));
+  erase(const_iterator pos) {
+    value_node__* const tmp__
+        = static_cast<value_node__* const>(erase_and_rebalance__(
+            const_cast<base_node__* const>(pos.node__), this->_header__()));
 
     this->destroy_node__(tmp__);
     --this->node_count__;
@@ -1196,7 +1196,7 @@ class rb_tree__ {
   }
 
   void
-  erase(iterator first, iterator last) {
+  erase(const_iterator first, const_iterator last) {
     if (first == this->begin() && last == this->end())
       this->clear();
     else {

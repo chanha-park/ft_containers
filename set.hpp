@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 23:26:40 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 15:15:13 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class set {
   tree_type__ tree__;
 
  public:
-  typedef typename tree_type__::iterator iterator;
+  typedef typename tree_type__::const_iterator iterator;
   typedef typename tree_type__::const_iterator const_iterator;
   typedef ft::reverse_iterator<iterator> reverse_iterator;
   typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
@@ -182,7 +182,7 @@ class set {
   }
 
   iterator
-  insert(iterator pos, const value_type& value) {
+  insert(const_iterator pos, const value_type& value) {
     return (tree__.insert_hint_unique(pos, value));
   }
 
@@ -193,12 +193,12 @@ class set {
   }
 
   void
-  erase(iterator pos) {
+  erase(const_iterator pos) {
     tree__.erase(pos);
   }
 
   void
-  erase(iterator first, iterator last) {
+  erase(const_iterator first, const_iterator last) {
     tree__.erase(first, last);
   }
 
