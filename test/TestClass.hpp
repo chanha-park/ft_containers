@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 15:28:24 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 23:04:14 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 21:52:53 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,10 @@ struct AssignException {
 
   const AssignException&
   operator=(const AssignException& other) {
-    if (counter >= EXCEPTION_COUNT)
+    if (counter >= EXCEPTION_COUNT) {
+      counter = 0;
       throw(std::runtime_error("Error from Assignment"));
+    }
 
     delete ptr;
     ptr = new T;
@@ -118,8 +120,10 @@ struct CopyException {
   }
 
   CopyException(const CopyException& other) {
-    if (counter >= EXCEPTION_COUNT)
+    if (counter >= EXCEPTION_COUNT) {
+      counter = 0;
       throw(std::runtime_error("Error from Copy Constructor"));
+    }
     ptr = new T;
     *ptr = *(other.ptr);
     ++counter;

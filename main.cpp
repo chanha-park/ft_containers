@@ -17,16 +17,8 @@ main(int argc, char** argv) {
 
   TEST<int>();
   TEST<NormalClass<int> >();
-  try {
-    TEST<AssignException<int> >();
-  } catch (std::exception& e) {
-    std::cout << e.what() << std::endl;
-  }
-  try {
-    TEST<CopyException<int> >();
-  } catch (std::exception& e) {
-    std::cout << e.what() << std::endl;
-  }
+  TEST<AssignException<int> >();
+  TEST<CopyException<int> >();
 
 #if defined __APPLE__
 #  ifndef SANITIZE
