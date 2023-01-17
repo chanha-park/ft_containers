@@ -161,20 +161,31 @@ class A {
 int
 main(void) {
   {
-    std::vector<A, example::SampleAllocator<int> > vec;
-    std::map<int, int, std::less<int>, example::SampleAllocator<int> > m;
+    std::vector<A, example::SampleAllocator<A> > vec;
+    std::map<int,
+             int,
+             std::less<int>,
+             example::SampleAllocator<std::pair<const int, int> > >
+        m;
     for (int i = 0; i < 100; ++i) {
       vec.push_back(A());
       m.insert(std::make_pair(i, -i));
     }
   }
   {
-    std::vector<A, example::PseudoAllocator<int> > vec;
-    std::map<int, int, std::less<int>, example::PseudoAllocator<int> > m;
+    std::vector<A, example::PseudoAllocator<A> > vec;
+    std::map<int,
+             int,
+             std::less<int>,
+             example::PseudoAllocator<std::pair<const int, int> > >
+        m;
     for (int i = 0; i < 100; ++i) {
       vec.push_back(A());
       m.insert(std::make_pair(i, -i));
     }
   }
+#if defined __APPLE__
+  system("leaks $PPID");
+#endif
   return (0);
 }
