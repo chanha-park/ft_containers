@@ -28,13 +28,13 @@ namespace ft {
 // vector_iterator class {{{2
 
 template <typename Iterator, typename Container>
-class vector_iterator :
-    public ft::iterator<
-        typename ft::iterator_traits<Iterator>::iterator_category,
-        typename ft::iterator_traits<Iterator>::value_type,
-        typename ft::iterator_traits<Iterator>::difference_type,
-        typename ft::iterator_traits<Iterator>::pointer,
-        typename ft::iterator_traits<Iterator>::reference> {
+class vector_iterator
+    : public ft::iterator<
+          typename ft::iterator_traits<Iterator>::iterator_category,
+          typename ft::iterator_traits<Iterator>::value_type,
+          typename ft::iterator_traits<Iterator>::difference_type,
+          typename ft::iterator_traits<Iterator>::pointer,
+          typename ft::iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 
@@ -203,15 +203,15 @@ class vector_base__ {
   T* finish;
   T* end_of_storage;
 
-  vector_base__(const allocator_type& x) :
-      data_allocator(x), start(0), finish(0), end_of_storage(0) {
+  vector_base__(const allocator_type& x)
+      : data_allocator(x), start(0), finish(0), end_of_storage(0) {
   }
 
-  vector_base__(size_t n, const allocator_type& x) try :
-      data_allocator(x),
-      start(data_allocator.allocate(n)),
-      finish(start),
-      end_of_storage(start + n) {
+  vector_base__(size_t n, const allocator_type& x) try
+      : data_allocator(x),
+        start(data_allocator.allocate(n)),
+        finish(start),
+        end_of_storage(start + n) {
   } catch (...) {
     throw(std::length_error("ft::vector"));
   }
@@ -285,8 +285,8 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
   vector(size_type n,
          InputIter first,
          InputIter last,
-         const allocator_type& alloc) :
-      Base_(n, alloc) {
+         const allocator_type& alloc)
+      : Base_(n, alloc) {
     this->finish = ft::addressof(*ft::uninitialized_copy(
         first, last, this->start, this->data_allocator));
   }
@@ -393,21 +393,21 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
  public:
   // constructor {{{
 
-  explicit vector(const allocator_type& alloc = allocator_type()) :
-      Base_(alloc) {
+  explicit vector(const allocator_type& alloc = allocator_type())
+      : Base_(alloc) {
   }
 
   explicit vector(size_type n,
                   const value_type& val = value_type(),
-                  const allocator_type& alloc = allocator_type()) :
-      Base_(n, alloc) {
+                  const allocator_type& alloc = allocator_type())
+      : Base_(n, alloc) {
     this->finish = ft::addressof(
         *ft::uninitialized_fill_n(this->start, n, val, this->data_allocator));
   }
 
   // copy constructor
-  vector(const vector<T, Allocator>& other) :
-      Base_(other.size(), other.get_allocator()) {
+  vector(const vector<T, Allocator>& other)
+      : Base_(other.size(), other.get_allocator()) {
     this->finish = ft::addressof(*ft::uninitialized_copy(
         other.begin(), other.end(), this->start, this->data_allocator));
   }
@@ -417,8 +417,8 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
   vector(typename ft::enable_if<is_integral<Iterator>::value, Iterator>::type
              first,
          Iterator last,
-         const allocator_type& alloc = allocator_type()) :
-      Base_(static_cast<size_type>(first), alloc) {
+         const allocator_type& alloc = allocator_type())
+      : Base_(static_cast<size_type>(first), alloc) {
     const size_type n = static_cast<size_type>(first);
     const value_type val = static_cast<value_type>(last);
 
@@ -435,8 +435,8 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
                          ft::input_iterator_tag>::value,
           Iterator>::type first,
       Iterator last,
-      const allocator_type& alloc = allocator_type()) :
-      Base_(alloc) {
+      const allocator_type& alloc = allocator_type())
+      : Base_(alloc) {
     for (; first != last; ++first)
       push_back(*first);
   }
@@ -450,8 +450,8 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
                           ft::input_iterator_tag>::value,
           Iterator>::type first,
       Iterator last,
-      const allocator_type& alloc = allocator_type()) :
-      Base_(ft::distance(first, last), alloc) {
+      const allocator_type& alloc = allocator_type())
+      : Base_(ft::distance(first, last), alloc) {
     this->finish = ft::addressof(*ft::uninitialized_copy(
         first, last, this->start, this->data_allocator));
   }

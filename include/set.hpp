@@ -66,13 +66,13 @@ class set {
   }
 
   explicit set(const key_compare& cmp,
-               const allocator_type& alloc = allocator_type()) :
-      tree__(cmp, alloc) {
+               const allocator_type& alloc = allocator_type())
+      : tree__(cmp, alloc) {
   }
 
   template <typename InputIter>
-  set(InputIter first, InputIter last) :
-      tree__(key_compare(), allocator_type()) {
+  set(InputIter first, InputIter last)
+      : tree__(key_compare(), allocator_type()) {
     tree__.insert_range_unique(first, last);
   }
 
@@ -80,13 +80,13 @@ class set {
   set(InputIter first,
       InputIter last,
       const key_compare& cmp,
-      const allocator_type& alloc = allocator_type()) :
-      tree__(cmp, alloc) {
+      const allocator_type& alloc = allocator_type())
+      : tree__(cmp, alloc) {
     tree__.insert_range_unique(first, last);
   }
 
-  set(const ft::set<key_type, key_compare, allocator_type>& other) :
-      tree__(other.tree__) {
+  set(const ft::set<key_type, key_compare, allocator_type>& other)
+      : tree__(other.tree__) {
   }
 
   // constructor }}}

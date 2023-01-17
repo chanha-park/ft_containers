@@ -104,8 +104,8 @@ struct is_void_internal<void> : public ft::true_type {};
 }  // namespace detail
 
 template <typename T>
-struct is_void :
-    public ft::detail::is_void_internal<typename ft::remove_cv<T>::type> {};
+struct is_void
+    : public ft::detail::is_void_internal<typename ft::remove_cv<T>::type> {};
 
 // is_void }}}
 
@@ -156,8 +156,9 @@ struct is_integral_internal<unsigned long> : public ft::true_type {};
 }  // namespace detail
 
 template <typename T>
-struct is_integral :
-    public ft::detail::is_integral_internal<typename ft::remove_cv<T>::type> {};
+struct is_integral
+    : public ft::detail::is_integral_internal<typename ft::remove_cv<T>::type> {
+};
 
 // is_integral }}}
 
@@ -180,19 +181,18 @@ struct is_floating_point_internal<long double> : public ft::true_type {};
 }  // namespace detail
 
 template <typename T>
-struct is_floating_point :
-    public ft::detail::is_floating_point_internal<
-        typename ft::remove_cv<T>::type> {};
+struct is_floating_point : public ft::detail::is_floating_point_internal<
+                               typename ft::remove_cv<T>::type> {};
 
 // is_floating_point }}}
 
 // is_arithmetic {{{
 
 template <typename T>
-struct is_arithmetic :
-    public ft::integral_constant<bool,
-                                 ft::is_integral<T>::value
-                                     || ft::is_floating_point<T>::value> {};
+struct is_arithmetic
+    : public ft::integral_constant<bool,
+                                   ft::is_integral<T>::value
+                                       || ft::is_floating_point<T>::value> {};
 
 // is_arithmetic }}}
 
@@ -209,8 +209,9 @@ struct is_pointer_internal<T*> : public ft::true_type {};
 }  // namespace detail
 
 template <typename T>
-struct is_pointer :
-    public ft::detail::is_pointer_internal<typename ft::remove_cv<T>::type> {};
+struct is_pointer
+    : public ft::detail::is_pointer_internal<typename ft::remove_cv<T>::type> {
+};
 
 // is_pointer }}}
 

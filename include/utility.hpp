@@ -86,8 +86,8 @@ struct functor_identity__ : public ft::unary_function<T, T> {
 };
 
 template <typename Pair>
-struct functor_first__ :
-    public ft::unary_function<Pair, typename Pair::first_type> {
+struct functor_first__
+    : public ft::unary_function<Pair, typename Pair::first_type> {
   typename Pair::first_type&
   operator()(Pair& x) const {
     return (x.first);
@@ -100,8 +100,8 @@ struct functor_first__ :
 };
 
 template <typename Pair>
-struct functor_second__ :
-    public ft::unary_function<Pair, typename Pair::second_type> {
+struct functor_second__
+    : public ft::unary_function<Pair, typename Pair::second_type> {
   typename Pair::second_type&
   operator()(Pair& x) const {
     return (x.second);

@@ -90,14 +90,14 @@ struct PseudoAllocator {
   PseudoAllocator(void) throw() : idx(0), space(), status() {
   }
 
-  PseudoAllocator(const PseudoAllocator& other) throw() :
-      idx(0), space(), status() {
+  PseudoAllocator(const PseudoAllocator& other) throw()
+      : idx(0), space(), status() {
     (void)other;
   }
 
   template <typename U>
-  PseudoAllocator(const PseudoAllocator<U>& other) throw() :
-      idx(0), space(), status() {
+  PseudoAllocator(const PseudoAllocator<U>& other) throw()
+      : idx(0), space(), status() {
     (void)other;
   }
 

@@ -44,8 +44,8 @@ class map {
 
   // member class value_compare {{{
 
-  class value_compare :
-      public ft::binary_function<value_type, value_type, bool> {
+  class value_compare
+      : public ft::binary_function<value_type, value_type, bool> {
    private:
     friend class map;
 
@@ -94,13 +94,13 @@ class map {
   }
 
   explicit map(const key_compare& cmp,
-               const allocator_type& alloc = allocator_type()) :
-      tree__(cmp, alloc) {
+               const allocator_type& alloc = allocator_type())
+      : tree__(cmp, alloc) {
   }
 
   template <typename InputIter>
-  map(InputIter first, InputIter last) :
-      tree__(key_compare(), allocator_type()) {
+  map(InputIter first, InputIter last)
+      : tree__(key_compare(), allocator_type()) {
     tree__.insert_range_unique(first, last);
   }
 
@@ -108,14 +108,13 @@ class map {
   map(InputIter first,
       InputIter last,
       const key_compare& cmp,
-      const allocator_type& alloc = allocator_type()) :
-      tree__(cmp, alloc) {
+      const allocator_type& alloc = allocator_type())
+      : tree__(cmp, alloc) {
     tree__.insert_range_unique(first, last);
   }
 
-  map(const ft::map<key_type, mapped_type, key_compare, allocator_type>&
-          other) :
-      tree__(other.tree__) {
+  map(const ft::map<key_type, mapped_type, key_compare, allocator_type>& other)
+      : tree__(other.tree__) {
   }
 
   // constructor }}}

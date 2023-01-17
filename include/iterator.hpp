@@ -120,20 +120,20 @@ template <typename Iterator, bool>
 struct iterator_traits__ {};
 
 template <typename Iterator>
-struct iterator_traits__<Iterator, true> :
-    ft::detail::iterator_traits_internal<
-        Iterator,
-        ft::is_iterator_tag<typename Iterator::iterator_category>::value> {};
+struct iterator_traits__<Iterator, true>
+    : ft::detail::iterator_traits_internal<
+          Iterator,
+          ft::is_iterator_tag<typename Iterator::iterator_category>::value> {};
 
 // iterator_traits__ }}}
 
 }  // namespace detail
 
 template <typename Iterator>
-struct iterator_traits :
-    ft::detail::iterator_traits__<
-        Iterator,
-        ft::detail::has_iterator_typedef__<Iterator>::value> {};
+struct iterator_traits
+    : ft::detail::iterator_traits__<
+          Iterator,
+          ft::detail::has_iterator_typedef__<Iterator>::value> {};
 
 template <typename T>
 struct iterator_traits<T*> {
@@ -231,13 +231,13 @@ distance(InputIter first, InputIter last) {
 // reverse_iterator: class {{{2
 
 template <typename Iterator>
-class reverse_iterator :
-    public ft::iterator<
-        typename ft::iterator_traits<Iterator>::iterator_category,
-        typename ft::iterator_traits<Iterator>::value_type,
-        typename ft::iterator_traits<Iterator>::difference_type,
-        typename ft::iterator_traits<Iterator>::pointer,
-        typename ft::iterator_traits<Iterator>::reference> {
+class reverse_iterator
+    : public ft::iterator<
+          typename ft::iterator_traits<Iterator>::iterator_category,
+          typename ft::iterator_traits<Iterator>::value_type,
+          typename ft::iterator_traits<Iterator>::difference_type,
+          typename ft::iterator_traits<Iterator>::pointer,
+          typename ft::iterator_traits<Iterator>::reference> {
  protected:
   Iterator current;
 

@@ -251,8 +251,8 @@ class rb_tree_const_iterator__ {
   explicit rb_tree_const_iterator__(const rb_tree_base_node__* x) : node__(x) {
   }
 
-  rb_tree_const_iterator__(const rb_tree_iterator__<T>& it) :
-      node__(it.node__) {
+  rb_tree_const_iterator__(const rb_tree_iterator__<T>& it)
+      : node__(it.node__) {
   }
 
   reference
@@ -351,9 +351,9 @@ class rb_tree__ {
     typename Allocator::template rebind<value_node__>::other node_allocator;
 
    public:
-    rb_tree_alloc_base__(const allocator_type& a) :
-        node_allocator(a),
-        header(static_cast<base_node__*>(this->allocate_node__())) {
+    rb_tree_alloc_base__(const allocator_type& a)
+        : node_allocator(a),
+          header(static_cast<base_node__*>(this->allocate_node__())) {
     }
 
     ~rb_tree_alloc_base__(void) {
@@ -923,21 +923,21 @@ class rb_tree__ {
     this->empty_initialize();
   }
 
-  rb_tree__(const key_compare& comp) :
-      Base__(allocator_type()), node_count__(0), comp__(comp) {
+  rb_tree__(const key_compare& comp)
+      : Base__(allocator_type()), node_count__(0), comp__(comp) {
     this->empty_initialize();
   }
 
-  rb_tree__(const key_compare& comp, const allocator_type& a) :
-      Base__(a), node_count__(0), comp__(comp) {
+  rb_tree__(const key_compare& comp, const allocator_type& a)
+      : Base__(a), node_count__(0), comp__(comp) {
     this->empty_initialize();
   }
 
   rb_tree__(
-      const rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>& other) :
-      Base__(other.get_allocator()),
-      node_count__(other.node_count__),
-      comp__(other.comp__) {
+      const rb_tree__<Key, Value, KeyFromValue, Compare, Allocator>& other)
+      : Base__(other.get_allocator()),
+        node_count__(other.node_count__),
+        comp__(other.comp__) {
     if (other._root__() == NULL)
       this->empty_initialize();
     else {
