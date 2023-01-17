@@ -6,7 +6,7 @@
 #    By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/12 17:24:07 by chanhpar          #+#    #+#              #
-#    Updated: 2023/01/16 18:40:43 by chanhpar         ###   ########.fr        #
+#    Updated: 2023/01/17 18:31:37 by chanhpar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@ RM				:= rm -f
 
 CXXFLAGS		:= -Wall -Wextra -Werror -std=c++98 -pedantic \
 				   -O3 -MMD -MP
-CPPFLAGS		:= -I. -I./test
 
 ifdef DEBUG
 	CXXFLAGS += -fsanitize=address -g -DSANITIZE -DDEBUG
@@ -39,6 +38,8 @@ INCS			:= type_traits.hpp \
 				   map.hpp \
 				   set.hpp \
 
+INCS_DIR		:= ./include/
+
 TEST_INCS		:= TestClass.hpp \
 				   test.hpp \
 				   test_common.hpp \
@@ -46,6 +47,10 @@ TEST_INCS		:= TestClass.hpp \
 				   test_set.hpp \
 				   test_stack.hpp \
 				   test_vector.hpp
+
+TEST_DIR		:= ./test/
+
+CPPFLAGS		:= -I$(INCS_DIR) -I$(TEST_DIR)
 
 SHELL			:= /bin/bash
 SEED			:= 42
@@ -62,7 +67,7 @@ OUTPUT_FT		:= ft_output.log
 .PHONY: all
 all: $(NAME)
 
-$(NAME): $(SRCS) $(INCS) $(addprefix test/, $(TEST_INCS))
+$(NAME): $(SRCS) $(addprefix $(INCS_DIR), $(INCS)) $(addprefix $(TEST_DIR), $(TEST_INCS))
 	@$(MAKE) std
 	@$(MAKE) clean
 	@$(MAKE) CXXFLAGS="$(CXXFLAGS) -DFT" ft
