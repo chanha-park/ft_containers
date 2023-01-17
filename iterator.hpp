@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 14:47:02 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 17:13:12 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 17:34:24 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,48 +398,6 @@ operator+(typename reverse_iterator<Iterator>::difference_type n,
 // reverse_iterator: addition, subtraction operators }}}
 
 // reverse iterator }}}
-
-// template <typename T1, typename T2>
-// void
-// constructObject_(T1* p, const T2& value) {
-//   new (static_cast<void*>(p)) T1(value);
-// }
-
-// template <typename T>
-// void
-// constructObject_(T* p) {
-//   new (static_cast<void*>(p)) T();
-// }
-
-// template <typename T>
-// void
-// destructObject_(T* p) {
-//   p->~T();
-// }
-
-// template <typename ForwardIter>
-// typename ft::enable_if<!ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
-// destruct_(ForwardIter first, ForwardIter last) {
-//   for (; first != last; ++first)
-//     ft::destructObject_(&*first);
-// }
-
-// template <typename ForwardIter>
-// typename ft::enable_if<ft::has_trivial_destructor<typename
-// ft::iterator_traits<
-//                            ForwardIter>::value_type>::value,
-//                        void>::type
-// destruct_(ForwardIter, ForwardIter) {
-// }
-
-// template <typename ForwardIter>
-// void
-// destructObject_(ForwardIter first, ForwardIter last) {
-//   ft::destruct_<ForwardIter>(first, last);
-// }
 
 }  // namespace ft
 

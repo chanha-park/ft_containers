@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 17:09:43 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 17:35:20 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,16 +236,6 @@ template <typename T, size_t N>
 struct is_array<T[N]> : public ft::true_type {};
 
 // is_array }}}
-
-// has_trivial_destructor {{{
-
-// template <typename T>
-// struct has_trivial_destructor :
-//     public ft::integral_constant<bool,
-//                                  ft::is_arithmetic<T>::value
-//                                      || ft::is_pointer<T>::value> {};
-
-// has_trivial_destructor }}}
 
 // is_same {{{
 

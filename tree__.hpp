@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 15:57:19 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 17:34:55 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -536,11 +536,6 @@ class rb_tree__ {
   _parent__(const base_node__* x) {
     return (static_cast<const value_node__*>(x->parent));
   }
-
-  // static reference
-  // get_value__(value_node__* x) {
-  //   return (x->val);
-  // }
 
   static const key_type&
   _key__(const value_node__* x) {
