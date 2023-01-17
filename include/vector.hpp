@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 22:47:06 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 20:26:37 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,10 @@ operator+(typename vector_iterator<Iterator, Container>::difference_type n,
 
 namespace detail {
 
-// vector_base_ class {{{
+// vector_base__ class {{{
 
 template <typename T, typename Allocator>
-class vector_base_ {
+class vector_base__ {
  public:
   typedef typename Allocator::template rebind<T>::other allocator_type;
 
@@ -203,11 +203,11 @@ class vector_base_ {
   T* finish;
   T* end_of_storage;
 
-  vector_base_(const allocator_type& x) :
+  vector_base__(const allocator_type& x) :
       data_allocator(x), start(0), finish(0), end_of_storage(0) {
   }
 
-  vector_base_(size_t n, const allocator_type& x) try :
+  vector_base__(size_t n, const allocator_type& x) try :
       data_allocator(x),
       start(data_allocator.allocate(n)),
       finish(start),
@@ -227,21 +227,20 @@ class vector_base_ {
       data_allocator.deallocate(p, n);
   }
 
-  virtual ~vector_base_(void) {
+  virtual ~vector_base__(void) {
     deallocate_(start, end_of_storage - start);
   }
 };
 
-// vector_base_ class }}}
+// vector_base__ class }}}
 
 }  // namespace detail
 
 // vector class start
 template <typename T, typename Allocator = std::allocator<T> >
-class vector : protected ft::detail::vector_base_<T, Allocator> {
+class vector : protected ft::detail::vector_base__<T, Allocator> {
  private:
-  typedef ft::detail::vector_base_<T, Allocator> Base_;
-  typedef vector<T, Allocator> vector_type_;
+  typedef ft::detail::vector_base__<T, Allocator> Base_;
 
  public:
   // member types {{{
@@ -250,8 +249,8 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
   typedef value_type* pointer;
   typedef const value_type* const_pointer;
 
-  typedef vector_iterator<pointer, vector_type_> iterator;
-  typedef vector_iterator<const_pointer, vector_type_> const_iterator;
+  typedef vector_iterator<pointer, vector<T, Allocator> > iterator;
+  typedef vector_iterator<const_pointer, vector<T, Allocator> > const_iterator;
 
   typedef value_type& reference;
   typedef const value_type& const_reference;
@@ -326,10 +325,10 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
           first, last, this->end(), this->data_allocator));
     } else {
       const size_type oldSize__ = this->size();
-      vector_type_ tmp__(this->recommend__(oldSize__ + insertSize__),
-                         this->begin(),
-                         pos,
-                         this->get_allocator());
+      vector<T, Allocator> tmp__(this->recommend__(oldSize__ + insertSize__),
+                                 this->begin(),
+                                 pos,
+                                 this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
           first, last, tmp__.end(), tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
@@ -365,7 +364,7 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
     const size_type newSize__ = ft::distance(first, last);
 
     if (newSize__ > this->capacity()) {
-      vector_type_ tmp__(
+      vector<T, Allocator> tmp__(
           this->recommend__(newSize__), first, last, this->get_allocator());
       this->swap(tmp__);
       return;
@@ -391,7 +390,7 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
     const size_type newSize__ = ft::distance(first, last);
 
     if (newSize__ > this->capacity()) {
-      vector_type_ tmp__(
+      vector<T, Allocator> tmp__(
           this->recommend__(newSize__), first, last, this->get_allocator());
       this->swap(tmp__);
       return;
@@ -490,7 +489,7 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
       const size_type oldSize__ = this->size();
       const size_type newSize__ = other.size();
       if (this->capacity() < newSize__) {
-        vector_type_ tmp__(other);
+        vector<T, Allocator> tmp__(other);
         this->swap(tmp__);
         return (*this);
       }
@@ -583,10 +582,10 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
   void
   reserve(size_type n) {
     if (n > this->capacity()) {
-      vector_type_ tmp__(this->recommend__(n),
-                         this->begin(),
-                         this->end(),
-                         this->get_allocator());
+      vector<T, Allocator> tmp__(this->recommend__(n),
+                                 this->begin(),
+                                 this->end(),
+                                 this->get_allocator());
       this->swap(tmp__);
     }
   }
@@ -654,7 +653,7 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
   void
   assign(size_type n, const value_type& val) {
     if (n > this->capacity()) {
-      vector_type_ tmp__(n, val, this->get_allocator());
+      vector<T, Allocator> tmp__(n, val, this->get_allocator());
       this->swap(tmp__);
     } else if (n > this->size()) {
       std::fill(this->begin(), this->end(), val);
@@ -712,10 +711,10 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
       }
     } else {
       // need realloc
-      vector_type_ tmp__(this->recommend__(this->size() + 1),
-                         this->begin(),
-                         pos,
-                         this->get_allocator());
+      vector<T, Allocator> tmp__(this->recommend__(this->size() + 1),
+                                 this->begin(),
+                                 pos,
+                                 this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
           tmp__.finish, 1, val, tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
@@ -773,10 +772,10 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
       }
     } else {
       // need realloc
-      vector_type_ tmp__(this->recommend__(this->size() + n),
-                         this->begin(),
-                         pos,
-                         this->get_allocator());
+      vector<T, Allocator> tmp__(this->recommend__(this->size() + n),
+                                 this->begin(),
+                                 pos,
+                                 this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
           tmp__.finish, n, val, tmp__.data_allocator));
       tmp__.finish = ft::addressof(*ft::uninitialized_copy(
@@ -827,10 +826,10 @@ class vector : protected ft::detail::vector_base_<T, Allocator> {
           *ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator));
     } else {
       // need realloc
-      vector_type_ tmp__(this->recommend__(this->size() + 1),
-                         this->begin(),
-                         this->end(),
-                         this->get_allocator());
+      vector<T, Allocator> tmp__(this->recommend__(this->size() + 1),
+                                 this->begin(),
+                                 this->end(),
+                                 this->get_allocator());
       tmp__.finish = ft::addressof(*ft::uninitialized_fill_n(
           tmp__.finish, 1, val, tmp__.data_allocator));
       this->swap(tmp__);
