@@ -49,6 +49,7 @@ struct Facto<0> {
 
 int
 main(void) {
+  std::cout << example::Num<100>::value << std::endl;
   std::cout << example::Add<200, 300>::value << std::endl;
   std::cout << example::Fibo<10>::value << std::endl;
   std::cout << example::Fibo<100>::value << std::endl;
