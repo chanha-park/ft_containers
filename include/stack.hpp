@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 19:09:39 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/14 22:48:04 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 19:31:09 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,7 @@
 
 namespace ft {
 
-// forward declarations {{{
-
 template <typename T, typename Container = ft::vector<T> >
-class stack;
-
-template <typename T, typename Container>
-bool
-operator==(const stack<T, Container>& x, const stack<T, Container>& y);
-
-template <typename T, typename Container>
-bool
-operator<(const stack<T, Container>& x, const stack<T, Container>& y);
-
-// forward declarations }}}
-
-template <typename T, typename Container>
 class stack {
  public:
   typedef Container container_type;
@@ -51,88 +36,71 @@ class stack {
 
   stack&
   operator=(const stack& other) {
-    c = other.c;
+    this->c = other.c;
     return (*this);
   }
 
   bool
   empty(void) const {
-    return (c.empty());
+    return (this->c.empty());
   }
 
   size_type
   size(void) const {
-    return (c.size());
+    return (this->c.size());
   }
 
   reference
   top(void) {
-    return (c.back());
+    return (this->c.back());
   }
 
   const_reference
   top(void) const {
-    return (c.back());
+    return (this->c.back());
   }
 
   void
   push(const value_type& x) {
-    c.push_back(x);
+    this->c.push_back(x);
   }
 
   void
   pop(void) {
-    c.pop_back();
+    this->c.pop_back();
   }
 
-  template <typename T_, typename Container_>
-  friend bool
-  operator==(const stack<T_, Container_>& x, const stack<T_, Container_>& y);
+  bool
+  operator==(const stack<T, Container>& other) const {
+    return (this->c == other.c);
+  }
 
-  template <typename T_, typename Container_>
-  friend bool
-  operator<(const stack<T_, Container_>& x, const stack<T_, Container_>& y);
+  bool
+  operator<(const stack<T, Container>& other) const {
+    return (this->c < other.c);
+  }
+
+  bool
+  operator!=(const stack<T, Container>& other) const {
+    return (!(*this == other));
+  }
+
+  bool
+  operator>(const stack<T, Container>& other) const {
+    return (other < *this);
+  }
+
+  bool
+  operator<=(const stack<T, Container>& other) const {
+    return (!(other < *this));
+  }
+
+  bool
+  operator>=(const stack<T, Container>& other) const {
+    return (!(*this < other));
+  }
+
 };  // class stack
-
-// relational operator {{{
-
-template <typename T, typename Container>
-bool
-operator==(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (x.c == y.c);
-}
-
-template <typename T, typename Container>
-bool
-operator<(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (x.c < y.c);
-}
-
-template <typename T, typename Container>
-bool
-operator!=(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (!(x == y));
-}
-
-template <typename T, typename Container>
-bool
-operator>(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (y < x);
-}
-
-template <typename T, typename Container>
-bool
-operator<=(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (!(y < x));
-}
-
-template <typename T, typename Container>
-bool
-operator>=(const stack<T, Container>& x, const stack<T, Container>& y) {
-  return (!(x < y));
-}
-
-// relational operator }}}
 
 }  // namespace ft
 
