@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 21:57:26 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 22:23:33 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,11 +320,6 @@ template <typename Key,
           typename Compare,
           typename Allocator = std::allocator<Value> >
 class rb_tree__ {
- private:
-  typedef bool node_color__;
-  static const node_color__ red__ = true;
-  static const node_color__ black__ = false;
-
  public:
   typedef Key key_type;
   typedef Value value_type;
@@ -493,7 +488,7 @@ class rb_tree__ {
 
   // methods for root, leftmost, rightmost }}}
 
-  // static methods for base_node__* type {{{
+  // static methods for node {{{
 
   static value_node__*
   _left__(base_node__* x) {
@@ -540,8 +535,6 @@ class rb_tree__ {
     return (x->color);
   }
 
-  // static getter for value_node__* type }}}
-
   static base_node__*
   local_leftmost__(base_node__* x) {
     return (base_node__::local_leftmost__(x));
@@ -561,6 +554,8 @@ class rb_tree__ {
   local_rightmost__(const base_node__* x) {
     return (base_node__::local_rightmost__(x));
   }
+
+  // static methods for node }}}
 
   static void
   rotate_left__(base_node__* x, base_node__*& root) {
@@ -785,6 +780,7 @@ class rb_tree__ {
     base_node__* succ_child__;
     base_node__* parent_new__ = NULL;
 
+    // find successor node {{{2
     if (node_to_delete->left == NULL) {
       succ__ = node_to_delete;
       succ_child__ = succ__->right;
@@ -799,10 +795,12 @@ class rb_tree__ {
         succ__ = succ__->left;
       succ_child__ = succ__->right;
     }
+    // }}}
 
     const node_color__ removed_color__ = succ__->color;
 
     if (succ__ != node_to_delete) {
+      // bring successor to node_to_delete position {{{2
       node_to_delete->left->parent = succ__;
       succ__->left = node_to_delete->left;
 
@@ -830,8 +828,11 @@ class rb_tree__ {
 
       succ__->color = node_to_delete->color;
 
+      // }}}
+
     } else {
-      // succ__ == node_to_delete i.e. node_to_delete has NULL child
+      // succ__ == node_to_delete
+      // i.e. node_to_delete has NULL child {{{2
 
       parent_new__ = node_to_delete->parent;
       if (succ_child__)
@@ -857,6 +858,7 @@ class rb_tree__ {
         else
           rightmost__ = local_rightmost__(succ_child__);
       }
+      // }}}
     }
 
     if (removed_color__ == black__) {
