@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 17:34:55 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 21:57:26 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -351,13 +351,18 @@ class rb_tree__ {
     typename Allocator::template rebind<value_node__>::other node_allocator;
 
    public:
+    rb_tree_alloc_base__(const allocator_type& a) :
+        node_allocator(a),
+        header(static_cast<base_node__*>(this->allocate_node__())) {
+    }
+
+    ~rb_tree_alloc_base__(void) {
+      this->deallocate_node__(static_cast<value_node__*>(this->header));
+    }
+
     allocator_type
     get_allocator(void) const {
       return (node_allocator);
-    }
-
-    rb_tree_alloc_base__(const allocator_type& a) :
-        node_allocator(a), header(NULL) {
     }
 
     base_node__* header;
@@ -375,30 +380,13 @@ class rb_tree__ {
     // class rb_tree_alloc_base__ }}}
   };
 
-  class rb_tree_node__ : public rb_tree_alloc_base__ {
-    // class rb_tree_node__ {{{
-   public:
-    typedef rb_tree_alloc_base__ Base__;
-    typedef typename Base__::allocator_type allocator_type;
-
-    rb_tree_node__(const allocator_type& a) : Base__(a) {
-      this->header = static_cast<base_node__*>(this->allocate_node__());
-    }
-
-    ~rb_tree_node__(void) {
-      this->deallocate_node__(static_cast<value_node__*>(this->header));
-    }
-
-    // class rb_tree_node__ }}}
-  };
-
  private:
-  rb_tree_node__ Base__;
+  rb_tree_alloc_base__ Base__;
   size_type node_count__;
   key_compare comp__;
 
  public:
-  typedef typename rb_tree_node__::allocator_type allocator_type;
+  typedef typename rb_tree_alloc_base__::allocator_type allocator_type;
 
   typedef rb_tree_iterator__<value_type> iterator;
   typedef rb_tree_const_iterator__<value_type> const_iterator;
