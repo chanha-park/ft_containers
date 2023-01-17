@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 20:26:37 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 21:26:43 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,12 +318,16 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
     const size_type insertSize__ = ft::distance(first, last);
     if (insertSize__ == 0)
       return (pos);
+
     const size_type offset__ = pos - this->begin();
     if (size_type(this->end_of_storage - this->finish) >= insertSize__
         && pos == this->end()) {
+      // enough space && insert at end
       this->finish = ft::addressof(*ft::uninitialized_copy(
           first, last, this->end(), this->data_allocator));
+
     } else {
+      // copy and swap
       const size_type oldSize__ = this->size();
       vector<T, Allocator> tmp__(this->recommend__(oldSize__ + insertSize__),
                                  this->begin(),
@@ -349,6 +353,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
 
     for (; first != last && cur__ != this->end(); ++cur__, (void)++first)
       *cur__ = *first;
+
     if (first == last)
       this->erase(cur__, this->end());
     else
@@ -364,6 +369,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
     const size_type newSize__ = ft::distance(first, last);
 
     if (newSize__ > this->capacity()) {
+      // not enough space. copy and swap
       vector<T, Allocator> tmp__(
           this->recommend__(newSize__), first, last, this->get_allocator());
       this->swap(tmp__);
@@ -372,36 +378,12 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
     if (oldSize__ >= newSize__) {
       iterator it__(std::copy(first, last, this->begin()));
       ft::destroy(it__, this->end(), this->data_allocator);
+
     } else {
       ForwardIter mid__(first);
       ft::advance(mid__, oldSize__);
       std::copy(first, mid__, this->begin());
       ft::uninitialized_copy(mid__, last, this->end(), this->data_allocator);
-    }
-    this->finish = this->start + newSize__;
-  }
-
-  template <typename RandIter>
-  void
-  assign_range__(RandIter first,
-                 RandIter last,
-                 ft::random_access_iterator_tag) {
-    const size_type oldSize__ = this->size();
-    const size_type newSize__ = ft::distance(first, last);
-
-    if (newSize__ > this->capacity()) {
-      vector<T, Allocator> tmp__(
-          this->recommend__(newSize__), first, last, this->get_allocator());
-      this->swap(tmp__);
-      return;
-    }
-    if (this->size() >= newSize__) {
-      iterator it__(std::copy(first, last, this->begin()));
-      ft::destroy(it__, this->end(), this->data_allocator);
-    } else {
-      std::copy(first, first + oldSize__, this->begin());
-      ft::uninitialized_copy(
-          first + oldSize__, last, this->end(), this->data_allocator);
     }
     this->finish = this->start + newSize__;
   }
@@ -430,10 +412,11 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         other.begin(), other.end(), this->start, this->data_allocator));
   }
 
-  template <typename InputIter>
-  vector(typename ft::enable_if<is_integral<InputIter>::value, InputIter>::type
+  // If is_integral -> not an iterator -> static_cast to size_type, value_type
+  template <typename Iterator>
+  vector(typename ft::enable_if<is_integral<Iterator>::value, Iterator>::type
              first,
-         InputIter last,
+         Iterator last,
          const allocator_type& alloc = allocator_type()) :
       Base_(static_cast<size_type>(first), alloc) {
     const size_type n = static_cast<size_type>(first);
@@ -443,28 +426,30 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         *ft::uninitialized_fill_n(this->start, n, val, this->data_allocator));
   }
 
-  template <typename InputIter>
+  // InputIter: push_back one by one
+  template <typename Iterator>
   vector(
       typename ft::enable_if<
-          !is_integral<InputIter>::value
-              && is_same<typename iterator_traits<InputIter>::iterator_category,
+          !is_integral<Iterator>::value
+              && is_same<typename iterator_traits<Iterator>::iterator_category,
                          ft::input_iterator_tag>::value,
-          InputIter>::type first,
-      InputIter last,
+          Iterator>::type first,
+      Iterator last,
       const allocator_type& alloc = allocator_type()) :
       Base_(alloc) {
     for (; first != last; ++first)
       push_back(*first);
   }
 
-  template <typename InputIter>
+  // ForwardIter -> Can use ft::distance
+  template <typename Iterator>
   vector(
-      typename ft::enable_if<!is_integral<InputIter>::value
-                                 && !is_same<typename iterator_traits<
-                                                 InputIter>::iterator_category,
-                                             ft::input_iterator_tag>::value,
-                             InputIter>::type first,
-      InputIter last,
+      typename ft::enable_if<
+          !is_integral<Iterator>::value
+              && !is_same<typename iterator_traits<Iterator>::iterator_category,
+                          ft::input_iterator_tag>::value,
+          Iterator>::type first,
+      Iterator last,
       const allocator_type& alloc = allocator_type()) :
       Base_(ft::distance(first, last), alloc) {
     this->finish = ft::addressof(*ft::uninitialized_copy(
@@ -488,11 +473,15 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
     if (&other != this) {
       const size_type oldSize__ = this->size();
       const size_type newSize__ = other.size();
+
       if (this->capacity() < newSize__) {
+        // not enough space. copy and swap
         vector<T, Allocator> tmp__(other);
         this->swap(tmp__);
         return (*this);
       }
+
+      // enough space. no need to realloc
       if (oldSize__ >= newSize__) {
         iterator it__(std::copy(other.begin(), other.end(), this->begin()));
         ft::destroy(it__, this->end(), this->data_allocator);
@@ -653,12 +642,15 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
   void
   assign(size_type n, const value_type& val) {
     if (n > this->capacity()) {
+      // not enough space. copy and swap
       vector<T, Allocator> tmp__(n, val, this->get_allocator());
       this->swap(tmp__);
+
     } else if (n > this->size()) {
       std::fill(this->begin(), this->end(), val);
       this->finish = ft::addressof(*ft::uninitialized_fill_n(
           this->end(), n - this->size(), val, this->data_allocator));
+
     } else {
       std::fill_n(this->begin(), n, val);
       this->erase(this->begin() + n, this->end());
@@ -672,6 +664,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         first, last, typename iterator_traits<InputIter>::iterator_category());
   }
 
+  // If is_integral -> not an iterator -> static_cast to size_type, value_type
   template <typename InputIter>
   typename ft::enable_if<ft::is_integral<InputIter>::value, void>::type
   assign(InputIter first, InputIter last) {
@@ -691,6 +684,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
       if (pos == oldEnd__) {
         this->finish = ft::addressof(
             *ft::uninitialized_fill_n(oldEnd__, 1, val, this->data_allocator));
+
       } else if (1 <= size_type(oldEnd__ - pos)) {
         // enough space, but need to shift elements back. pos + 1 <= end
         iterator mid__(oldEnd__ - 1);
@@ -698,6 +692,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
             mid__, oldEnd__, oldEnd__, this->data_allocator));
         std::copy_backward(pos, mid__, oldEnd__);
         std::fill(pos, pos + 1, val);
+
       } else {
         // enough space, but need to shift elements back. pos + 1 > end
         this->finish = ft::addressof(
@@ -710,7 +705,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         std::fill(pos, oldEnd__, val);
       }
     } else {
-      // need realloc
+      // not enough space. copy and swap
       vector<T, Allocator> tmp__(this->recommend__(this->size() + 1),
                                  this->begin(),
                                  pos,
@@ -734,6 +729,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         typename iterator_traits<InputIter>::iterator_category()));
   }
 
+  // If is_integral -> not an iterator -> static_cast to size_type, value_type
   template <typename InputIter>
   typename ft::enable_if<ft::is_integral<InputIter>::value, iterator>::type
   insert(iterator pos, InputIter first, InputIter last) {
@@ -752,6 +748,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
       if (pos == oldEnd__) {
         this->finish = ft::addressof(
             *ft::uninitialized_fill_n(oldEnd__, n, val, this->data_allocator));
+
       } else if (n <= size_type(oldEnd__ - pos)) {
         // enough space, but need to shift elements back. pos + n <= end
         iterator mid__(oldEnd__ - n);
@@ -759,6 +756,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
             mid__, oldEnd__, oldEnd__, this->data_allocator));
         std::copy_backward(pos, mid__, oldEnd__);
         std::fill(pos, pos + n, val);
+
       } else {
         // enough space, but need to shift elements back. pos + n > end
         this->finish = ft::addressof(
@@ -771,7 +769,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
         std::fill(pos, oldEnd__, val);
       }
     } else {
-      // need realloc
+      // not enough space. copy and swap
       vector<T, Allocator> tmp__(this->recommend__(this->size() + n),
                                  this->begin(),
                                  pos,
@@ -825,7 +823,7 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
       this->finish = ft::addressof(
           *ft::uninitialized_fill_n(this->end(), 1, val, this->data_allocator));
     } else {
-      // need realloc
+      // not enough space. copy and swap
       vector<T, Allocator> tmp__(this->recommend__(this->size() + 1),
                                  this->begin(),
                                  this->end(),
@@ -848,47 +846,44 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
   get_allocator(void) const {
     return (this->data_allocator);
   }
+
+  // vector relational operator {{{
+
+  bool
+  operator==(const vector<T, Allocator>& y) const {
+    return (this->size() == y.size()
+            && ft::equal(this->begin(), this->end(), y.begin()));
+  }
+
+  bool
+  operator<(const vector<T, Allocator>& y) const {
+    return (ft::lexicographical_compare(
+        this->begin(), this->end(), y.begin(), y.end()));
+  }
+
+  bool
+  operator!=(const vector<T, Allocator>& y) const {
+    return (!(*this == y));
+  }
+
+  bool
+  operator>(const vector<T, Allocator>& y) const {
+    return (y < *this);
+  }
+
+  bool
+  operator<=(const vector<T, Allocator>& y) const {
+    return (!(y < *this));
+  }
+
+  bool
+  operator>=(const vector<T, Allocator>& y) const {
+    return (!(*this < y));
+  }
+
+  // vector relational operator }}}
+
 };  // class vector
-
-// vector relational operator {{{
-
-template <typename T, typename Allocator>
-bool
-operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin()));
-}
-
-template <typename T, typename Allocator>
-bool
-operator<(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()));
-}
-
-template <typename T, typename Allocator>
-bool
-operator!=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (!(x == y));
-}
-
-template <typename T, typename Allocator>
-bool
-operator>(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (y < x);
-}
-
-template <typename T, typename Allocator>
-bool
-operator<=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (!(y < x));
-}
-
-template <typename T, typename Allocator>
-bool
-operator>=(const vector<T, Allocator>& x, const vector<T, Allocator>& y) {
-  return (!(x < y));
-}
-
-// vector relational operator }}}
 
 template <typename T, typename Allocator>
 void
