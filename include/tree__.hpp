@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 22:07:57 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 22:23:33 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/18 10:27:33 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -695,35 +695,37 @@ class rb_tree__ {
   rebalance_for_erase__(base_node__*& x,
                         base_node__*& parent_new,
                         base_node__*& root) throw() {
+    // if x->color == red__, Just change it to black. It'll resolve doubly black
     while (x != root && (x == NULL || x->color == black__)) {
       if (x == parent_new->left) {
         // x is a left child {{{
         base_node__* uncle__ = parent_new->right;
-        if (uncle__->color == red__) {
+        if (uncle__->color == red__) {  // -> u's childs, p are black
           uncle__->color = black__;
-          parent_new->color = red__;
-          rotate_left__(parent_new, root);
-          uncle__ = parent_new->right;
+          parent_new->color = red__;        //         prev_u(black)
+          rotate_left__(parent_new, root);  //                 |
+          uncle__ = parent_new->right;      // ->   x(black) - p(red) - u(black)
         }
 
+        // now uncle is black
         if ((uncle__->left == NULL || uncle__->left->color == black__)
             && (uncle__->right == NULL || uncle__->right->color == black__)) {
-          uncle__->color = red__;
-          x = parent_new;
+          uncle__->color = red__;  // make uncle red, x goes up
+          x = parent_new;          // now new_x (prev_paren) owe doubly black
           parent_new = parent_new->parent;
 
-        } else {
+        } else {  // uncle have red child, cannot make red directly
           if (uncle__->right == NULL || uncle__->right->color == black__) {
-            uncle__->left->color = black__;
-            uncle__->color = red__;
-            rotate_right__(uncle__, root);
-            uncle__ = parent_new->right;
-          }
+            uncle__->left->color = black__;  //             u(black)
+            uncle__->color = red__;          //        a(red)     b(black)
+            rotate_right__(uncle__, root);   //  ->          a(black)
+            uncle__ = parent_new->right;     //       (black)  prev_u(red)
+          }                                  //                     b(black)
           uncle__->color = parent_new->color;
           parent_new->color = black__;
 
-          if (uncle__->right)
-            uncle__->right->color = black__;
+          // it cannot be null. it resolve doubly black
+          uncle__->right->color = black__;
 
           rotate_left__(parent_new, root);
           break;
