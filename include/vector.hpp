@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 12:20:14 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/17 21:26:43 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:31:25 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -633,6 +633,16 @@ class vector : protected ft::detail::vector_base__<T, Allocator> {
   const_reference
   back(void) const {
     return (*(end() - 1));
+  }
+
+  value_type*
+  data(void) {
+    return (this->start);
+  }
+
+  const value_type*
+  data(void) const {
+    return (this->start);
   }
 
   // element access }}}

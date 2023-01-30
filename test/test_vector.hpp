@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/13 17:06:47 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/01/16 22:34:32 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:34:59 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,17 @@ test_vector(void) {
     // clear, resize
     vec1.clear();
     vec1.resize(std::size_t(rand() % 10 + 20), T(rand()));
+
+    std::cout << "test data" << std::endl;
+
+    const T* p1 = vec1.data();
+
+    for (std::size_t i = 0; i < vec1.size(); ++i)
+      std::cout << p1[i] << std::endl;
+
+    T* p2 = vec1.data();
+
+    p2[vec1.size() / 2] = T(rand());
 
     test::print(vec1);
     test::print(vec2);
