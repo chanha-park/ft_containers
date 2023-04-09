@@ -6,7 +6,7 @@
 /*   By: chanhpar <chanhpar@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 09:49:23 by chanhpar          #+#    #+#             */
-/*   Updated: 2023/02/01 20:26:42 by chanhpar         ###   ########.fr       */
+/*   Updated: 2023/01/17 17:35:20 by chanhpar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ struct conditional<false, If, Else> {
 template <typename T, T v>
 struct integral_constant {
   static const T value = v;
+  typedef T value_type;
+  typedef integral_constant type;
+
+  operator value_type() const throw() {
+    return (value);
+  }
 };
 
 typedef integral_constant<bool, true> true_type;
